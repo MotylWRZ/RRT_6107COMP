@@ -1,0 +1,75 @@
+﻿Build started 24/01/2021 14:34:45.
+     1>Project "E:\6107COMP\6107COMP-Coursework-Template\Dependencies\lua-5.1.4\LuaLib\LuaLib.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Bin\Win32\Debug\\" /Fd"Bin\Win32\Debug\LuaLib.pdb" /Gd /TC /analyze- /errorReport:prompt ..\src\lapi.c ..\src\lauxlib.c ..\src\lbaselib.c ..\src\lcode.c ..\src\ldblib.c ..\src\ldebug.c ..\src\ldo.c ..\src\ldump.c ..\src\lfunc.c ..\src\lgc.c ..\src\linit.c ..\src\liolib.c ..\src\llex.c ..\src\lmathlib.c ..\src\lmem.c ..\src\loadlib.c ..\src\lobject.c ..\src\lopcodes.c ..\src\loslib.c ..\src\lparser.c ..\src\lstate.c ..\src\lstring.c ..\src\lstrlib.c ..\src\ltable.c ..\src\ltablib.c ..\src\ltm.c ..\src\lundump.c ..\src\lvm.c ..\src\lzio.c
+         lzio.c
+         lvm.c
+         lundump.c
+         ltm.c
+         ltablib.c
+         ltable.c
+         lstrlib.c
+         lstring.c
+         lstate.c
+         lparser.c
+         loslib.c
+         lopcodes.c
+         lobject.c
+         loadlib.c
+         lmem.c
+         lmathlib.c
+         llex.c
+         liolib.c
+         linit.c
+         lgc.c
+         Generating Code...
+         Compiling...
+         lfunc.c
+         ldump.c
+         ldo.c
+         ldebug.c
+         ldblib.c
+         lcode.c
+         lbaselib.c
+         lauxlib.c
+         lapi.c
+         Generating Code...
+       Lib:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"Bin\Win32\Debug\LuaLib.lib" /NOLOGO Bin\Win32\Debug\lapi.obj
+         Bin\Win32\Debug\lauxlib.obj
+         Bin\Win32\Debug\lbaselib.obj
+         Bin\Win32\Debug\lcode.obj
+         Bin\Win32\Debug\ldblib.obj
+         Bin\Win32\Debug\ldebug.obj
+         Bin\Win32\Debug\ldo.obj
+         Bin\Win32\Debug\ldump.obj
+         Bin\Win32\Debug\lfunc.obj
+         Bin\Win32\Debug\lgc.obj
+         Bin\Win32\Debug\linit.obj
+         Bin\Win32\Debug\liolib.obj
+         Bin\Win32\Debug\llex.obj
+         Bin\Win32\Debug\lmathlib.obj
+         Bin\Win32\Debug\lmem.obj
+         Bin\Win32\Debug\loadlib.obj
+         Bin\Win32\Debug\lobject.obj
+         Bin\Win32\Debug\lopcodes.obj
+         Bin\Win32\Debug\loslib.obj
+         Bin\Win32\Debug\lparser.obj
+         Bin\Win32\Debug\lstate.obj
+         Bin\Win32\Debug\lstring.obj
+         Bin\Win32\Debug\lstrlib.obj
+         Bin\Win32\Debug\ltable.obj
+         Bin\Win32\Debug\ltablib.obj
+         Bin\Win32\Debug\ltm.obj
+         Bin\Win32\Debug\lundump.obj
+         Bin\Win32\Debug\lvm.obj
+         Bin\Win32\Debug\lzio.obj
+         LuaLib.vcxproj -> E:\6107COMP\6107COMP-Coursework-Template\Dependencies\lua-5.1.4\LuaLib\Bin\Win32\Debug\LuaLib.lib
+       PostBuildEvent:
+         REM copy E:\6107COMP\6107COMP-Coursework-Template\Dependencies\lua-5.1.4\LuaLib\Bin\Win32\Debug\vc120.pdb E:\6107COMP\6107COMP-Coursework-Template\SDK\Library\Win32\Debug
+         :VCEnd
+     1>Done Building Project "E:\6107COMP\6107COMP-Coursework-Template\Dependencies\lua-5.1.4\LuaLib\LuaLib.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.37

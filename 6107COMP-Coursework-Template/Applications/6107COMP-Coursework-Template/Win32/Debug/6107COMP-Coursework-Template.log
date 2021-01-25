@@ -1,0 +1,10 @@
+﻿Build started 25.01.2021 13:38:18.
+     1>Project "D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\6107COMP-Coursework-Template.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(381,5): warning MSB8028: The intermediate directory (Win32\Debug\) contains files shared from another project (5108COMP-Coursework-Template.vcxproj, 5108COMP-Week8-Lab1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+     1>Link:
+         6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe
+     1>Done Building Project "D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\6107COMP-Coursework-Template.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.03
