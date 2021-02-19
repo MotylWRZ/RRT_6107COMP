@@ -42,14 +42,14 @@ LJMULevelDemo AppInstance;
 //
 ///////////////////////////////////////
 LJMULevelDemo::LJMULevelDemo():
-_render_text(nullptr),
-_render_view(nullptr),
-_obj_camera(nullptr),
-_obj_renderer11(nullptr),
-_obj_window(nullptr),
-_swap_index(0),
-_tgt_depth(nullptr),
-_tgt_render(nullptr)
+m_pRender_text(nullptr),
+m_pRenderView(nullptr),
+m_pCamera(nullptr),
+m_pRenderer11(nullptr),
+m_pWindow(nullptr),
+m_iSwapChain(0),
+m_DepthTarget(nullptr),
+m_RenderTarget(nullptr)
 {
 	
 }
@@ -61,7 +61,7 @@ _tgt_render(nullptr)
 //////////////////////////////////////
 std::wstring LJMULevelDemo::GetName()
 {
-	return(std::wstring(L"5108COMP: Coursework Template"));
+	return(std::wstring(L"6107COMP: Coursework Template"));
 }
 
 /////////////////////////////////////
@@ -82,29 +82,28 @@ void LJMULevelDemo::Initialize()
 	//Call the Input Assembly Stage to setup the layout of our Engine Objects
 	this->inputAssemblyStage();
 
-	this->_obj_camera = new Camera();
+	this->m_pCamera = new Camera();
 
 	Vector3f tcamerapos(0.0f, 20.0f, -50.0f);
-	this->_obj_camera->Spatial().SetTranslation(tcamerapos);
+	this->m_pCamera->Spatial().SetTranslation(tcamerapos);
 
-	this->_render_view = new ViewPerspective(*this->_obj_renderer11,
-		                                     this->_tgt_render, this->_tgt_depth);
-	this->_render_view->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-	this->_obj_camera->SetCameraView(this->_render_view);
+	this->m_pRenderView = new ViewPerspective(*this->m_pRenderer11,
+		                                     this->m_RenderTarget, this->m_DepthTarget);
+	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+	this->m_pCamera->SetCameraView(this->m_pRenderView);
 
-	this->_render_text = new LJMUTextOverlay(*this->_obj_renderer11, 
-		                                      this->_tgt_render, 
+	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, 
+		                                      this->m_RenderTarget, 
 											  std::wstring(L"Cambria"), 
 											  25);	
 
-	this->_obj_camera->SetOverlayView(this->_render_text);
+	this->m_pCamera->SetOverlayView(this->m_pRender_text);
 	
-	float twidth = 1024.0f;
-	float theight = 768.0f;
-	this->_obj_camera->SetProjectionParams(0.1f, 1000.0f, twidth/ theight, 
+
+	this->m_pCamera->SetProjectionParams(0.1f, 1000.0f, m_iscreenWidth / m_iscreenHeight,
 		                                   static_cast<float>(GLYPH_PI) / 2.0f);
 	
-	this->m_pScene->AddCamera(this->_obj_camera);	
+	this->m_pScene->AddCamera(this->m_pCamera);	
 }
 
 ///////////////////////////////////
@@ -119,10 +118,10 @@ void LJMULevelDemo::Update()
 	//----------START RENDERING--------------------------------------------------------------
 
 	this->m_pScene->Update(m_pTimer->Elapsed());
-	this->m_pScene->Render(this->_obj_renderer11);
+	this->m_pScene->Render(this->m_pRenderer11);
 
 	//--------END RENDERING-------------------------------------------------------------
-	this->_obj_renderer11->Present(this->_obj_window->GetHandle(), this->_obj_window->GetSwapChain());
+	this->m_pRenderer11->Present(this->m_pWindow->GetHandle(), this->m_pWindow->GetSwapChain());
 }
 
 ///////////////////////////////////
@@ -132,30 +131,27 @@ void LJMULevelDemo::Update()
 ///////////////////////////////////
 bool LJMULevelDemo::ConfigureEngineComponents()
 {
-	// The application currently supplies the 
-	int twidth = 1024;
-	int theight = 768;
 
 	// Set the render window parameters and initialize the window
-	this->_obj_window = new Win32RenderWindow();
-	this->_obj_window->SetPosition(25, 25);
-	this->_obj_window->SetSize(twidth, theight);
-	this->_obj_window->SetCaption(this->GetName());
-	this->_obj_window->Initialize(this);
+	this->m_pWindow = new Win32RenderWindow();
+	this->m_pWindow->SetPosition(25, 25);
+	this->m_pWindow->SetSize(m_iscreenWidth, m_iscreenHeight);
+	this->m_pWindow->SetCaption(this->GetName());
+	this->m_pWindow->Initialize(this);
 
 
 	// Create the renderer and initialize it for the desired device
 	// type and feature level.
-	this->_obj_renderer11 = new RendererDX11();
+	this->m_pRenderer11 = new RendererDX11();
 
-	if (!this->_obj_renderer11->Initialize(D3D_DRIVER_TYPE_HARDWARE, D3D_FEATURE_LEVEL_11_0))
+	if (!this->m_pRenderer11->Initialize(D3D_DRIVER_TYPE_HARDWARE, D3D_FEATURE_LEVEL_11_0))
 	{
 		Log::Get().Write(L"Could not create hardware device, trying to create the reference device...");
 
-		if (!this->_obj_renderer11->Initialize(D3D_DRIVER_TYPE_REFERENCE, D3D_FEATURE_LEVEL_10_0))
+		if (!this->m_pRenderer11->Initialize(D3D_DRIVER_TYPE_REFERENCE, D3D_FEATURE_LEVEL_10_0))
 		{
-			ShowWindow(this->_obj_window->GetHandle(), SW_HIDE);
-			MessageBox(this->_obj_window->GetHandle(), L"Could not create a hardware or software Direct3D 11 device!", L"5108COMP Coursework Template", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
+			ShowWindow(this->m_pWindow->GetHandle(), SW_HIDE);
+			MessageBox(this->m_pWindow->GetHandle(), L"Could not create a hardware or software Direct3D 11 device!", L"5108COMP Coursework Template", MB_ICONEXCLAMATION | MB_SYSTEMMODAL);
 			this->RequestTermination();
 			return(false);
 		}
@@ -167,36 +163,36 @@ bool LJMULevelDemo::ConfigureEngineComponents()
 	// demonstrates using a configuration object for fast and concise object
 	// creation.
 	SwapChainConfigDX11 tconfig;
-	tconfig.SetWidth(this->_obj_window->GetWidth());
-	tconfig.SetHeight(this->_obj_window->GetHeight());
-	tconfig.SetOutputWindow(this->_obj_window->GetHandle());
-	this->_swap_index = this->_obj_renderer11->CreateSwapChain(&tconfig);
-	this->_obj_window->SetSwapChain(this->_swap_index);
+	tconfig.SetWidth(this->m_pWindow->GetWidth());
+	tconfig.SetHeight(this->m_pWindow->GetHeight());
+	tconfig.SetOutputWindow(this->m_pWindow->GetHandle());
+	this->m_iSwapChain = this->m_pRenderer11->CreateSwapChain(&tconfig);
+	this->m_pWindow->SetSwapChain(this->m_iSwapChain);
 	
 	//Create Colour and Depth Buffers
-	this->_tgt_render = this->_obj_renderer11->GetSwapChainResource(this->_swap_index);
+	this->m_RenderTarget = this->m_pRenderer11->GetSwapChainResource(this->m_iSwapChain);
 
 	Texture2dConfigDX11 tdepthconfig;
-	tdepthconfig.SetDepthBuffer(twidth, theight);
-	this->_tgt_depth = this->_obj_renderer11->CreateTexture2D(&tdepthconfig, 0);
+	tdepthconfig.SetDepthBuffer(m_iscreenWidth, m_iscreenHeight);
+	this->m_DepthTarget = this->m_pRenderer11->CreateTexture2D(&tdepthconfig, 0);
 
 	// Bind the swap chain render target and the depth buffer for use in rendering.  
-	this->_obj_renderer11->pImmPipeline->ClearRenderTargets();
-	this->_obj_renderer11->pImmPipeline->OutputMergerStage.DesiredState.RenderTargetViews.SetState(0, this->_tgt_render->m_iResourceRTV);
-	this->_obj_renderer11->pImmPipeline->OutputMergerStage.DesiredState.DepthTargetViews.SetState(this->_tgt_depth->m_iResourceDSV);
-	this->_obj_renderer11->pImmPipeline->ApplyRenderTargets();
+	this->m_pRenderer11->pImmPipeline->ClearRenderTargets();
+	this->m_pRenderer11->pImmPipeline->OutputMergerStage.DesiredState.RenderTargetViews.SetState(0, this->m_RenderTarget->m_iResourceRTV);
+	this->m_pRenderer11->pImmPipeline->OutputMergerStage.DesiredState.DepthTargetViews.SetState(this->m_DepthTarget->m_iResourceDSV);
+	this->m_pRenderer11->pImmPipeline->ApplyRenderTargets();
 
 	D3D11_VIEWPORT tviewport;
-	tviewport.Width = static_cast< float >(twidth);
-	tviewport.Height = static_cast< float >(theight);
+	tviewport.Width = static_cast< float >(m_iscreenWidth);
+	tviewport.Height = static_cast< float >(m_iscreenHeight);
 	tviewport.MinDepth = 0.0f;
 	tviewport.MaxDepth = 1.0f;
 	tviewport.TopLeftX = 0;
 	tviewport.TopLeftY = 0;
 
-	int tvpindex = this->_obj_renderer11->CreateViewPort(tviewport);
-	this->_obj_renderer11->pImmPipeline->RasterizerStage.DesiredState.ViewportCount.SetState(1);
-	this->_obj_renderer11->pImmPipeline->RasterizerStage.DesiredState.Viewports.SetState(0, tvpindex);
+	int tvpindex = this->m_pRenderer11->CreateViewPort(tviewport);
+	this->m_pRenderer11->pImmPipeline->RasterizerStage.DesiredState.ViewportCount.SetState(1);
+	this->m_pRenderer11->pImmPipeline->RasterizerStage.DesiredState.Viewports.SetState(0, tvpindex);
 	return(true);
 }
 
@@ -226,16 +222,16 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 //////////////////////////////////
 void LJMULevelDemo::ShutdownEngineComponents()
 {
-	if (this->_obj_renderer11)
+	if (this->m_pRenderer11)
 	{
-		this->_obj_renderer11->Shutdown();
-		delete this->_obj_renderer11;
+		this->m_pRenderer11->Shutdown();
+		delete this->m_pRenderer11;
 	}
 
-	if (this->_obj_window)
+	if (this->m_pWindow)
 	{
-		this->_obj_window->Shutdown();
-		delete this->_obj_window;
+		this->m_pWindow->Shutdown();
+		delete this->m_pWindow;
 	}
 }
 
@@ -255,7 +251,7 @@ void LJMULevelDemo::TakeScreenShot()
 	if (this->m_bSaveScreenshot)
 	{
 		this->m_bSaveScreenshot = false;
-		this->_obj_renderer11->pImmPipeline->SaveTextureScreenShot(0, this->GetName());
+		this->m_pRenderer11->pImmPipeline->SaveTextureScreenShot(0, this->GetName());
 	}
 }
 

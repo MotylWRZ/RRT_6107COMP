@@ -1,47 +1,23 @@
-﻿Build started 24/01/2021 14:34:45.
-     1>Project "E:\6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\DirectXTK_Desktop_2012.vcxproj" on node 3 (Rebuild target(s)).
-     1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W4 /WX- /Od /Oy- /D _WIN32_WINNT=0x0600 /D _WIN7_PLATFORM_UPDATE /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"pch.h" /Fp"Bin\Desktop_2012\Win32\Debug\DirectXTK.pch" /Fo"Bin\Desktop_2012\Win32\Debug\\" /Fd"Bin\Desktop_2012\Win32\Debug\DirectXTK.pdb" /Gd /TP /analyze- /errorReport:prompt Src\pch.cpp
-         pch.cpp
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W4 /WX- /Od /Oy- /D _WIN32_WINNT=0x0600 /D _WIN7_PLATFORM_UPDATE /D WIN32 /D _DEBUG /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"pch.h" /Fp"Bin\Desktop_2012\Win32\Debug\DirectXTK.pch" /Fo"Bin\Desktop_2012\Win32\Debug\\" /Fd"Bin\Desktop_2012\Win32\Debug\DirectXTK.pdb" /Gd /TP /analyze- /errorReport:prompt Src\AlphaTestEffect.cpp Src\BasicEffect.cpp Src\CommonStates.cpp Src\DDSTextureLoader.cpp Src\DualTextureEffect.cpp Src\BinaryReader.cpp Src\EffectCommon.cpp Src\EnvironmentMapEffect.cpp Src\GeometricPrimitive.cpp Src\ScreenGrab.cpp Src\SkinnedEffect.cpp Src\SpriteBatch.cpp Src\PrimitiveBatch.cpp Src\SpriteFont.cpp Src\VertexTypes.cpp Src\WICTextureLoader.cpp
-         WICTextureLoader.cpp
-         VertexTypes.cpp
-         SpriteFont.cpp
-         PrimitiveBatch.cpp
-         SpriteBatch.cpp
-         SkinnedEffect.cpp
-         ScreenGrab.cpp
-         GeometricPrimitive.cpp
-         EnvironmentMapEffect.cpp
-         EffectCommon.cpp
-         BinaryReader.cpp
-         DualTextureEffect.cpp
-         DDSTextureLoader.cpp
-         CommonStates.cpp
-         BasicEffect.cpp
-         AlphaTestEffect.cpp
-         Generating Code...
-       Lib:
-         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"Bin\Desktop_2012\Win32\Debug\DirectXTK.lib" /NOLOGO Bin\Desktop_2012\Win32\Debug\AlphaTestEffect.obj
-         Bin\Desktop_2012\Win32\Debug\BasicEffect.obj
-         Bin\Desktop_2012\Win32\Debug\CommonStates.obj
-         Bin\Desktop_2012\Win32\Debug\DDSTextureLoader.obj
-         Bin\Desktop_2012\Win32\Debug\DualTextureEffect.obj
-         Bin\Desktop_2012\Win32\Debug\BinaryReader.obj
-         Bin\Desktop_2012\Win32\Debug\EffectCommon.obj
-         Bin\Desktop_2012\Win32\Debug\EnvironmentMapEffect.obj
-         Bin\Desktop_2012\Win32\Debug\GeometricPrimitive.obj
-         Bin\Desktop_2012\Win32\Debug\pch.obj
-         Bin\Desktop_2012\Win32\Debug\ScreenGrab.obj
-         Bin\Desktop_2012\Win32\Debug\SkinnedEffect.obj
-         Bin\Desktop_2012\Win32\Debug\SpriteBatch.obj
-         Bin\Desktop_2012\Win32\Debug\PrimitiveBatch.obj
-         Bin\Desktop_2012\Win32\Debug\SpriteFont.obj
-         Bin\Desktop_2012\Win32\Debug\VertexTypes.obj
-         Bin\Desktop_2012\Win32\Debug\WICTextureLoader.obj
-         DirectXTK_Desktop_2012.vcxproj -> E:\6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib
-     1>Done Building Project "E:\6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\DirectXTK_Desktop_2012.vcxproj" (Rebuild target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:03.65
+﻿  pch.cpp
+  AlphaTestEffect.cpp
+  BasicEffect.cpp
+  CommonStates.cpp
+  DDSTextureLoader.cpp
+  DualTextureEffect.cpp
+  BinaryReader.cpp
+  EffectCommon.cpp
+  EnvironmentMapEffect.cpp
+  GeometricPrimitive.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Src\GeometricPrimitive.cpp(597,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Src\GeometricPrimitive.cpp(598,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  ScreenGrab.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Src\ScreenGrab.cpp(788,36): warning C4838: conversion from 'UINT' to 'INT' requires a narrowing conversion
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Src\ScreenGrab.cpp(788,48): warning C4838: conversion from 'UINT' to 'INT' requires a narrowing conversion
+  SkinnedEffect.cpp
+  SpriteBatch.cpp
+  PrimitiveBatch.cpp
+  SpriteFont.cpp
+  VertexTypes.cpp
+  WICTextureLoader.cpp
+  Generating Code...
+  DirectXTK_Desktop_2012.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib

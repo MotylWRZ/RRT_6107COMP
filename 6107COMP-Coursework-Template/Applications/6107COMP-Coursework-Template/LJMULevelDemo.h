@@ -6,6 +6,7 @@
 #include "RendererDX11.h"
 
 #include "ViewPerspective.h"
+
 //Hieroglyph Includes
 #include "Camera.h"
 #include "Scene.h"
@@ -29,9 +30,10 @@ namespace LJMUDX
 	//Hieroglyph 3 Rendering Engine and LUA.
 	//
 	//
-	//AUTHORS:  DR Po Yang
+	//AUTHORS:  DR PO YANG
 	//			DR CHRIS CARTER
 	//////////////////////////////////////
+
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
 	{
 
@@ -58,19 +60,22 @@ namespace LJMUDX
 		
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
-	    protected:
+	protected:
 		//-------------CLASS MEMBERS-----------------------------------------------
-		RendererDX11*			_obj_renderer11;	//Pointer to our DirectX 11 Device
-		Win32RenderWindow*		_obj_window;		//Pointer to our Windows-Based Window
+		RendererDX11*			m_pRenderer11;		//Pointer to our DirectX 11 Device
+		Win32RenderWindow*		m_pWindow;			//Pointer to our Windows-Based Window
 
-		int						_swap_index;		//Index of our Swap Chain 
-		ResourcePtr				_tgt_render;		//Pointer to the GPU Render Target for Colour
-		ResourcePtr				_tgt_depth;			//Pointer to the GPU Render Target for Depth
+		int						m_iSwapChain;		//Index of our Swap Chain 
+		ResourcePtr				m_RenderTarget;		//Pointer to the GPU Render Target for Colour
+		ResourcePtr				m_DepthTarget;		//Pointer to the GPU Render Target for Depth
 
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
-		ViewPerspective*			_render_view;	//3D Output View - DirectX 11 Accelerated
-		LJMUTextOverlay*            _render_text;	//2D Output View - DirectX 11 Accelerated
-		Camera*						_obj_camera;	//Camera Object
+		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
+		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
+		Camera*					m_pCamera;			//Camera Object
+
+		float					m_iscreenWidth = 1920.0f;
+		float					m_iscreenHeight = 1080.0f;
 	};
 
 }

@@ -1,0 +1,4 @@
+E:\6107COMP\6107COMP-Workshop-Template (NEW)\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib
+E:\6107COMP\6107COMP-Workshop-Template (NEW)\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.pdb
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.lib
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Dependencies\DirectXTK\Bin\Desktop_2012\Win32\Debug\DirectXTK.pdb

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hieroglyph3", "Source\Hieroglyph3_Desktop.vcxproj", "{0F6D257E-70D5-46C5-8A12-7BDF93C35E81}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -88,6 +88,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Textures", "Textures", "{5E77C729-A9D1-48A3-B48B-64AEC7682A82}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6107COMP-Coursework-Template", "Applications\6107COMP-Coursework-Template\6107COMP-Coursework-Template.vcxproj", "{78E22633-FE9D-428D-80AD-7DEAA7B59E22}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F6D257E-70D5-46C5-8A12-7BDF93C35E81} = {0F6D257E-70D5-46C5-8A12-7BDF93C35E81}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,5 +143,8 @@ Global
 		{6A716E19-9CB7-4EA3-BA02-637DEC53A689} = {F1FB23DC-7B84-4EAB-BF03-B608401B2829}
 		{5E77C729-A9D1-48A3-B48B-64AEC7682A82} = {F1FB23DC-7B84-4EAB-BF03-B608401B2829}
 		{78E22633-FE9D-428D-80AD-7DEAA7B59E22} = {83A49C99-B244-4944-80D9-FF5A7073EC53}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30A1BE6E-58C4-4512-AD8A-C8CEF587CD23}
 	EndGlobalSection
 EndGlobal
