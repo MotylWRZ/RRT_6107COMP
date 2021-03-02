@@ -1,9 +1,6 @@
 ﻿  LJMULevelDemo.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(138,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(138,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(176,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(176,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-  LJMUTextOverlay.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMUTextOverlay.cpp(38,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(260,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(260,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(298,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(298,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

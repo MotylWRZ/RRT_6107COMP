@@ -21,6 +21,9 @@
 
 using namespace Glyph3;
 
+const float DEG_TO_RAD = GLYPH_PI / 180.0f;
+
+
 namespace LJMUDX
 {
 	//////////////////////////////////////
@@ -33,6 +36,8 @@ namespace LJMUDX
 	//AUTHORS:  DR PO YANG
 	//			DR CHRIS CARTER
 	//////////////////////////////////////
+
+	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<BasicVertexDX11::Vertex>> BasicMeshPtr;
 
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
 	{
@@ -57,7 +62,12 @@ namespace LJMUDX
 
 		//------------CUSTOM METHODS-----------------------------------------------
 		void inputAssemblyStage();					//Stage to setup our VB and IB Info
-		
+
+		void setupGeometry();
+		void animateGeometry(float DT);
+		void setupCamera();
+		MaterialPtr createBasicMaterial();
+
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -65,14 +75,22 @@ namespace LJMUDX
 		RendererDX11*			m_pRenderer11;		//Pointer to our DirectX 11 Device
 		Win32RenderWindow*		m_pWindow;			//Pointer to our Windows-Based Window
 
-		int						m_iSwapChain;		//Index of our Swap Chain 
+		int						m_iSwapChain;		//Index of our Swap Chain
 		ResourcePtr				m_RenderTarget;		//Pointer to the GPU Render Target for Colour
 		ResourcePtr				m_DepthTarget;		//Pointer to the GPU Render Target for Depth
+
+		// Actors
+		Actor* m_LandscapeActor;
+		Actor* m_CubeActor;
+		Actor* m_pCubeActor;
+		/*int m_VertexSize;
+		int m_IndexSize;*/
 
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
 		Camera*					m_pCamera;			//Camera Object
+		Actor* m_Actor;
 
 		float					m_iscreenWidth = 1920.0f;
 		float					m_iscreenHeight = 1080.0f;

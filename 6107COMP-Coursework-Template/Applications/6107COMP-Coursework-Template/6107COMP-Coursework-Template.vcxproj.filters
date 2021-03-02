@@ -15,12 +15,22 @@
     <ClCompile Include="LJMUTextOverlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerationHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LJMUTextOverlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerationHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

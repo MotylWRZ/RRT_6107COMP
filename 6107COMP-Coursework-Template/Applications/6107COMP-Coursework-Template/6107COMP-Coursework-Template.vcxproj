@@ -11,12 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GeometryGenerationHelpers.cpp" />
     <ClCompile Include="LJMULevelDemo.cpp" />
     <ClCompile Include="LJMUTextOverlay.cpp" />
+    <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GeometryGenerationHelpers.h" />
     <ClInclude Include="LJMULevelDemo.h" />
     <ClInclude Include="LJMUTextOverlay.h" />
+    <ClInclude Include="TerrainGenerator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{78E22633-FE9D-428D-80AD-7DEAA7B59E22}</ProjectGuid>

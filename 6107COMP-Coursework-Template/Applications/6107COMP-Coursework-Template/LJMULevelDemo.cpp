@@ -1,6 +1,10 @@
 //------------Include the Application Header File----------------------------
 #include "LJMULevelDemo.h"
 
+// API Header Files
+#include "TerrainGenerator.h"
+#include "GeometryGenerationHelpers.h"
+
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
 
@@ -34,7 +38,7 @@ using namespace Glyph3;
 //Include our own application Namespace
 using namespace LJMUDX;
 
-LJMULevelDemo AppInstance; 
+LJMULevelDemo AppInstance;
 
 //---------CONSTRUCTORS-------------------------------------------------------
 
@@ -51,7 +55,7 @@ m_iSwapChain(0),
 m_DepthTarget(nullptr),
 m_RenderTarget(nullptr)
 {
-	
+
 }
 
 //---------METHODS------------------------------------------------------------
@@ -69,9 +73,127 @@ std::wstring LJMULevelDemo::GetName()
 // Stage of the Pipeline.
 /////////////////////////////////////
 void LJMULevelDemo::inputAssemblyStage()
-{			
+{
 	//-----SETUP OUR GEOMETRY FOR THIS SCENE-----------------------------------------
+	this->setupGeometry();
+}
 
+void LJMULevelDemo::setupGeometry()
+{
+	// Create test Landscape
+	this->m_LandscapeActor = TerrainGenerator::createTerrainActor();
+	MaterialPtr tTerrainMaterial = this->createBasicMaterial();
+
+	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
+	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
+	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
+	this->m_pScene->AddActor(this->m_LandscapeActor);
+
+	// Create test Cube Mesh and Actor
+	this->m_CubeActor = new Actor();
+	BasicMeshPtr tMesh = GeometryGenerationHelpers::generateCube();
+	this->m_CubeActor->GetBody()->SetGeometry(tMesh);
+	MaterialPtr tCubeMaterial = this->createBasicMaterial();
+	this->m_CubeActor->GetBody()->SetMaterial(tCubeMaterial);
+	this->m_CubeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
+	this->m_CubeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
+	this->m_pScene->AddActor(this->m_CubeActor);
+
+}
+
+void LJMULevelDemo::animateGeometry(float DT)
+{
+}
+
+void LJMULevelDemo::setupCamera()
+{
+	this->m_pCamera = new FirstPersonCamera();
+	this->m_pCamera->SetEventManager(&this->EvtManager);
+
+	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
+	this->m_pCamera->Spatial().SetTranslation(tCameraPos);
+	this->m_pCamera->Spatial().RotateXBy(20 * DEG_TO_RAD);
+
+	this->m_pRenderView = new ViewPerspective(*this->m_pRenderer11, this->m_RenderTarget,
+		this->m_DepthTarget);
+	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+	this->m_pCamera->SetCameraView(this->m_pRenderView);
+
+	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, this->m_RenderTarget,
+		std::wstring(L"Cambria"),
+		25);
+	this->m_pCamera->SetOverlayView(this->m_pRender_text);
+	this->m_pCamera->SetProjectionParams(0.1f, 1000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
+		static_cast<float>(GLYPH_PI) / 2.0f);
+	this->m_pScene->AddCamera(this->m_pCamera);
+}
+
+MaterialPtr LJMUDX::LJMULevelDemo::createBasicMaterial()
+{
+	MaterialPtr tNewMaterial = MaterialPtr(new MaterialDX11());
+	RenderEffectDX11* tEffect = new RenderEffectDX11();
+
+	// Setup shader here
+	tEffect->SetVertexShader(this->m_pRenderer11->LoadShader(ShaderType::VERTEX_SHADER,
+		std::wstring(L"Basic.hlsl"),
+		std::wstring(L"VSMain"),
+		std::wstring(L"vs_4_0"),
+		true));
+
+	tEffect->SetPixelShader(this->m_pRenderer11->LoadShader(ShaderType::PIXEL_SHADER,
+		std::wstring(L"Basic.hlsl"),
+		std::wstring(L"PSMain"),
+		std::wstring(L"ps_4_0"),
+		true));
+
+	DepthStencilStateConfigDX11 tDSConfig;
+	int tDepthStencilState = this->m_pRenderer11->CreateDepthStencilState(&tDSConfig);
+
+	if (tDepthStencilState == -1)
+	{
+		Log::Get().Write(L"Failed to create light depth stencil state");
+		assert(false);
+	}
+
+	tEffect->m_iDepthStencilState = tDepthStencilState;
+	tEffect->m_uStencilRef = tDepthStencilState;
+
+	BlendStateConfigDX11 blendConfig;
+	blendConfig.AlphaToCoverageEnable = false;
+	blendConfig.IndependentBlendEnable = false;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		blendConfig.RenderTarget[i].BlendEnable = true;
+		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendConfig.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		blendConfig.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendConfig.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+
+	tEffect->m_iBlendState = RendererDX11::Get()->CreateBlendState(&blendConfig);
+
+	RasterizerStateConfigDX11 rsConfig;
+	rsConfig.CullMode = D3D11_CULL_BACK;
+	int iRasterizerState = m_pRenderer11->CreateRasterizerState(&rsConfig);
+
+	if (iRasterizerState == -1)
+	{
+		Log::Get().Write(L"Failed to create light ratserizer state");
+		assert(false);
+	}
+
+	tEffect->m_iRasterizerState = iRasterizerState;
+
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
+
+
+
+	return tNewMaterial;
 }
 
 ////////////////////////////////////
@@ -81,8 +203,8 @@ void LJMULevelDemo::Initialize()
 {
 	//Call the Input Assembly Stage to setup the layout of our Engine Objects
 	this->inputAssemblyStage();
-
-	this->m_pCamera = new Camera();
+	this->setupCamera();
+	/*this->m_pCamera = new Camera();
 
 	Vector3f tcamerapos(0.0f, 20.0f, -50.0f);
 	this->m_pCamera->Spatial().SetTranslation(tcamerapos);
@@ -92,24 +214,24 @@ void LJMULevelDemo::Initialize()
 	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
 	this->m_pCamera->SetCameraView(this->m_pRenderView);
 
-	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, 
-		                                      this->m_RenderTarget, 
-											  std::wstring(L"Cambria"), 
-											  25);	
+	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11,
+		                                      this->m_RenderTarget,
+											  std::wstring(L"Cambria"),
+											  25);
 
 	this->m_pCamera->SetOverlayView(this->m_pRender_text);
-	
+
 
 	this->m_pCamera->SetProjectionParams(0.1f, 1000.0f, m_iscreenWidth / m_iscreenHeight,
 		                                   static_cast<float>(GLYPH_PI) / 2.0f);
-	
-	this->m_pScene->AddCamera(this->m_pCamera);	
+
+	this->m_pScene->AddCamera(this->m_pCamera);*/
 }
 
 ///////////////////////////////////
-// Update the State of our Game and 
+// Update the State of our Game and
 // Output the Results to Screen (Render)
-/////////////////////////////////// 
+///////////////////////////////////
 void LJMULevelDemo::Update()
 {
 	this->m_pTimer->Update();
@@ -127,7 +249,7 @@ void LJMULevelDemo::Update()
 ///////////////////////////////////
 // Configure the DirectX 11 Programmable
 // Pipeline Stages and Create the Window
-// Calls 
+// Calls
 ///////////////////////////////////
 bool LJMULevelDemo::ConfigureEngineComponents()
 {
@@ -168,7 +290,7 @@ bool LJMULevelDemo::ConfigureEngineComponents()
 	tconfig.SetOutputWindow(this->m_pWindow->GetHandle());
 	this->m_iSwapChain = this->m_pRenderer11->CreateSwapChain(&tconfig);
 	this->m_pWindow->SetSwapChain(this->m_iSwapChain);
-	
+
 	//Create Colour and Depth Buffers
 	this->m_RenderTarget = this->m_pRenderer11->GetSwapChainResource(this->m_iSwapChain);
 
@@ -176,7 +298,7 @@ bool LJMULevelDemo::ConfigureEngineComponents()
 	tdepthconfig.SetDepthBuffer(m_iscreenWidth, m_iscreenHeight);
 	this->m_DepthTarget = this->m_pRenderer11->CreateTexture2D(&tdepthconfig, 0);
 
-	// Bind the swap chain render target and the depth buffer for use in rendering.  
+	// Bind the swap chain render target and the depth buffer for use in rendering.
 	this->m_pRenderer11->pImmPipeline->ClearRenderTargets();
 	this->m_pRenderer11->pImmPipeline->OutputMergerStage.DesiredState.RenderTargetViews.SetState(0, this->m_RenderTarget->m_iResourceRTV);
 	this->m_pRenderer11->pImmPipeline->OutputMergerStage.DesiredState.DepthTargetViews.SetState(this->m_DepthTarget->m_iResourceDSV);
