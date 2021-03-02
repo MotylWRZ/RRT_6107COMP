@@ -3,7 +3,7 @@
 
 // API Header Files
 #include "TerrainGenerator.h"
-#include "GeometryGenerationHelpers.h"
+#include "GeometryGenerator.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -91,7 +91,7 @@ void LJMULevelDemo::setupGeometry()
 
 	// Create test Cube Mesh and Actor
 	this->m_CubeActor = new Actor();
-	BasicMeshPtr tMesh = GeometryGenerationHelpers::generateCube();
+	BasicMeshPtr tMesh = GeometryGenerator::generateRectangle();
 	this->m_CubeActor->GetBody()->SetGeometry(tMesh);
 	MaterialPtr tCubeMaterial = this->createBasicMaterial();
 	this->m_CubeActor->GetBody()->SetMaterial(tCubeMaterial);

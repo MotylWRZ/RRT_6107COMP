@@ -1,7 +1,7 @@
 #include "TerrainGenerator.h"
 
 // API Header Files
-#include "GeometryGenerationHelpers.h"
+#include "GeometryGenerator.h"
 
 //Include the DirectX Rendering Components
 #include "MaterialGeneratorDX11.h"
@@ -124,11 +124,11 @@ void TerrainGenerator::createTerrainIndexArray(int TerrainWidth, int TerrainLeng
 
 				if (Winding)
 				{
-					GeometryGenerationHelpers::convertQuadToTriangles(Indices, I0, I1, I2, I3);
+					GeometryGenerator::convertQuadToTriangles(Indices, I0, I1, I2, I3);
 				}
 				else
 				{
-					GeometryGenerationHelpers::convertQuadToTriangles(Indices, I0, I3, I2, I1);
+					GeometryGenerator::convertQuadToTriangles(Indices, I0, I3, I2, I1);
 				}
 			}
 		}

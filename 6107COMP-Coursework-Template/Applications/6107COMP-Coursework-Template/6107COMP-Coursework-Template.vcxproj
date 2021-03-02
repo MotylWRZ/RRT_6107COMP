@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeometryGenerationHelpers.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="LJMULevelDemo.cpp" />
     <ClCompile Include="LJMUTextOverlay.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GeometryGenerationHelpers.h" />
+    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="LJMULevelDemo.h" />
     <ClInclude Include="LJMUTextOverlay.h" />
     <ClInclude Include="TerrainGenerator.h" />

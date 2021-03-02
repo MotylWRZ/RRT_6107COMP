@@ -18,7 +18,9 @@
     <ClCompile Include="TerrainGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeometryGenerationHelpers.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -30,7 +32,7 @@
     <ClInclude Include="TerrainGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryGenerationHelpers.h">
+    <ClInclude Include="GeometryGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
