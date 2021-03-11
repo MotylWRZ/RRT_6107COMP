@@ -82,7 +82,7 @@ void LJMULevelDemo::inputAssemblyStage()
 void LJMULevelDemo::setupGeometry()
 {
 	// Create test Landscape
-	this->m_LandscapeActor = TerrainGenerator::createTerrainActor();
+	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
 
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);

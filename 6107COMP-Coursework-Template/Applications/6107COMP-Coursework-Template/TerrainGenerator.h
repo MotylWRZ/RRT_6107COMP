@@ -19,11 +19,11 @@ class TerrainGenerator
 	~TerrainGenerator();
 
 public:
-	static BasicMeshPtr generateTerrainMesh(int OffsetX, int OffsetZ, int TerrainResolution, int TerrainSpacing);
-	static void createTerrainIndexArray(int TerrainWidth, int TerrainLength,
-		bool Winding, std::vector<int>& Indices);
+	static BasicMeshPtr generateTerrainMesh(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
+	static void createTerrainIndexArray(int terrainWidth, int terrainLength,
+		bool winding, std::vector<int>& indices);
 
-	static void createSegmentedTerrainActor(std::vector<Actor*>& TerrainSegments);
-	static Actor* createTerrainActor();
+	static void createSegmentedTerrainActor(std::vector<Actor*>& terrainSegments);
+	static Actor* createTerrainActor(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
 };
 

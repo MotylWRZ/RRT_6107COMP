@@ -14,7 +14,7 @@ TerrainGenerator::~TerrainGenerator()
 {
 }
 
-BasicMeshPtr TerrainGenerator::generateTerrainMesh(int OffsetX, int OffsetZ, int TerrainResolution, int TerrainSpacing)
+BasicMeshPtr TerrainGenerator::generateTerrainMesh(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing)
 {
 
 	float tMajorHeightFrequency = 5.0f;
@@ -23,14 +23,14 @@ BasicMeshPtr TerrainGenerator::generateTerrainMesh(int OffsetX, int OffsetZ, int
 	float tMinorHeightFrequency = 75.0f;
 	float tMinorHeight = 0.25f;
 
-	float tSpacing = TerrainSpacing;
+	float tSpacing = terrainSpacing;
 	float tHeightScale = 12.0f;
 
-	int tTerrainWidth = TerrainResolution;
-	int tTerrainLength = TerrainResolution;
+	int tTerrainWidth = terrainResolution;
+	int tTerrainLength = terrainResolution;
 
-	int tOffsetX = OffsetX * (TerrainResolution - 1);
-	int tOffsetZ = OffsetZ * (TerrainResolution - 1);
+	int tOffsetX = offsetX * (terrainResolution - 1);
+	int tOffsetZ = offsetZ * (terrainResolution - 1);
 
 	std::vector<Vector3f> tVertices;
 	std::vector<Vector4f> tVertexColors;
@@ -107,35 +107,36 @@ BasicMeshPtr TerrainGenerator::generateTerrainMesh(int OffsetX, int OffsetZ, int
 	return tTerrainMesh;
 }
 
-void TerrainGenerator::createTerrainIndexArray(int TerrainWidth, int TerrainLength, bool Winding, std::vector<int>& Indices)
+void TerrainGenerator::createTerrainIndexArray(int terrainWidth, int terrainLength,
+	bool winding, std::vector<int>& indices)
 {
-	Indices.clear();
+	indices.clear();
 
-	if (TerrainWidth >= 2 && TerrainLength >= 2)
+	if (terrainWidth >= 2 && terrainLength >= 2)
 	{
-		for (int IdxX = 0; IdxX < TerrainWidth - 1; IdxX++)
+		for (int IdxX = 0; IdxX < terrainWidth - 1; IdxX++)
 		{
-			for (int IdxY = 0; IdxY < TerrainLength - 1; IdxY++)
+			for (int IdxY = 0; IdxY < terrainLength - 1; IdxY++)
 			{
-				const int I0 = (IdxX + 0) * TerrainLength + (IdxY + 0);
-				const int I1 = (IdxX + 1) * TerrainLength + (IdxY + 0);
-				const int I2 = (IdxX + 1) * TerrainLength + (IdxY + 1);
-				const int I3 = (IdxX + 0) * TerrainLength + (IdxY + 1);
+				const int I0 = (IdxX + 0) * terrainLength + (IdxY + 0);
+				const int I1 = (IdxX + 1) * terrainLength + (IdxY + 0);
+				const int I2 = (IdxX + 1) * terrainLength + (IdxY + 1);
+				const int I3 = (IdxX + 0) * terrainLength + (IdxY + 1);
 
-				if (Winding)
+				if (winding)
 				{
-					GeometryGenerator::convertQuadToTriangles(Indices, I0, I1, I2, I3);
+					GeometryGenerator::convertQuadToTriangles(indices, I0, I1, I2, I3);
 				}
 				else
 				{
-					GeometryGenerator::convertQuadToTriangles(Indices, I0, I3, I2, I1);
+					GeometryGenerator::convertQuadToTriangles(indices, I0, I3, I2, I1);
 				}
 			}
 		}
 	}
 }
 
-void TerrainGenerator::createSegmentedTerrainActor(std::vector<Actor*>& TerrainSegments)
+void TerrainGenerator::createSegmentedTerrainActor(std::vector<Actor*>& terrainSegments)
 {
 	int tLandscapeResolution = 255;
 	int tLandscapeSpacing = 10;
@@ -164,18 +165,15 @@ void TerrainGenerator::createSegmentedTerrainActor(std::vector<Actor*>& TerrainS
 		}
 	}
 
-	TerrainSegments = tTerrainSegments;
+	terrainSegments = tTerrainSegments;
 }
 
-Actor* TerrainGenerator::createTerrainActor()
+Actor* TerrainGenerator::createTerrainActor(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing)
 {
-	BasicMeshPtr tTerrainMesh = TerrainGenerator::generateTerrainMesh(0, 0, 20, 10);
+	BasicMeshPtr tTerrainMesh = TerrainGenerator::generateTerrainMesh(offsetX, offsetZ, terrainResolution, terrainSpacing);
 	Actor* tTerrainActor = new Actor();
 
 	tTerrainActor->GetBody()->SetGeometry(tTerrainMesh);
-	//this->m_LandscapeMaterial = createBasicMaterial();
-	//this->m_LandscapeMaterial = createTerrainTextureMaterial(std::wstring(L"Data/Textures/TerrainGrass.tif"));
-	//this->m_LandscapeActor->GetBody()->SetMaterial(this->m_LandscapeMaterial);
 	tTerrainActor->GetNode()->Position() = Vector3f(0.0f, 0.0f, 0.0f);
 	tTerrainActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 
