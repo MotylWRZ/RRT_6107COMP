@@ -39,12 +39,6 @@ namespace LJMUDX
 
 	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<BasicVertexDX11::Vertex>> BasicMeshPtr;
 
-	enum class ESceneActive
-	{
-		UNIVERSE,
-		PLANET
-	};
-
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
 	{
 
@@ -72,8 +66,6 @@ namespace LJMUDX
 		void setupGeometry();
 		void animateGeometry(float DT);
 		void setupCamera();
-		void setupScenes();
-		MaterialPtr createBasicMaterial();
 
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
@@ -95,15 +87,12 @@ namespace LJMUDX
 		Actor* m_ActorScene2;
 		/*int m_VertexSize;
 		int m_IndexSize;*/
-
-		ESceneActive m_sceneActive;
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
 		Camera*					m_pCamera;			//Camera Object
 		Camera*					m_pCamera2;
 		Actor* m_Actor;
-		Scene* m_sceneMain;
 		float					m_iscreenWidth = 1920.0f;
 		float					m_iscreenHeight = 1080.0f;
 	};

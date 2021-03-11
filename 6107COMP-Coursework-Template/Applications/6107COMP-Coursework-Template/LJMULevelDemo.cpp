@@ -4,6 +4,7 @@
 // API Header Files
 #include "TerrainGenerator.h"
 #include "GeometryGenerator.h"
+#include "MaterialGenerator.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -53,8 +54,7 @@ m_pRenderer11(nullptr),
 m_pWindow(nullptr),
 m_iSwapChain(0),
 m_DepthTarget(nullptr),
-m_RenderTarget(nullptr),
-m_sceneActive(ESceneActive::UNIVERSE)
+m_RenderTarget(nullptr)
 {
 
 }
@@ -83,7 +83,7 @@ void LJMULevelDemo::setupGeometry()
 {
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor();
-	MaterialPtr tTerrainMaterial = this->createBasicMaterial();
+	MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
 
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
@@ -94,21 +94,11 @@ void LJMULevelDemo::setupGeometry()
 	this->m_CubeActor = new Actor();
 	BasicMeshPtr tMesh = GeometryGenerator::generateRectangle();
 	this->m_CubeActor->GetBody()->SetGeometry(tMesh);
-	MaterialPtr tCubeMaterial = this->createBasicMaterial();
+	MaterialPtr tCubeMaterial = MaterialGenerator::createBasicMaterial(*this->m_pRenderer11);
 	this->m_CubeActor->GetBody()->SetMaterial(tCubeMaterial);
 	this->m_CubeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_CubeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	this->m_pScene->AddActor(this->m_CubeActor);
-
-	// Scene2
-	this->m_ActorScene2 = new Actor();
-	BasicMeshPtr tMesh2 = GeometryGenerator::generateCube();
-	this->m_ActorScene2->GetBody()->SetGeometry(tMesh2);
-	MaterialPtr tCubeMaterial2 = this->createBasicMaterial();
-	this->m_ActorScene2->GetBody()->SetMaterial(tCubeMaterial2);
-	this->m_ActorScene2->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
-	this->m_ActorScene2->GetNode()->Scale() = Vector3f(1, 1, 1);
-	this->m_scenePlanet->AddActor(this->m_ActorScene2);
 }
 
 void LJMULevelDemo::animateGeometry(float DT)
@@ -139,85 +129,6 @@ void LJMULevelDemo::setupCamera()
 
 	this->m_pCamera2 = new FirstPersonCamera();
 	*this->m_pCamera2 = *this->m_pCamera;
-
-	this->m_scenePlanet->AddCamera(this->m_pCamera2);
-}
-
-void LJMULevelDemo::setupScenes()
-{
-	// Main scene is just a pointer to the pScene.
-	//This scene wil be used for Universe rendering
-	this->m_sceneMain = this->m_pScene;
-	// Planet scene is an additional scene which should render planet terrain upclose
-	this->m_scenePlanet = new Scene();
-}
-
-MaterialPtr LJMULevelDemo::createBasicMaterial()
-{
-	MaterialPtr tNewMaterial = MaterialPtr(new MaterialDX11());
-	RenderEffectDX11* tEffect = new RenderEffectDX11();
-
-	// Setup shader here
-	tEffect->SetVertexShader(this->m_pRenderer11->LoadShader(ShaderType::VERTEX_SHADER,
-		std::wstring(L"Basic.hlsl"),
-		std::wstring(L"VSMain"),
-		std::wstring(L"vs_4_0"),
-		true));
-
-	tEffect->SetPixelShader(this->m_pRenderer11->LoadShader(ShaderType::PIXEL_SHADER,
-		std::wstring(L"Basic.hlsl"),
-		std::wstring(L"PSMain"),
-		std::wstring(L"ps_4_0"),
-		true));
-
-	DepthStencilStateConfigDX11 tDSConfig;
-	int tDepthStencilState = this->m_pRenderer11->CreateDepthStencilState(&tDSConfig);
-
-	if (tDepthStencilState == -1)
-	{
-		Log::Get().Write(L"Failed to create light depth stencil state");
-		assert(false);
-	}
-
-	tEffect->m_iDepthStencilState = tDepthStencilState;
-	tEffect->m_uStencilRef = tDepthStencilState;
-
-	BlendStateConfigDX11 blendConfig;
-	blendConfig.AlphaToCoverageEnable = false;
-	blendConfig.IndependentBlendEnable = false;
-
-	for (int i = 0; i < 8; ++i)
-	{
-		blendConfig.RenderTarget[i].BlendEnable = true;
-		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
-		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		blendConfig.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendConfig.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
-		blendConfig.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ZERO;
-		blendConfig.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	}
-
-	tEffect->m_iBlendState = RendererDX11::Get()->CreateBlendState(&blendConfig);
-
-	RasterizerStateConfigDX11 rsConfig;
-	rsConfig.CullMode = D3D11_CULL_BACK;
-	int iRasterizerState = m_pRenderer11->CreateRasterizerState(&rsConfig);
-
-	if (iRasterizerState == -1)
-	{
-		Log::Get().Write(L"Failed to create light ratserizer state");
-		assert(false);
-	}
-
-	tEffect->m_iRasterizerState = iRasterizerState;
-
-	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
-	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
-
-
-
-	return tNewMaterial;
 }
 
 ////////////////////////////////////
@@ -225,7 +136,6 @@ MaterialPtr LJMULevelDemo::createBasicMaterial()
 ////////////////////////////////////
 void LJMULevelDemo::Initialize()
 {
-	this->setupScenes();
 	//Call the Input Assembly Stage to setup the layout of our Engine Objects
 	this->inputAssemblyStage();
 	this->setupCamera();
@@ -263,26 +173,8 @@ void LJMULevelDemo::Update()
 	EvtManager.ProcessEvent(EvtFrameStartPtr( new EvtFrameStart(this->m_pTimer->Elapsed())));
 
 	//----------START RENDERING--------------------------------------------------------------
-
-	switch (this->m_sceneActive)
-	{
-	case ESceneActive::UNIVERSE:
-	{
 		this->m_pScene->Update(m_pTimer->Elapsed());
 		this->m_pScene->Render(this->m_pRenderer11);
-		break;
-	}
-	case ESceneActive::PLANET:
-	{
-		this->m_scenePlanet->Update(m_pTimer->Elapsed());
-		this->m_scenePlanet->Render(this->m_pRenderer11);
-		break;
-	}
-	default:
-		break;
-	}
-
-
 	//--------END RENDERING-------------------------------------------------------------
 	this->m_pRenderer11->Present(this->m_pWindow->GetHandle(), this->m_pWindow->GetSwapChain());
 }
@@ -370,17 +262,6 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 	{
 		EvtKeyDownPtr tkey_down = std::static_pointer_cast<EvtKeyDown>(pevent);
 		unsigned int  tkeycode = tkey_down->GetCharacterCode();
-
-
-		if (tkeycode == VK_UP)
-		{
-			this->m_sceneActive = ESceneActive::PLANET;
-		}
-		if (tkeycode == VK_DOWN)
-		{
-			this->m_sceneActive = ESceneActive::UNIVERSE;
-
-		}
 	}
 	else if (e == SYSTEM_KEYBOARD_KEYUP)
 	{

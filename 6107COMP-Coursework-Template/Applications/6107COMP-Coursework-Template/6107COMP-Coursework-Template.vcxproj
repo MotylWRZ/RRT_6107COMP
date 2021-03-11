@@ -14,12 +14,14 @@
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="LJMULevelDemo.cpp" />
     <ClCompile Include="LJMUTextOverlay.cpp" />
+    <ClCompile Include="MaterialGenerator.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="LJMULevelDemo.h" />
     <ClInclude Include="LJMUTextOverlay.h" />
+    <ClInclude Include="MaterialGenerator.h" />
     <ClInclude Include="TerrainGenerator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
