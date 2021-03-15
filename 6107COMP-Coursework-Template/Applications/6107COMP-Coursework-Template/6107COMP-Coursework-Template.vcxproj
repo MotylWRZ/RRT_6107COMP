@@ -15,6 +15,7 @@
     <ClCompile Include="LJMULevelDemo.cpp" />
     <ClCompile Include="LJMUTextOverlay.cpp" />
     <ClCompile Include="MaterialGenerator.cpp" />
+    <ClCompile Include="RRTVertexDX11.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -22,6 +23,7 @@
     <ClInclude Include="LJMULevelDemo.h" />
     <ClInclude Include="LJMUTextOverlay.h" />
     <ClInclude Include="MaterialGenerator.h" />
+    <ClInclude Include="RRTVertexDX11.h" />
     <ClInclude Include="TerrainGenerator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

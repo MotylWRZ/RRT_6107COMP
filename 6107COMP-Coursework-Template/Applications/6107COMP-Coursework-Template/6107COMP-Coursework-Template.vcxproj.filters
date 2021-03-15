@@ -24,6 +24,7 @@
     <ClCompile Include="MaterialGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RRTVertexDX11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -41,5 +42,6 @@
     <ClInclude Include="MaterialGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RRTVertexDX11.h" />
   </ItemGroup>
 </Project>

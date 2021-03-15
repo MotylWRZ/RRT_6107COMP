@@ -20,5 +20,9 @@ public:
 	// Concrete Materials
 	static MaterialPtr createTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile);
 
+	static MaterialPtr createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring textureFile1);
+	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile);
+
+	static void setLightToMaterial(MaterialPtr material);
 };
 

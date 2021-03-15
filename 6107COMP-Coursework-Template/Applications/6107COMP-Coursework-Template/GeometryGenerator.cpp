@@ -37,12 +37,12 @@ BasicMeshPtr GeometryGenerator::generateTriangle()
 	};
 	int tIndexSize = 3;
 
-	auto tTriangleMesh = std::make_shared<DrawExecutorDX11<BasicVertexDX11::Vertex>>();
-	tTriangleMesh->SetLayoutElements(BasicVertexDX11::GetElementCount(), BasicVertexDX11::Elements);
+	auto tTriangleMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tTriangleMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
 	tTriangleMesh->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	tTriangleMesh->SetMaxVertexCount(tIndexSize);
 
-	BasicVertexDX11::Vertex tVertex;
+	RRTVertexDX11::Vertex tVertex;
 	for (size_t i = 0; i < tIndexSize; i++)
 	{
 		UINT tIndex = Indices[i];
@@ -87,12 +87,12 @@ BasicMeshPtr GeometryGenerator::generateRectangle()
 	};
 	int tIndexSize = 6;
 
-	auto tRectangleMesh = std::make_shared<DrawExecutorDX11<BasicVertexDX11::Vertex>>();
-	tRectangleMesh->SetLayoutElements(BasicVertexDX11::GetElementCount(), BasicVertexDX11::Elements);
+	auto tRectangleMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tRectangleMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
 	tRectangleMesh->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	tRectangleMesh->SetMaxVertexCount(tIndexSize);
 
-	BasicVertexDX11::Vertex tVertex;
+	RRTVertexDX11::Vertex tVertex;
 	for (size_t i = 0; i < tIndexSize; i++)
 	{
 		UINT tIndex = Indices[i];
@@ -156,12 +156,12 @@ BasicMeshPtr GeometryGenerator::generateCube()
 	};
 	int tIndexSize = 36;
 
-	auto tCubeMesh = std::make_shared<DrawExecutorDX11<BasicVertexDX11::Vertex>>();
-	tCubeMesh->SetLayoutElements(BasicVertexDX11::GetElementCount(), BasicVertexDX11::Elements);
+	auto tCubeMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tCubeMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
 	tCubeMesh->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	tCubeMesh->SetMaxVertexCount(tIndexSize);
 
-	BasicVertexDX11::Vertex tVertex;
+	RRTVertexDX11::Vertex tVertex;
 	for (size_t i = 0; i < tIndexSize; i++)
 	{
 		UINT tIndex = Indices[i];

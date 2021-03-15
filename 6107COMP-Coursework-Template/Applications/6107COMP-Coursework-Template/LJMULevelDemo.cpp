@@ -83,8 +83,10 @@ void LJMULevelDemo::setupGeometry()
 {
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
-	MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
-
+	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
+	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, (L"RRTTextureMapping.hlsl"), std::wstring(L"rocks_ground_06_diff_2k.tiff"));
+	//MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, std::wstring(L"TerrainGrass.tif"));
+	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"));
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);

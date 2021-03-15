@@ -19,6 +19,8 @@
 //LJMU Framework Includes
 #include "LJMUTextOverlay.h"
 
+#include "RRTVertexDX11.h"
+
 using namespace Glyph3;
 
 const float DEG_TO_RAD = GLYPH_PI / 180.0f;
@@ -37,7 +39,7 @@ namespace LJMUDX
 	//			DR CHRIS CARTER
 	//////////////////////////////////////
 
-	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<BasicVertexDX11::Vertex>> BasicMeshPtr;
+	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
 	{

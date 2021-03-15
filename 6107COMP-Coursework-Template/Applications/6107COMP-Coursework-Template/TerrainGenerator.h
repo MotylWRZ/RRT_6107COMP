@@ -9,9 +9,11 @@
 //STL Includes
 #include <vector>
 
+#include "RRTVertexDX11.h"
+
 using namespace Glyph3;
 
-typedef std::shared_ptr<Glyph3::DrawExecutorDX11<BasicVertexDX11::Vertex>> BasicMeshPtr;
+typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
 class TerrainGenerator
 {

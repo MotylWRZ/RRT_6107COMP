@@ -264,3 +264,63 @@ MaterialPtr MaterialGenerator::createTerrainMultiTextureMaterial(RendererDX11& p
 {
 	return MaterialGenerator::createMultiTextureMaterial(pRenderer, std::wstring(L"RRTTerrainMultiTextureMapping.hlsl"), highlandsTextureFile, lowlandsTextureFile);
 }
+
+MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring textureFile1)
+{
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitTexture.hlsl"), textureFile1);
+
+	MaterialGenerator::setLightToMaterial(tMaterial);
+
+	return  tMaterial;
+}
+
+MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile)
+{
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitBumpTexture (2).hlsl"), diffuseTextureFile);
+
+	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
+	tMaterial->Parameters.SetShaderResourceParameter(L"BumpTexture", tBumpTexture);
+
+	MaterialGenerator::setLightToMaterial(tMaterial);
+
+	return tMaterial;
+}
+
+
+
+void MaterialGenerator::setLightToMaterial(MaterialPtr material)
+{
+	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+
+	Vector4f m_vDirectionalLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
+	Vector3f m_vDirectionalLightDirection = Vector3f(0.0f, 0.0f, 1.0f);
+
+	Vector4f m_vSpotLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
+	Vector3f m_vSpotLightDirection = Vector3f(-1.0f, 0.0f, 0.0f);
+	Vector4f m_vSpotLightPosition = Vector4f(100.0f, 0.0f, 0.0f, 1.0f);
+	Vector4f m_vSpotLightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f m_vSpotLightFocus = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+
+	Vector4f m_vPointLightColour = Vector4f(1.0f, 1.0f, 0.9f, 1.0f);
+	Vector4f m_vPointLightPosition = Vector4f(100.0f, 0.0f, 100.0f, 1.0f);
+	Vector4f m_vPointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+
+	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
+	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
+
+	m_vDirectionalLightDirection.Normalize();
+	material->Parameters.SetVectorParameter(L"DirectionalLightColour", m_vDirectionalLightColour);
+	material->Parameters.SetVectorParameter(L"DirectionalLightDirection", Vector4f(m_vDirectionalLightDirection, 1.0f));
+
+	m_vSpotLightDirection.Normalize();
+	material->Parameters.SetVectorParameter(L"SpotLightColour", m_vSpotLightColour);
+	material->Parameters.SetVectorParameter(L"SpotLightDirection", Vector4f(m_vSpotLightDirection, 1.0f));
+	material->Parameters.SetVectorParameter(L"SpotLightPosition", m_vSpotLightPosition);
+	material->Parameters.SetVectorParameter(L"SpotLightRange", m_vSpotLightRange);
+	material->Parameters.SetVectorParameter(L"SpotLightFocus", m_vSpotLightFocus);
+
+	material->Parameters.SetVectorParameter(L"PointLightColour", m_vPointLightColour);
+	material->Parameters.SetVectorParameter(L"PointLightPosition", m_vPointLightPosition);
+	material->Parameters.SetVectorParameter(L"PointLightRange", m_vPointLightRange);
+}

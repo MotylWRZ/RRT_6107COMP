@@ -88,12 +88,12 @@ BasicMeshPtr TerrainGenerator::generateTerrainMesh(int offsetX, int offsetZ, int
 	int tNumberOfIndices = tIndices.size();
 	int tNumberOfTriangles = tNumberOfIndices / 3;
 
-	BasicMeshPtr tTerrainMesh = std::make_shared<DrawExecutorDX11<BasicVertexDX11::Vertex>>();
-	tTerrainMesh->SetLayoutElements(BasicVertexDX11::GetElementCount(), BasicVertexDX11::Elements);
+	BasicMeshPtr tTerrainMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tTerrainMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
 	tTerrainMesh->SetPrimitiveType(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	tTerrainMesh->SetMaxVertexCount(tNumberOfIndices);
 
-	BasicVertexDX11::Vertex tVertex;
+	RRTVertexDX11::Vertex tVertex;
 
 	for (int i = 0; i < tNumberOfIndices; i++)
 	{
