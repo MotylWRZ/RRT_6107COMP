@@ -17,12 +17,22 @@ cbuffer SurfaceReflectanceInfo
 	float4 SurfaceConstants;			// x: ambient, y: diffuse, z: specular, w: shininess
 };
 
-cbuffer PointLightInfo
+struct PointLightInfo
 {
 	float4 PointLightColour;
 	float3 PointLightPosition;
 	float2 PointLightRange;
 };
+
+cbuffer BufferPointLights : register(b1)
+{
+	PointLightInfo PointLights[10];
+
+	//PointLightInfo PointLights[10];
+	//float4 testArray[12];
+	//float4 testVector;
+};
+//StructuredBuffer<PointLightInfo> PointLights;
 
 cbuffer DirectionalLightInfo
 {
@@ -84,25 +94,25 @@ float3 calculateDirectionalLight(float3 surfaceNormal, float3 position)
 
 }
 
-float3 calculatePointLight(float3 surfaceNormal, float3 position)
+float3 calculatePointLight(PointLightInfo pointLight, float3 surfaceNormal, float3 position)
 {
 
-	float pointDistance = distance(PointLightPosition, position);
-	float pointDistAtt = saturate(1 - pointDistance / PointLightRange.x);
-	float3 pointlightDirection = normalize(position - PointLightPosition);
-	float3 viewVector_p = normalize(position - ViewPosition.xyz);
-	float3 pointlightreflectVector = reflect(pointlightDirection, surfaceNormal);
+	float pointDistance = distance(pointLight.PointLightPosition, position);
+	float pointDistAtt = saturate(1 - pointDistance / pointLight.PointLightRange.x);
+	float3 pointlightDirection = normalize(position - pointLight.PointLightPosition);
+		float3 viewVector_p = normalize(position - ViewPosition.xyz);
+		float3 pointlightreflectVector = reflect(pointlightDirection, surfaceNormal);
 
-	// Ambience
-	float3 PointLightAmbience = PointLightColour.xyz * SurfaceConstants.x;
+		// Ambience
+		float3 PointLightAmbience = pointLight.PointLightColour.xyz * SurfaceConstants.x;
 
-	// Diffuse
-	float3 PointDiffuse = saturate(dot(surfaceNormal, -pointlightDirection)) * pointDistAtt * PointLightColour.xyz * SurfaceConstants.y;
+		// Diffuse
+		float3 PointDiffuse = saturate(dot(surfaceNormal, -pointlightDirection)) * pointDistAtt * pointLight.PointLightColour.xyz * SurfaceConstants.y;
 
-	// Specular
-	float3 PointSpecular = pow(saturate(dot(pointlightreflectVector, -viewVector_p)), SurfaceConstants.w) * pointDistAtt * PointLightColour.xyz * SurfaceConstants.z;
+		// Specular
+		float3 PointSpecular = pow(saturate(dot(pointlightreflectVector, -viewVector_p)), SurfaceConstants.w) * pointDistAtt * pointLight.PointLightColour.xyz * SurfaceConstants.z;
 
-	return (PointLightAmbience + PointDiffuse + PointSpecular);
+		return (PointLightAmbience + PointDiffuse + PointSpecular);
 }
 
 float3 calculateSpotLight(float3 surfaceNormal, float3 position)
@@ -153,8 +163,28 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 
 	float3 worldPosition = input.worldPos.xyz;
 
+	//PointLightInfo b;
+	//b.PointLightColour = testVector[0].PointLightColour;// testArray[0];// float4(1.0f, 1.0f, 0.9f, 0.0f);
+	//b.PointLightPosition = testVector[0].PointLightPosition;// float3(100.0f, 0.0f, 100.0f);
+	//b.PointLightRange = testVector[0].PointLightRange;// float2(120.0f, 0.0f);
+
+	//PointLightInfo g;
+	//g.PointLightColour = testVector[1].PointLightColour;// float4(1.0f, 0.0f, 0.9f, 1.0f);
+	//g.PointLightPosition = testVector[1].PointLightPosition;// float3(300.0f, 0.0f, 100.0f);
+	//g.PointLightRange = testVector[1].PointLightRange; //float2(120.0f, 0.0f);
+	//float3 pointlightIntensity = calculatePointLight(b, normalVector, worldPosition);// = float3(1.0f, 1.0f, 1.0f);// calculatePointLight(normalVector, worldPosition);
+	//pointlightIntensity += calculatePointLight(g, normalVector, worldPosition);
+
+	// UNCOMMENT THIS
+	float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
+
+	for (int i = 0; i < 10; i++)
+	{
+		pointlightIntensity += calculatePointLight(PointLights[i], normalVector, worldPosition);
+	}
+
 		float3 directionallightIntensity = calculateDirectionalLight(normalVector, worldPosition);
-		float3 pointlightIntensity = calculatePointLight(normalVector, worldPosition);
+		
 		float3 spotlightIntensity = calculateSpotLight(normalVector, worldPosition);
 
 		float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;

@@ -15,6 +15,13 @@
 #include "Texture2dConfigDX11.h"
 #include "MaterialGeneratorDX11.h"
 
+struct PointLightInfo
+{
+	Vector4f PointLightColour;
+	Vector4f PointLightPosition;
+	Vector4f PointLightRange;
+};
+
 
 MaterialGenerator::MaterialGenerator()
 {
@@ -269,27 +276,42 @@ MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer
 {
 	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitTexture.hlsl"), textureFile1);
 
-	MaterialGenerator::setLightToMaterial(tMaterial);
+	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial);
 
 	return  tMaterial;
 }
 
 MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile)
 {
-	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitBumpTexture (2).hlsl"), diffuseTextureFile);
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
 
 	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
 	tMaterial->Parameters.SetShaderResourceParameter(L"BumpTexture", tBumpTexture);
 
-	MaterialGenerator::setLightToMaterial(tMaterial);
+	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial);
+
+
+
+
+
 
 	return tMaterial;
 }
 
 
 
-void MaterialGenerator::setLightToMaterial(MaterialPtr material)
+void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material)
 {
+	PointLightInfo PointLights[2];
+
+	PointLights[0].PointLightColour = Vector4f(0.0f, 1.0f, 0.9f, 1.0f);
+	PointLights[0].PointLightPosition = Vector4f(100.0f, 0.0f, 100.0f, 1.0f);
+	PointLights[0].PointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+
+	PointLights[1].PointLightColour = Vector4f(0.4f, 0.0f, 0.1f, 1.0f);
+	PointLights[1].PointLightPosition = Vector4f(300.0f, 0.0f, 100.0f, 0.0f);
+	PointLights[1].PointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+
 	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
 	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -323,4 +345,23 @@ void MaterialGenerator::setLightToMaterial(MaterialPtr material)
 	material->Parameters.SetVectorParameter(L"PointLightColour", m_vPointLightColour);
 	material->Parameters.SetVectorParameter(L"PointLightPosition", m_vPointLightPosition);
 	material->Parameters.SetVectorParameter(L"PointLightRange", m_vPointLightRange);
+
+	//Vector4f* array = new Vector4f[10];
+	//array[0] = Vector4f(1.0f, 1.0f, 0.9f, 0.0f);
+
+	BufferConfigDX11 tBuffConfig;
+	tBuffConfig.SetDefaultConstantBuffer(10 * sizeof(Vector4f), false);
+
+
+	Vector4f a = Vector4f(0.0f, 1.0f, 0.9f, 1.0f);
+
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = &PointLights;
+	//data.pSysMem = &a;
+
+	ResourcePtr lights = pRenderer.CreateConstantBuffer(&tBuffConfig, &data);
+
+	material->Parameters.SetConstantBufferParameter(L"BufferPointLights", lights);
+	//material->Parameters.SetVectorParameter(L"testVector", a);
+
 }
