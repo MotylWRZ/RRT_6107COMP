@@ -1,2 +1,5 @@
-﻿  MaterialGenerator.cpp
+﻿  Light_Directional.cpp
+  Light_Point.cpp
+  Light_Spot.cpp
+  Generating Code...
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

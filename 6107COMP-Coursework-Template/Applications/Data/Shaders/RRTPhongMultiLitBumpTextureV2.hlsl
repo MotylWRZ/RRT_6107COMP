@@ -152,40 +152,40 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 
 	float3 worldPosition = input.worldPos.xyz;
 
-		float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
-		float3 directionallightIntensity = float3(0.0f, 0.0f, 0.0f);
-		float3 spotlightIntensity = float3(0.0f, 0.0f, 0.0f);
-		float3 lightIntensity = float3(0.0f, 0.0f, 0.0f);
+	float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
+	float3 directionallightIntensity = float3(0.0f, 0.0f, 0.0f);
+	float3 spotlightIntensity = float3(0.0f, 0.0f, 0.0f);
+	float3 lightIntensity = float3(0.0f, 0.0f, 0.0f);
 
 	// Compute Lights
 	for (int i = 0; i < 10; i++)
 	{
         //pointlightIntensity += calculatePointLight(Lights[i], normalVector, worldPosition);
-        if (Lights[i].iLightType == 0)
+        if (Lights[i].iLightType == LIGHT_TYPE_NONE)
         {
             continue;
         }
-        if (Lights[i].iLightType.x == 1)
+        if (Lights[i].iLightType.x == LIGHT_TYPE_POINT)
         {
             pointlightIntensity += calculatePointLight(Lights[i], normalVector, worldPosition);
             continue;
         }
-        if (Lights[i].iLightType == 2)
+        if (Lights[i].iLightType == LIGHT_TYPE_SPOT)
         {
             spotlightIntensity += calculateSpotLight(Lights[i], normalVector, worldPosition);
             continue;
         }
-        if (Lights[i].iLightType == 3)
+        if (Lights[i].iLightType == LIGHT_TYPE_DIRECTIONAL)
         {
             directionallightIntensity += calculateDirectionalLight(Lights[i], normalVector, worldPosition);
             continue;
         }
     }
 
-			float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;
-			float4 lightIntensity4f = float4(lightIntensity3f, 1);
+	float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;
+	float4 lightIntensity4f = float4(lightIntensity3f, 1);
 
-			float4 pixelcolour = DiffuseTexture.Sample(TextureSampler, input.tex) * lightIntensity4f;
+	float4 pixelcolour = DiffuseTexture.Sample(TextureSampler, input.tex) * lightIntensity4f;
 
-			return pixelcolour;
-		}
+	return pixelcolour;
+}

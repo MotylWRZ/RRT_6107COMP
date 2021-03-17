@@ -7,6 +7,12 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{9d681266-ecfa-4684-b316-3382fc2f3ed2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Lights">
+      <UniqueIdentifier>{8b5038d4-dec8-44b4-8dbf-b38319cd14e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lights">
+      <UniqueIdentifier>{f132edb0-258c-4690-9071-c184db71b10f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
@@ -25,6 +31,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RRTVertexDX11.cpp" />
+    <ClCompile Include="Light_Point.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Light_Spot.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Light_Directional.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Light_Base.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -43,5 +61,17 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RRTVertexDX11.h" />
+    <ClInclude Include="Light_Base.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light_Directional.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light_Point.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light_Spot.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
