@@ -25,7 +25,16 @@ struct PointLightInfo
 struct DirectionalLightInfo
 {
 	Vector4f DirectionalLightColour;
-	Vector3f DirectionalLightDirection;
+	Vector4f DirectionalLightDirection;
+};
+
+struct SpotLightInfo
+{
+	Vector4f SpotLightColour;
+	Vector4f SpotLightPosition;
+	Vector4f SpotLightDirection;
+	Vector4f SpotLightRange;
+	Vector4f SpotLightFocus;
 };
 
 
@@ -296,11 +305,6 @@ MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRend
 
 	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial);
 
-
-
-
-
-
 	return tMaterial;
 }
 
@@ -309,76 +313,102 @@ MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRend
 void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material)
 {
 	PointLightInfo PointLights[2];
-	DirectionalLightInfo DirectionalLights[1];
+	DirectionalLightInfo DirectionalLight;
+	SpotLightInfo SpotLights[2];
 
 	PointLights[0].PointLightColour = Vector4f(0.0f, 1.0f, 0.9f, 1.0f);
-	PointLights[0].PointLightPosition = Vector4f(100.0f, 0.0f, 100.0f, 1.0f);
-	PointLights[0].PointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+	PointLights[0].PointLightPosition = Vector4f(100.0f, 0.0f, 300.0f, 1.0f);
+	PointLights[0].PointLightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
 
 	PointLights[1].PointLightColour = Vector4f(0.4f, 0.0f, 0.1f, 1.0f);
-	PointLights[1].PointLightPosition = Vector4f(300.0f, 0.0f, 100.0f, 0.0f);
-	PointLights[1].PointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+	PointLights[1].PointLightPosition = Vector4f(300.0f, 0.0f, 300.0f, 0.0f);
+	PointLights[1].PointLightRange = Vector4f(200.0f, 0.0f, 0.0f, 0.0f);
 
-	DirectionalLights[0].DirectionalLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
-	DirectionalLights[0].DirectionalLightDirection = Vector3f(0.0f, 0.0f, 1.0f);
-	DirectionalLights[0].DirectionalLightDirection.Normalize();
+	DirectionalLight.DirectionalLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
+	DirectionalLight.DirectionalLightDirection = Vector4f(0.0f, 0.0f, 1.0f, 1.0f);
+	DirectionalLight.DirectionalLightDirection.Normalize();
 
+
+	SpotLights[0].SpotLightColour = Vector4f(0.1f, 1.0f, 0.1f, 1.0f);
+	SpotLights[0].SpotLightDirection = Vector4f(0.0f, -1.0f, 0.0f, 1.0f);
+	SpotLights[0].SpotLightPosition = Vector4f(200.0f, 50.0f, 100.0f, 1.0f);
+	SpotLights[0].SpotLightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+	SpotLights[0].SpotLightFocus = Vector4f(1.0f, 0.0f, 0.0f, 0.0f);
+	SpotLights[0].SpotLightDirection.Normalize();
+
+	SpotLights[1].SpotLightColour = Vector4f(1.0f, 0.1f, 0.1f, 1.0f);
+	SpotLights[1].SpotLightDirection = Vector4f(0.0f, -1.0f, 0.0f, 1.0f);
+	SpotLights[1].SpotLightPosition = Vector4f(400.0f, 50.0f, 100.0f, 1.0f);
+	SpotLights[1].SpotLightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+	SpotLights[1].SpotLightFocus = Vector4f(1.0f, 0.0f, 0.0f, 0.0f);
+	SpotLights[1].SpotLightDirection.Normalize();
 
 	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
 	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 
+	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
+	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
 
+	BufferConfigDX11 tBuffConfig;
+	tBuffConfig.SetDefaultConstantBuffer(2 * sizeof(PointLightInfo), false);
 
-	Vector4f m_vSpotLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
-	Vector3f m_vSpotLightDirection = Vector3f(-1.0f, 0.0f, 0.0f);
-	Vector4f m_vSpotLightPosition = Vector4f(100.0f, 0.0f, 0.0f, 1.0f);
-	Vector4f m_vSpotLightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
-	Vector4f m_vSpotLightFocus = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+	BufferConfigDX11 tBuffConfig2;
+	tBuffConfig2.SetDefaultConstantBuffer(sizeof(DirectionalLightInfo), false);
 
-	Vector4f m_vPointLightColour = Vector4f(1.0f, 1.0f, 0.9f, 1.0f);
-	Vector4f m_vPointLightPosition = Vector4f(100.0f, 0.0f, 100.0f, 1.0f);
-	Vector4f m_vPointLightRange = Vector4f(120.0f, 0.0f, 0.0f, 0.0f);
+	BufferConfigDX11 tBuffConfig3;
+	tBuffConfig3.SetDefaultConstantBuffer(2 * sizeof(SpotLightInfo), false);
+
+	D3D11_SUBRESOURCE_DATA dataPointLights;
+	D3D11_SUBRESOURCE_DATA dataDirectionalLights;
+	D3D11_SUBRESOURCE_DATA dataSpotLights;
+	dataPointLights.pSysMem = PointLights;
+	dataDirectionalLights.pSysMem = &DirectionalLight;
+	dataSpotLights.pSysMem = SpotLights;
+
+	ResourcePtr pointLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataPointLights);
+	ResourcePtr directionalLights = pRenderer.CreateConstantBuffer(&tBuffConfig2, &dataDirectionalLights);
+	ResourcePtr spotLights = pRenderer.CreateConstantBuffer(&tBuffConfig3, &dataSpotLights);
+
+	material->Parameters.SetConstantBufferParameter(L"PointLights", pointLights);
+	material->Parameters.SetConstantBufferParameter(L"DirectionalLight", directionalLights);
+	material->Parameters.SetConstantBufferParameter(L"SpotLights", spotLights);
+}
+
+void MaterialGenerator::setLightToMaterialPrev(RendererDX11& pRenderer, MaterialPtr material)
+{
+	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+
+	Vector4f m_vDirectionalLightColour = Vector4f(0.1f, 0.1f, 0.1f, 1.0f);
+	Vector3f m_vDirectionalLightDirection = Vector3f(0.0f, 0.0f, 1.0f);
+
+	Vector4f m_vSpotLightColour = Vector4f(0.1f, 1.0f, 0.1f, 1.0f);
+	Vector3f m_vSpotLightDirection = Vector3f(0.0f, -1.0f, 0.0f);
+	Vector4f m_vSpotLightPosition = Vector4f(200.0f, 50.0f, 100.0f, 1.0f);
+	Vector4f m_vSpotLightRange = Vector4f(30000.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f m_vSpotLightFocus = Vector4f(10.0f, 0.0f, 0.0f, 0.0f);
+
+	Vector4f m_vPointLightColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4f m_vPointLightPosition = Vector4f(200.0f, 50.0f, 100.0f, 1.0f);
+	Vector4f m_vPointLightRange = Vector4f(300.0f, 0.0f, 0.0f, 0.0f);
+
 
 	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
 	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
 
-	//m_vDirectionalLightDirection.Normalize();
-	//material->Parameters.SetVectorParameter(L"DirectionalLightColour", m_vDirectionalLightColour);
-	//material->Parameters.SetVectorParameter(L"DirectionalLightDirection", Vector4f(m_vDirectionalLightDirection, 1.0f));
+	m_vDirectionalLightDirection.Normalize();
+	material->Parameters.SetVectorParameter(L"DirectionalLightColour", m_vDirectionalLightColour);
+	material->Parameters.SetVectorParameter(L"DirectionalLightDirection", Vector4f(m_vDirectionalLightDirection, 1.0f));
 
 	m_vSpotLightDirection.Normalize();
 	material->Parameters.SetVectorParameter(L"SpotLightColour", m_vSpotLightColour);
 	material->Parameters.SetVectorParameter(L"SpotLightDirection", Vector4f(m_vSpotLightDirection, 1.0f));
-	material->Parameters.SetVectorParameter(L"SpotLightPosition", m_vSpotLightPosition);
+	material->Parameters.SetVectorParameter(L"SpotLightPosition",m_vSpotLightPosition);
 	material->Parameters.SetVectorParameter(L"SpotLightRange", m_vSpotLightRange);
 	material->Parameters.SetVectorParameter(L"SpotLightFocus", m_vSpotLightFocus);
 
 	material->Parameters.SetVectorParameter(L"PointLightColour", m_vPointLightColour);
 	material->Parameters.SetVectorParameter(L"PointLightPosition", m_vPointLightPosition);
 	material->Parameters.SetVectorParameter(L"PointLightRange", m_vPointLightRange);
-
-	//Vector4f* array = new Vector4f[10];
-	//array[0] = Vector4f(1.0f, 1.0f, 0.9f, 0.0f);
-
-	BufferConfigDX11 tBuffConfig;
-	tBuffConfig.SetDefaultConstantBuffer(10 * sizeof(Vector4f), false);
-
-	BufferConfigDX11 tBuffConfig2;
-	tBuffConfig2.SetDefaultConstantBuffer(10 * sizeof(Vector4f), false);
-
-
-	Vector4f a = Vector4f(0.0f, 1.0f, 0.9f, 1.0f);
-
-	D3D11_SUBRESOURCE_DATA dataPointLights;
-	D3D11_SUBRESOURCE_DATA dataDirectionalLights;
-	D3D11_SUBRESOURCE_DATA dataSpotLights;
-	dataPointLights.pSysMem = PointLights;
-	dataDirectionalLights.pSysMem = DirectionalLights;
-
-	ResourcePtr pointLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataPointLights);
-	ResourcePtr directionalLights = pRenderer.CreateConstantBuffer(&tBuffConfig2, &dataDirectionalLights);
-
-	material->Parameters.SetConstantBufferParameter(L"PointLights", pointLights);
-	material->Parameters.SetConstantBufferParameter(L"DirectionalLight", directionalLights);
 
 }

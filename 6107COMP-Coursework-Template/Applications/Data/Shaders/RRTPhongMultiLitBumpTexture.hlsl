@@ -30,27 +30,36 @@ struct DirectionalLightInfo
 	float3 DirectionalLightDirection;
 };
 
-cbuffer PointLights : register(b1)
-{
-	PointLightInfo PointLights[100];
-};
-
-cbuffer DirectionalLight : register (b2)
-{
-	DirectionalLightInfo DirectionalLight;
-};
-//StructuredBuffer<PointLightInfo> PointLights;
-
-
-
-cbuffer SpotLightInfo
+struct SpotLightInfo
 {
 	float4 SpotLightColour;
 	float3 SpotLightPosition;
 	float3 SpotLightDirection;
 	float2 SpotLightRange;
 	float2 SpotLightFocus;
+	float2 Padding;
+	// Total 4 * 16 bytes
 };
+
+cbuffer Spot
+{
+	SpotLightInfo SpotInfo;
+};
+
+cbuffer PointLights : register(b1)
+{
+	PointLightInfo PointLights[10];
+};
+
+cbuffer DirectionalLight : register(b2)
+{
+	DirectionalLightInfo DirectionalLight;
+};
+
+cbuffer SpotLights : register(b3)
+{
+	SpotLightInfo SpotLights[10];
+}
 
 cbuffer SceneInfo
 {
@@ -117,24 +126,24 @@ float3 calculatePointLight(PointLightInfo pointLight, float3 surfaceNormal, floa
 		return (PointLightAmbience + PointDiffuse + PointSpecular);
 }
 
-float3 calculateSpotLight(float3 surfaceNormal, float3 position)
+float3 calculateSpotLight(SpotLightInfo spotLight, float3 surfaceNormal, float3 position)
 {
 
-	float spotDistance = distance(SpotLightPosition, position);
-	float spotDistAtt = saturate(1 - spotDistance / SpotLightRange.x);
-	float3 spotlight2PixelVector = normalize(position - SpotLightPosition);
-	float spotAngularAtt = saturate(pow(dot(spotlight2PixelVector, SpotLightDirection), SpotLightFocus.x));
+	float spotDistance = distance(spotLight.SpotLightPosition, position);
+	float spotDistAtt = saturate(1 - spotDistance / spotLight.SpotLightRange.x);
+	float3 spotlight2PixelVector = normalize(position - spotLight.SpotLightPosition);
+		float spotAngularAtt = saturate(pow(dot(spotlight2PixelVector, spotLight.SpotLightDirection), spotLight.SpotLightFocus.x));
 
 	// Ambience
-	float3 SpotLightAmbience = SpotLightColour.xyz * SurfaceConstants.x;
+	float3 SpotLightAmbience = spotLight.SpotLightColour.xyz * SurfaceConstants.x;
 
 	// Diffuse
-	float3 SpotDiffuse = saturate(dot(surfaceNormal, -SpotLightDirection)) * spotDistAtt * spotAngularAtt * SpotLightColour.xyz * SurfaceConstants.y;
+	float3 SpotDiffuse = saturate(dot(surfaceNormal, -spotLight.SpotLightDirection)) * spotDistAtt * spotAngularAtt * spotLight.SpotLightColour.xyz * SurfaceConstants.y;
 
 	// Specular
 	float3 viewVector_s = normalize(position - ViewPosition.xyz);
-	float3 spotlightreflectVector = reflect(SpotLightDirection, surfaceNormal);
-	float3 SpotSpecular = pow(saturate(dot(spotlightreflectVector, -viewVector_s)), SurfaceConstants.w) * spotDistAtt * spotAngularAtt * SpotLightColour.xyz * SurfaceConstants.z;
+	float3 spotlightreflectVector = reflect(spotLight.SpotLightDirection, surfaceNormal);
+	float3 SpotSpecular = pow(saturate(dot(spotlightreflectVector, -viewVector_s)), SurfaceConstants.w) * spotDistAtt * spotAngularAtt * spotLight.SpotLightColour.xyz * SurfaceConstants.z;
 
 	return (SpotLightAmbience + SpotDiffuse + SpotSpecular);
 }
@@ -165,41 +174,31 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 
 	float3 worldPosition = input.worldPos.xyz;
 
-	//PointLightInfo b;
-	//b.PointLightColour = testVector[0].PointLightColour;// testArray[0];// float4(1.0f, 1.0f, 0.9f, 0.0f);
-	//b.PointLightPosition = testVector[0].PointLightPosition;// float3(100.0f, 0.0f, 100.0f);
-	//b.PointLightRange = testVector[0].PointLightRange;// float2(120.0f, 0.0f);
-
-	//PointLightInfo g;
-	//g.PointLightColour = testVector[1].PointLightColour;// float4(1.0f, 0.0f, 0.9f, 1.0f);
-	//g.PointLightPosition = testVector[1].PointLightPosition;// float3(300.0f, 0.0f, 100.0f);
-	//g.PointLightRange = testVector[1].PointLightRange; //float2(120.0f, 0.0f);
-	//float3 pointlightIntensity = calculatePointLight(b, normalVector, worldPosition);// = float3(1.0f, 1.0f, 1.0f);// calculatePointLight(normalVector, worldPosition);
-	//pointlightIntensity += calculatePointLight(g, normalVector, worldPosition);
-
-	// UNCOMMENT THIS
 	float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
 	float3 directionallightIntensity = float3(0.0f, 0.0f, 0.0f);
-	for (int i = 0; i < 100; i++)
+	float3 spotlightIntensity = float3(0.0f, 0.0f, 0.0f);
+
+	// Compute Point Lights
+	for (int i = 0; i < 10; i++)
 	{
 		pointlightIntensity += calculatePointLight(PointLights[i], normalVector, worldPosition);
 	}
 
-	
+	// Compute Spot Lights
+	for (int i = 0; i < 10; i++)
+	{
+		spotlightIntensity += calculateSpotLight(SpotLights[i], normalVector, worldPosition);
+	}
 
-		//float3 directionallightIntensity = calculateDirectionalLight(normalVector, worldPosition);
+	// Calculate Directional Light
 	directionallightIntensity = calculateDirectionalLight(DirectionalLight, normalVector, worldPosition);
-		float3 spotlightIntensity = calculateSpotLight(normalVector, worldPosition);
 
-		float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;
+
+		
+	float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;
 	float4 lightIntensity4f = float4(lightIntensity3f, 1);
 
-	//float3 lightmap = LightTexture.Sample(TextureSampler, input.tex);
-	float3 darkness_factor = saturate(0.04f - directionallightIntensity)/0.04f;
-	//lightmap = darkness_factor* lightmap * 0.1f;
-
 	float4 pixelcolour = DiffuseTexture.Sample(TextureSampler, input.tex) * lightIntensity4f;
-							//+ float4(lightmap, 0);
 
 	return pixelcolour;
 }

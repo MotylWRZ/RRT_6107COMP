@@ -98,7 +98,7 @@ void LJMULevelDemo::setupGeometry()
 	this->m_CubeActor->GetBody()->SetGeometry(tMesh);
 	MaterialPtr tCubeMaterial = MaterialGenerator::createBasicMaterial(*this->m_pRenderer11);
 	this->m_CubeActor->GetBody()->SetMaterial(tCubeMaterial);
-	this->m_CubeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
+	this->m_CubeActor->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_CubeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	this->m_pScene->AddActor(this->m_CubeActor);
 }
