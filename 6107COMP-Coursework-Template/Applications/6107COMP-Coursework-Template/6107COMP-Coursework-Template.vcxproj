@@ -18,6 +18,7 @@
     <ClCompile Include="LJMUTextOverlay.cpp" />
     <ClCompile Include="MaterialGenerator.cpp" />
     <ClCompile Include="Light_Point.cpp" />
+    <ClCompile Include="MeshImporter.cpp" />
     <ClCompile Include="RRTVertexDX11.cpp" />
     <ClCompile Include="Light_Spot.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
@@ -27,9 +28,11 @@
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Light_Base.h" />
     <ClInclude Include="LJMULevelDemo.h" />
+    <ClInclude Include="LJMUMeshOBJ.h" />
     <ClInclude Include="LJMUTextOverlay.h" />
     <ClInclude Include="MaterialGenerator.h" />
     <ClInclude Include="Light_Point.h" />
+    <ClInclude Include="MeshImporter.h" />
     <ClInclude Include="RRTVertexDX11.h" />
     <ClInclude Include="Light_Spot.h" />
     <ClInclude Include="TerrainGenerator.h" />

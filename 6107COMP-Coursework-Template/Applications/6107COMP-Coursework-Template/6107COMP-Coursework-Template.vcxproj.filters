@@ -13,6 +13,12 @@
     <Filter Include="Source Files\Lights">
       <UniqueIdentifier>{f132edb0-258c-4690-9071-c184db71b10f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\MeshImporter">
+      <UniqueIdentifier>{4398f849-5a9c-4cd8-809e-5f63ee400956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\MeshImporter">
+      <UniqueIdentifier>{0c1f6bfe-0a51-46b7-970f-e7e313b02691}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
@@ -43,6 +49,9 @@
     <ClCompile Include="Light_Base.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
+    <ClCompile Include="MeshImporter.cpp">
+      <Filter>Source Files\MeshImporter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -72,6 +81,12 @@
     </ClInclude>
     <ClInclude Include="Light_Spot.h">
       <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshImporter.h">
+      <Filter>Header Files\MeshImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="LJMUMeshOBJ.h">
+      <Filter>Header Files\MeshImporter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
