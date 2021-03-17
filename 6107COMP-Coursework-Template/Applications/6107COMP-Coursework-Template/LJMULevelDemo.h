@@ -40,7 +40,7 @@ namespace LJMUDX
 	//AUTHORS:  DR PO YANG
 	//			DR CHRIS CARTER
 	//////////////////////////////////////
-
+	typedef  std::shared_ptr<Light_Base> LightBasePtr;
 	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
@@ -70,7 +70,7 @@ namespace LJMUDX
 		void setupGeometry();
 		void animateGeometry(float DT);
 		void setupCamera();
-		void addLight(Light_Base* pLight);
+		void addLight(LightBasePtr pLight);
 		void setupLighting();
 
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
@@ -89,7 +89,7 @@ namespace LJMUDX
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 
-		std::vector<Light_Base*> m_lights;
+		std::vector<LightBasePtr> m_lights;
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated

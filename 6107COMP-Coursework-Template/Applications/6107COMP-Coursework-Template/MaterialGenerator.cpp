@@ -315,9 +315,9 @@ MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer
 	return  tMaterial;
 }
 
-MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<Light_Base*>& lights)
+MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights)
 {
-	//MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
+	//MaterialPtr tMaterial = MaterialGenerator::createTesxtureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
 	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTextureV2.hlsl"), diffuseTextureFile);
 
 	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
@@ -436,7 +436,7 @@ void MaterialGenerator::setLightToMaterialV2(RendererDX11& pRenderer, MaterialPt
 	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);*/
 }
 
-void MaterialGenerator::setLightToMaterialV3(RendererDX11& pRenderer, MaterialPtr material, const std::vector<Light_Base*>& lights)
+void MaterialGenerator::setLightToMaterialV3(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights)
 {
 	/*std::vector<Light_Base*> tVecLights;
 

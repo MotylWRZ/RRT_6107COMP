@@ -137,7 +137,7 @@ void LJMULevelDemo::setupCamera()
 	*this->m_pCamera2 = *this->m_pCamera;
 }
 
-void LJMUDX::LJMULevelDemo::addLight(Light_Base* pLight)
+void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
 {
 	this->m_lights.push_back(pLight);
 }
@@ -148,7 +148,7 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 	Vector3f tLightPosition(200.0f, 0.0f, 300.0f);
 	Vector2f tLightRange(100.0f, 0.0f);
 
-	Light_Base* tPointLight = new Light_Point(tLightColour, tLightPosition, tLightRange);
+	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
 
 	this->addLight(tPointLight);
 }
