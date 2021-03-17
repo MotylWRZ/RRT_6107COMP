@@ -14,5 +14,5 @@ Light_Directional::Light_Directional(Vector4f lightColour, Vector3f lightDirecti
 void Light_Directional::setDirectionalLightInfo(Vector4f lightColour, Vector3f lightDirection)
 {
 	this->m_LightInfo.LightColour = lightColour;
-	this->m_LightInfo.LightPosition = Vector4f(lightDirection, 0.0f);
+	this->m_LightInfo.LightDirection = Vector4f(lightDirection, 0.0f);
 }

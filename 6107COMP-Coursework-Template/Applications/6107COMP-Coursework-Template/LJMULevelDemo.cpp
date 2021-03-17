@@ -43,7 +43,6 @@ using namespace Glyph3;
 using namespace LJMUDX;
 
 LJMULevelDemo AppInstance;
-
 //---------CONSTRUCTORS-------------------------------------------------------
 
 ///////////////////////////////////////
@@ -87,9 +86,6 @@ void LJMULevelDemo::setupGeometry()
 {
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
-	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
-	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, (L"RRTTextureMapping.hlsl"), std::wstring(L"rocks_ground_06_diff_2k.tiff"));
-	//MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, std::wstring(L"TerrainGrass.tif"));
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
@@ -139,18 +135,53 @@ void LJMULevelDemo::setupCamera()
 
 void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
 {
-	this->m_lights.push_back(pLight);
+	// Check if the maximum number of lights is not exceeded
+	if (this->m_lights.size() < LIGHTS_NUM_MAX)
+	{
+		this->m_lights.push_back(pLight);
+	}
 }
 
 void LJMUDX::LJMULevelDemo::setupLighting()
 {
 	Vector4f tLightColour(0.0f, 1.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition(200.0f, 0.0f, 300.0f);
+	Vector3f tLightPosition(100.0f, 0.0f, 300.0f);
 	Vector2f tLightRange(100.0f, 0.0f);
 
+	Vector4f tLightColour2(1.0f, 0.0f, 0.9f, 1.0f);
+	Vector3f tLightPosition2(300.0f, 0.0f, 400.0f);
+	Vector2f tLightRange2(100.0f, 0.0f);
+
+	Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
+	Vector3f tDirLightDirection(0.0f, 0.0f, 1.0f);
+	tDirLightDirection.Normalize();
+
+	Vector4f SpotLightColour(0.0f, 1.0f, 0.0f, 1.0f);
+	Vector3f SpotLightDirection(0.0f, -1.0f, 0.0f);
+	Vector3f SpotLightPosition(400.0f, 50.0f, 100.0f);
+	Vector2f SpotLightRange(100.0f, 0.0f);
+	Vector2f SpotLightFocus(1.0f, 0.0f);
+	//SpotLightDirection.Normalize();
+
 	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
+	LightBasePtr tPointLight2 = std::make_shared<Light_Point>(tLightColour2, tLightPosition2, tLightRange2);
+	LightBasePtr tDirectionalLight = std::make_shared<Light_Directional>(tDirLightColour, tDirLightDirection);
+	LightBasePtr tSpotLight = std::make_shared<Light_Spot>(SpotLightColour, SpotLightPosition, SpotLightDirection, SpotLightRange, SpotLightFocus);
 
 	this->addLight(tPointLight);
+	this->addLight(tPointLight2);
+	this->addLight(tDirectionalLight);
+	this->addLight(tSpotLight);
+
+	for (int i = 0; i < 200;  i++)
+	{
+		tLightPosition.x += 70.0f;
+		//tLightColour.x += 0.1f;
+
+		LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
+
+		this->addLight(tPointLight);
+	}
 }
 
 ////////////////////////////////////

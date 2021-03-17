@@ -36,7 +36,7 @@ struct Light
 
 cbuffer cLights
 {
-	Light Lights[10];
+	Light Lights[100];
 }
 
 cbuffer SceneInfo

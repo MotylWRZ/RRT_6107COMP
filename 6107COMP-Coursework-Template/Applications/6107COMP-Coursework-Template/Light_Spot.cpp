@@ -16,6 +16,7 @@ void Light_Spot::setSpotLightInfo(Vector4f lightColour, Vector3f lightPosition, 
 	this->m_LightInfo.LightColour = lightColour;
 	this->m_LightInfo.LightPosition = Vector4f(lightPosition, 0.0f);
 	this->m_LightInfo.LightDirection = Vector4f(lightDirection, 0.0f);
-	this->m_LightInfo.LightRange = Vector4f(lightRange.x, lightRange.y, 0.0f, 0.0f);
-	this->m_LightInfo.LightFocus = Vector4f(lightFocus.x, lightFocus.y, 0.0f, 0.0f);
+	this->m_LightInfo.LightRange = Vector4f(lightRange.x, 0.0f, 0.0f, 0.0f);
+	this->m_LightInfo.LightFocus = Vector4f(lightFocus.x, 0.0f, 0.0f, 0.0f);
+	this->m_LightInfo.LightDirection.Normalize();
 }
