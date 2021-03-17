@@ -24,22 +24,24 @@ struct PointLightInfo
 	float2 PointLightRange;
 };
 
-cbuffer BufferPointLights : register(b1)
+struct DirectionalLightInfo
 {
-	PointLightInfo PointLights[10];
+	float4 DirectionalLightColour;
+	float3 DirectionalLightDirection;
+};
 
-	//PointLightInfo PointLights[10];
-	//float4 testArray[12];
-	//float4 testVector;
+cbuffer PointLights : register(b1)
+{
+	PointLightInfo PointLights[100];
+};
+
+cbuffer DirectionalLight : register (b2)
+{
+	DirectionalLightInfo DirectionalLight;
 };
 //StructuredBuffer<PointLightInfo> PointLights;
 
-cbuffer DirectionalLightInfo
-{
-	float4 DirectionalLightColour;
-	float3 DirectionalLightPosition;
-	float3 DirectionalLightDirection;
-};
+
 
 cbuffer SpotLightInfo
 {
@@ -76,19 +78,19 @@ struct VS_OUTPUT
 	float3 binormal : BINORMAL;
 };
 
-float3 calculateDirectionalLight(float3 surfaceNormal, float3 position)
+float3 calculateDirectionalLight(DirectionalLightInfo directionalLight, float3 surfaceNormal, float3 position)
 {
 	float3 viewVector_d = normalize(position - ViewPosition.xyz);
-	float3 directionallightreflectVector = reflect(DirectionalLightDirection, surfaceNormal);
+		float3 directionallightreflectVector = reflect(directionalLight.DirectionalLightDirection, surfaceNormal);
 
 	// Ambience
-	float3 DirectionalLightAmbience = DirectionalLightColour.xyz * SurfaceConstants.x;
+	float3 DirectionalLightAmbience = directionalLight.DirectionalLightColour.xyz * SurfaceConstants.x;
 
 	// Diffuse
-	float3 DirectionalDiffuse = saturate(dot(surfaceNormal, -DirectionalLightDirection)) * DirectionalLightColour.xyz * SurfaceConstants.y;
+	float3 DirectionalDiffuse = saturate(dot(surfaceNormal, -directionalLight.DirectionalLightDirection)) * directionalLight.DirectionalLightColour.xyz * SurfaceConstants.y;
 
 	// Specular
-	float3 DirectionalSpecular = pow(saturate(dot(directionallightreflectVector, -viewVector_d)), SurfaceConstants.w) * DirectionalLightColour.xyz * SurfaceConstants.z;
+	float3 DirectionalSpecular = pow(saturate(dot(directionallightreflectVector, -viewVector_d)), SurfaceConstants.w) * directionalLight.DirectionalLightColour.xyz * SurfaceConstants.z;
 
 	return (DirectionalLightAmbience + DirectionalDiffuse + DirectionalSpecular);
 
@@ -177,14 +179,16 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 
 	// UNCOMMENT THIS
 	float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
-
-	for (int i = 0; i < 10; i++)
+	float3 directionallightIntensity = float3(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < 100; i++)
 	{
 		pointlightIntensity += calculatePointLight(PointLights[i], normalVector, worldPosition);
 	}
 
-		float3 directionallightIntensity = calculateDirectionalLight(normalVector, worldPosition);
-		
+	
+
+		//float3 directionallightIntensity = calculateDirectionalLight(normalVector, worldPosition);
+	directionallightIntensity = calculateDirectionalLight(DirectionalLight, normalVector, worldPosition);
 		float3 spotlightIntensity = calculateSpotLight(normalVector, worldPosition);
 
 		float3 lightIntensity3f = directionallightIntensity + pointlightIntensity + spotlightIntensity + SurfaceEmissiveColour.xyz;
