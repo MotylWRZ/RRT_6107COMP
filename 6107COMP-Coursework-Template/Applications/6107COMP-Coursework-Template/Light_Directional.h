@@ -2,6 +2,7 @@
 #include "Light_Base.h"
 class Light_Directional : public Light_Base
 {
+public:
 	Light_Directional();
 	Light_Directional(Vector4f lightColour, Vector3f lightDirection);
 	virtual ~Light_Directional() {};

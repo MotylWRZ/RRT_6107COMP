@@ -5,6 +5,9 @@
 #include "TerrainGenerator.h"
 #include "GeometryGenerator.h"
 #include "MaterialGenerator.h"
+#include "Light_Directional.h"
+#include "Light_Point.h"
+#include "Light_Spot.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -76,6 +79,7 @@ std::wstring LJMULevelDemo::GetName()
 void LJMULevelDemo::inputAssemblyStage()
 {
 	//-----SETUP OUR GEOMETRY FOR THIS SCENE-----------------------------------------
+	this->setupLighting();
 	this->setupGeometry();
 }
 
@@ -86,7 +90,7 @@ void LJMULevelDemo::setupGeometry()
 	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
 	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, (L"RRTTextureMapping.hlsl"), std::wstring(L"rocks_ground_06_diff_2k.tiff"));
 	//MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, std::wstring(L"TerrainGrass.tif"));
-	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"));
+	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
@@ -131,6 +135,22 @@ void LJMULevelDemo::setupCamera()
 
 	this->m_pCamera2 = new FirstPersonCamera();
 	*this->m_pCamera2 = *this->m_pCamera;
+}
+
+void LJMUDX::LJMULevelDemo::addLight(Light_Base* pLight)
+{
+	this->m_lights.push_back(pLight);
+}
+
+void LJMUDX::LJMULevelDemo::setupLighting()
+{
+	Vector4f tLightColour(0.0f, 1.0f, 0.9f, 1.0f);
+	Vector3f tLightPosition(200.0f, 0.0f, 300.0f);
+	Vector2f tLightRange(100.0f, 0.0f);
+
+	Light_Base* tPointLight = new Light_Point(tLightColour, tLightPosition, tLightRange);
+
+	this->addLight(tPointLight);
 }
 
 ////////////////////////////////////

@@ -21,6 +21,8 @@
 
 #include "RRTVertexDX11.h"
 
+class Light_Base;
+
 using namespace Glyph3;
 
 const float DEG_TO_RAD = GLYPH_PI / 180.0f;
@@ -68,6 +70,8 @@ namespace LJMUDX
 		void setupGeometry();
 		void animateGeometry(float DT);
 		void setupCamera();
+		void addLight(Light_Base* pLight);
+		void setupLighting();
 
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
@@ -85,10 +89,7 @@ namespace LJMUDX
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 
-		// Scene2
-		Actor* m_ActorScene2;
-		/*int m_VertexSize;
-		int m_IndexSize;*/
+		std::vector<Light_Base*> m_lights;
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
