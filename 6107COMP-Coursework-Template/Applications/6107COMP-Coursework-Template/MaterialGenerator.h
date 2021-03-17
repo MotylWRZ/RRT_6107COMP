@@ -24,6 +24,7 @@ public:
 	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile);
 
 	static void setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material);
+	static void setLightToMaterialV2(RendererDX11& pRenderer, MaterialPtr material);
 	static void setLightToMaterialPrev(RendererDX11& pRenderer, MaterialPtr material);
 };
 

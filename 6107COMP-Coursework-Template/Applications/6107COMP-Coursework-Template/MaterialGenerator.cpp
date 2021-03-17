@@ -15,6 +15,21 @@
 #include "Texture2dConfigDX11.h"
 #include "MaterialGeneratorDX11.h"
 
+#define LIGHT_TYPE_NONE			 0
+#define LIGHT_TYPE_POINT         1
+#define LIGHT_TYPE_SPOT          2
+#define LIGHT_TYPE_DIRECTIONAL   3
+
+struct Light
+{
+	Vector4f iLightType = Vector4f(LIGHT_TYPE_NONE, 0.0f, 0.0f, 0.0f);
+	Vector4f LightColour = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f LightPosition = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f LightDirection = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f LightRange = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+	Vector4f LightFocus = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+};
+
 struct PointLightInfo
 {
 	Vector4f PointLightColour;
@@ -298,12 +313,14 @@ MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer
 
 MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile)
 {
-	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
+	//MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTextureV2.hlsl"), diffuseTextureFile);
 
 	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
 	tMaterial->Parameters.SetShaderResourceParameter(L"BumpTexture", tBumpTexture);
 
-	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial);
+	//MaterialGenerator::setLightToMaterial(pRenderer, tMaterial);
+	MaterialGenerator::setLightToMaterialV2(pRenderer, tMaterial);
 
 	return tMaterial;
 }
@@ -372,6 +389,43 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	material->Parameters.SetConstantBufferParameter(L"PointLights", pointLights);
 	material->Parameters.SetConstantBufferParameter(L"DirectionalLight", directionalLights);
 	material->Parameters.SetConstantBufferParameter(L"SpotLights", spotLights);
+}
+
+void MaterialGenerator::setLightToMaterialV2(RendererDX11& pRenderer, MaterialPtr material)
+{
+	Light Lights[10];
+
+	Lights[0].iLightType.x = LIGHT_TYPE_POINT;
+	Lights[0].LightColour = Vector4f(0.0f, 1.0f, 0.9f, 1.0f);
+	Lights[0].LightPosition = Vector4f(200.0f, 0.0f, 300.0f, 1.0f);
+	Lights[0].LightRange = Vector4f(100.0f, 0.0f, 0.0f, 0.0f);
+
+	Lights[1].iLightType.x = LIGHT_TYPE_POINT;
+	Lights[1].LightColour = Vector4f(1.0f, 0.0f, 0.9f, 1.0f);
+	Lights[1].LightPosition = Vector4f(300.0f, 0.0f, 300.0f, 1.0f);
+	Lights[1].LightRange = Vector4f(200.0f, 0.0f, 0.0f, 0.0f);
+
+	Lights[2].iLightType.x = LIGHT_TYPE_DIRECTIONAL;
+	Lights[2].LightColour = Vector4f(0.1f, 0.1f, 0.7f, 1.0f);
+	Lights[2].LightDirection = Vector4f(0.0f, 0.0f, 1.0f, 1.0f);
+	Lights[2].LightDirection.Normalize();
+
+	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+
+	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
+	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
+
+	BufferConfigDX11 tBuffConfig;
+	tBuffConfig.SetDefaultConstantBuffer(10 * sizeof(Light), false);
+
+	D3D11_SUBRESOURCE_DATA dataLights;
+	dataLights.pSysMem = Lights;
+
+
+	ResourcePtr resLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataLights);
+
+	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
 }
 
 void MaterialGenerator::setLightToMaterialPrev(RendererDX11& pRenderer, MaterialPtr material)
