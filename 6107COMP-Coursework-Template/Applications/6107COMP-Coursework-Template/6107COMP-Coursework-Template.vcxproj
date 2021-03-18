@@ -19,6 +19,7 @@
     <ClCompile Include="MaterialGenerator.cpp" />
     <ClCompile Include="Light_Point.cpp" />
     <ClCompile Include="MeshImporter.cpp" />
+    <ClCompile Include="Planet.cpp" />
     <ClCompile Include="RRTVertexDX11.cpp" />
     <ClCompile Include="Light_Spot.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
@@ -33,6 +34,7 @@
     <ClInclude Include="MaterialGenerator.h" />
     <ClInclude Include="Light_Point.h" />
     <ClInclude Include="MeshImporter.h" />
+    <ClInclude Include="Planet.h" />
     <ClInclude Include="RRTVertexDX11.h" />
     <ClInclude Include="Light_Spot.h" />
     <ClInclude Include="TerrainGenerator.h" />

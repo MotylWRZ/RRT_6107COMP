@@ -20,6 +20,7 @@
 #include "LJMUTextOverlay.h"
 
 #include "RRTVertexDX11.h"
+#include "Planet.h"
 
 class Light_Base;
 
@@ -89,6 +90,8 @@ namespace LJMUDX
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 
+		Planet* m_planet;
+		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated

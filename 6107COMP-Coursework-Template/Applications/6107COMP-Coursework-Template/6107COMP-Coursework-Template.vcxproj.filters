@@ -19,6 +19,12 @@
     <Filter Include="Source Files\MeshImporter">
       <UniqueIdentifier>{0c1f6bfe-0a51-46b7-970f-e7e313b02691}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Actors">
+      <UniqueIdentifier>{50b7af76-e1df-46f1-92a3-17568e88aa92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Actors">
+      <UniqueIdentifier>{eae38306-883b-4e71-be38-578db9b9b5b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
@@ -51,6 +57,9 @@
     </ClCompile>
     <ClCompile Include="MeshImporter.cpp">
       <Filter>Source Files\MeshImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="Planet.cpp">
+      <Filter>Source Files\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +96,9 @@
     </ClInclude>
     <ClInclude Include="LJMUMeshOBJ.h">
       <Filter>Header Files\MeshImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet.h">
+      <Filter>Header Files\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

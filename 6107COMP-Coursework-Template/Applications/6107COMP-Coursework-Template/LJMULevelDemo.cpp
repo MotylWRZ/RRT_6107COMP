@@ -8,6 +8,7 @@
 #include "Light_Directional.h"
 #include "Light_Point.h"
 #include "Light_Spot.h"
+#include "MeshImporter.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -101,6 +102,22 @@ void LJMULevelDemo::setupGeometry()
 	this->m_CubeActor->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_CubeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	this->m_pScene->AddActor(this->m_CubeActor);
+
+
+
+	Actor* tPlanetActor = new Actor();
+	BasicMeshPtr tMesh2 = MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tPlanetMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);// MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"brown_mud_dry_diff_2k.tiff");
+	tPlanetActor->GetBody()->SetGeometry(tMesh2);
+	tPlanetActor->GetBody()->SetMaterial(tPlanetMaterial);
+	tPlanetActor->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+	tPlanetActor->GetNode()->Scale() = Vector3f(1, 1, 1);
+	//this->m_pScene->AddActor(tPlanetActor);
+
+	this->m_planet = new Planet();
+	this->m_planet->Initialize(tPlanetMaterial);
+	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+	this->m_pScene->AddActor(this->m_planet);
 }
 
 void LJMULevelDemo::animateGeometry(float DT)
@@ -224,6 +241,10 @@ void LJMULevelDemo::Update()
 {
 	this->m_pTimer->Update();
 	EvtManager.ProcessEvent(EvtFrameStartPtr( new EvtFrameStart(this->m_pTimer->Elapsed())));
+
+	float tDT = this->m_pTimer->Elapsed();
+
+	this->m_planet->Update(tDT);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());
