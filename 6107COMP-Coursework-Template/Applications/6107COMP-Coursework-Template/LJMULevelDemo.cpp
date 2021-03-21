@@ -88,6 +88,7 @@ void LJMULevelDemo::setupGeometry()
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);
+	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
@@ -114,8 +115,9 @@ void LJMULevelDemo::setupGeometry()
 	tPlanetActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	//this->m_pScene->AddActor(tPlanetActor);
 
+	MaterialPtr tInstMaterial = MaterialGenerator::createGSInstancingMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"));
 	this->m_planet = new Planet();
-	this->m_planet->Initialize(tPlanetMaterial);
+	this->m_planet->Initialize(tInstMaterial);
 	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_pScene->AddActor(this->m_planet);
 }
@@ -162,14 +164,20 @@ void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
 void LJMUDX::LJMULevelDemo::setupLighting()
 {
 	Vector4f tLightColour(0.0f, 1.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition(100.0f, 0.0f, 300.0f);
+	Vector3f tLightPosition(100.0f, 30.0f, 300.0f);
 	Vector2f tLightRange(100.0f, 0.0f);
 
 	Vector4f tLightColour2(1.0f, 0.0f, 0.9f, 1.0f);
 	Vector3f tLightPosition2(300.0f, 0.0f, 400.0f);
 	Vector2f tLightRange2(100.0f, 0.0f);
 
-	Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
+	Vector4f tLightColour3(1.0f, 1.0f, 1.0f, 1.0f);
+	Vector3f tLightPosition3(300.0f, 30.0f, 100.0f);
+	Vector2f tLightRange3(40.0f, 0.0f);
+
+
+	//Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
+	Vector4f tDirLightColour(0.2f, 0.2f, 0.3f, 1.0f);
 	Vector3f tDirLightDirection(0.0f, 0.0f, 1.0f);
 	tDirLightDirection.Normalize();
 
@@ -182,23 +190,27 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
 	LightBasePtr tPointLight2 = std::make_shared<Light_Point>(tLightColour2, tLightPosition2, tLightRange2);
+	LightBasePtr tPointLight3 = std::make_shared<Light_Point>(tLightColour3, tLightPosition3, tLightRange3);
 	LightBasePtr tDirectionalLight = std::make_shared<Light_Directional>(tDirLightColour, tDirLightDirection);
 	LightBasePtr tSpotLight = std::make_shared<Light_Spot>(SpotLightColour, SpotLightPosition, SpotLightDirection, SpotLightRange, SpotLightFocus);
 
 	this->addLight(tPointLight);
 	this->addLight(tPointLight2);
+	this->addLight(tPointLight3);
 	this->addLight(tDirectionalLight);
 	this->addLight(tSpotLight);
 
-	for (int i = 0; i < 200;  i++)
-	{
-		tLightPosition.x += 70.0f;
-		//tLightColour.x += 0.1f;
+	//for (int i = 0; i < 200;  i++)
+	//{
+	//	tLightPosition.x += 30.0f;
+	//	//tLightColour.x += 0.1f;
+	//	tLightColour.x += 0.1;
+	//	tLightColour.z -= 0.1;
 
-		LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
+	//	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
 
-		this->addLight(tPointLight);
-	}
+	//	this->addLight(tPointLight);
+	//}
 }
 
 ////////////////////////////////////
@@ -244,7 +256,35 @@ void LJMULevelDemo::Update()
 
 	float tDT = this->m_pTimer->Elapsed();
 
+	//LightBasePtr tLight = this->m_lights[2];
+	//static float speed = 0.0f;
+	//speed += 0.001f;
+	//LightInfo tInfo;
+	//tInfo = tLight->getLightInfo();
+	//tInfo.LightPosition.x += cos(speed) * 0.2f;
+
+	//tLight->setLightInfo(tInfo);
+
+	MaterialPtr tMat = this->m_LandscapeActor->GetBody()->GetMaterial();
+	MaterialPtr tPlanetMat = this->m_planet->GetBody()->GetMaterial();
+
+	if (tMat && tPlanetMat)
+	{
+		//MaterialGenerator::setLightToMaterial(*m_pRenderer11, tMat, this->m_lights);
+		//MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tPlanetMat, this->m_lights);
+		//MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights);
+	}
+	else
+	{
+		int a = 1;
+	}
+
+
+
+
 	this->m_planet->Update(tDT);
+
+
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());
