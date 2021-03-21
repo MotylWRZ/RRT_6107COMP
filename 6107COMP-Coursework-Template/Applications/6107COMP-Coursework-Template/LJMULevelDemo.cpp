@@ -85,9 +85,16 @@ void LJMULevelDemo::inputAssemblyStage()
 
 void LJMULevelDemo::setupGeometry()
 {
+	MaterialReflectanceInfo tMatInfo;
+	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	tMatInfo.Ambient = 0.0f;
+	tMatInfo.Diffuse = 0.0f;
+	tMatInfo.Specular = 0.0f;
+	tMatInfo.Shininess = 1.0f;
+
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
-	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);
+	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);
 	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
@@ -108,7 +115,7 @@ void LJMULevelDemo::setupGeometry()
 
 	Actor* tPlanetActor = new Actor();
 	BasicMeshPtr tMesh2 = MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1, 1, 1, 1));
-	MaterialPtr tPlanetMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights);// MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"brown_mud_dry_diff_2k.tiff");
+	MaterialPtr tPlanetMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);// MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"brown_mud_dry_diff_2k.tiff");
 	tPlanetActor->GetBody()->SetGeometry(tMesh2);
 	tPlanetActor->GetBody()->SetMaterial(tPlanetMaterial);
 	tPlanetActor->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);

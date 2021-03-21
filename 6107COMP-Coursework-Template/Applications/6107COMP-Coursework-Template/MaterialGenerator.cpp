@@ -306,19 +306,19 @@ MaterialPtr MaterialGenerator::createTerrainMultiTextureMaterial(RendererDX11& p
 	return MaterialGenerator::createMultiTextureMaterial(pRenderer, std::wstring(L"RRTTerrainMultiTextureMapping.hlsl"), highlandsTextureFile, lowlandsTextureFile);
 }
 
-MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights)
+MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTextureV2.hlsl"), diffuseTextureFile);
 
 	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
 	tMaterial->Parameters.SetShaderResourceParameter(L"BumpTexture", tBumpTexture);
 
-	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial, lights);
+	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial, lights, MatReflectanceInfo);
 
 	return tMaterial;
 }
 
-void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights)
+void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)
 	{
@@ -338,11 +338,11 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 		tLights[i] = lights[i]->getLightInfo();// tVecLights[i]->getLightInfo();
 	}
 
-	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
-	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4f tSurfaceConstants = MatReflectanceInfo.SurfaceEmissiveColour;
+	Vector4f tSurfaceEmissiveColour = Vector4f(MatReflectanceInfo.Ambient, MatReflectanceInfo.Diffuse, MatReflectanceInfo.Specular, MatReflectanceInfo.Shininess);
 
-	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
-	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
+	material->Parameters.SetVectorParameter(L"SurfaceConstants", tSurfaceConstants);
+	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", tSurfaceEmissiveColour);
 
 	BufferConfigDX11 tBuffConfig;
 	tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
@@ -355,7 +355,7 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
 }
 
-void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights)
+void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)
 	{
