@@ -101,6 +101,8 @@ void LJMULevelDemo::setupGeometry()
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	this->m_pScene->AddActor(this->m_LandscapeActor);
 
+	this->m_data = MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tTerrainMaterial, this->m_lights, tMatInfo);
+
 	// Create test Cube Mesh and Actor
 	this->m_CubeActor = new Actor();
 	BasicMeshPtr tMesh = GeometryGenerator::generateRectangle();
@@ -228,6 +230,8 @@ void LJMULevelDemo::Initialize()
 	//Call the Input Assembly Stage to setup the layout of our Engine Objects
 	this->inputAssemblyStage();
 	this->setupCamera();
+
+	///////////////////////////////////////////////////////////////////////////////////////
 	/*this->m_pCamera = new Camera();
 
 	Vector3f tcamerapos(0.0f, 20.0f, -50.0f);
@@ -263,23 +267,30 @@ void LJMULevelDemo::Update()
 
 	float tDT = this->m_pTimer->Elapsed();
 
-	//LightBasePtr tLight = this->m_lights[2];
-	//static float speed = 0.0f;
-	//speed += 0.001f;
-	//LightInfo tInfo;
-	//tInfo = tLight->getLightInfo();
-	//tInfo.LightPosition.x += cos(speed) * 0.2f;
+	LightBasePtr tLight = this->m_lights[2];
+	static float speed = 0.0f;
+	speed += 0.001f;
+	LightInfo tInfo;
+	tInfo = tLight->getLightInfo();
+	tInfo.LightPosition.x += cos(speed) * 0.2f;
 
-	//tLight->setLightInfo(tInfo);
+	tLight->setLightInfo(tInfo);
+
+	MaterialReflectanceInfo tMatInfo;
+	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	tMatInfo.Ambient = 0.0f;
+	tMatInfo.Diffuse = 0.0f;
+	tMatInfo.Specular = 0.0f;
+	tMatInfo.Shininess = 1.0f;
 
 	MaterialPtr tMat = this->m_LandscapeActor->GetBody()->GetMaterial();
 	MaterialPtr tPlanetMat = this->m_planet->GetBody()->GetMaterial();
 
 	if (tMat && tPlanetMat)
 	{
-		//MaterialGenerator::setLightToMaterial(*m_pRenderer11, tMat, this->m_lights);
+		//MaterialGenerator::setLightToMaterial(*m_pRenderer11, tMat, this->m_lights, tMatInfo);
 		//MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tPlanetMat, this->m_lights);
-		//MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo, this->m_data);
 	}
 	else
 	{

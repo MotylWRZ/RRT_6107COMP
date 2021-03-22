@@ -61,6 +61,9 @@
     <ClCompile Include="Planet.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="InstancedStaticMesh.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -98,6 +101,9 @@
       <Filter>Header Files\MeshImporter</Filter>
     </ClInclude>
     <ClInclude Include="Planet.h">
+      <Filter>Header Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancedStaticMesh.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
   </ItemGroup>

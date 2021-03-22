@@ -37,8 +37,8 @@ public:
 
 	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 
-	static void setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
-	static void updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	static ResourcePtr setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	static void updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo, ResourcePtr resLights);
 
 	static MaterialPtr createGSInstancingMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile);
 	static MaterialPtr createGSInstancingMultiTextureMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile);
