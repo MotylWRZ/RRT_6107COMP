@@ -58,6 +58,11 @@ struct SpotLightInfo
 	Vector4f SpotLightFocus;
 };
 
+struct BufferData
+{
+	LightInfo Lights[100];
+};
+
 
 MaterialGenerator::MaterialGenerator()
 {
@@ -320,11 +325,11 @@ MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRend
 	return tMaterial;
 }
 
-ResourcePtr MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
+void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)
 	{
-		return nullptr;
+		return;
 	}
 	LightInfo tLights[LIGHTS_NUM_MAX];
 
@@ -347,20 +352,33 @@ ResourcePtr MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, Mater
 	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", tSurfaceEmissiveColour);
 
 	BufferConfigDX11 tBuffConfig;
-	tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
+	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
+	tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
+	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
+	tBuffConfig.SetMiscFlags(0);
+	tBuffConfig.SetStructureByteStride(0);
+	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);// D3D11_USAGE_DEFAULT);
+	tBuffConfig.SetCPUAccessFlags(D3D11_CPU_ACCESS_WRITE);
+
+	BufferData tData;
+	//tData.Lights = tLights;
+
+	for (int i = 0; i < 100; i++)
+	{
+		tData.Lights[i] = tLights[i];
+	}
 
 	D3D11_SUBRESOURCE_DATA dataLights;
-	dataLights.pSysMem = &tLights;
+	dataLights.pSysMem = &tData;
+	dataLights.SysMemPitch = 0;
+	dataLights.SysMemSlicePitch = 0;
 
 	ResourcePtr resLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataLights);
 
 	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
-
-	// Resource ResourcePTR which poijnts to the created constant buffer
-	return resLights;
 }
 
-void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo, ResourcePtr buffer)
+void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)
 	{
@@ -377,285 +395,60 @@ void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr
 	// Load Lights info structs
 	for (int i = 0; i < lights.size(); i++)
 	{
-		tLights[i] = lights[i]->getLightInfo();// tVecLights[i]->getLightInfo();
+		tLights[i] = lights[i]->getLightInfo();
 	}
 
-	Vector4f m_vSurfaceConstants = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
-	Vector4f m_vSurfaceEmissiveColour = Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-
-	material->Parameters.SetVectorParameter(L"SurfaceConstants", m_vSurfaceConstants);
-	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", m_vSurfaceEmissiveColour);
-
-	BufferConfigDX11 tBuffConfig;
-	tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), true);
+	material->Parameters.SetVectorParameter(L"SurfaceConstants", MatReflectanceInfo.SurfaceEmissiveColour);
+	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", Vector4f(MatReflectanceInfo.Ambient, MatReflectanceInfo.Diffuse, MatReflectanceInfo.Specular, MatReflectanceInfo.Shininess));
 
 	D3D11_SUBRESOURCE_DATA dataLights;
 	dataLights.pSysMem = tLights;
 	dataLights.SysMemPitch = 0;
 	dataLights.SysMemSlicePitch = 0;
 
-	ID3D11DeviceContext* a = nullptr;
+	// Get CBuffer Paramameter Writer from the material
+	ConstantBufferParameterWriterDX11* tWriter =  material->Parameters.GetConstantBufferParameterWriter(L"cLights");
 
-	if (!a)
+	if (!tWriter)
 	{
-		int i = 0;
+		return;
 	}
 
+	// Get actual constant buffer from the renderer
+	ConstantBufferDX11* tBuffer = pRenderer.GetConstantBufferByIndex(tWriter->GetValue()->m_iResource);
 
-	D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-	vertexBufferDesc.ByteWidth = sizeof(LightInfo) * LIGHTS_NUM_MAX;
-	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	vertexBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	// Create a pointer to the DeviceContext
+	ID3D11DeviceContext* tContext;
+	pRenderer.GetDevice()->GetImmediateContext(&tContext);
 
-	tBuffConfig.GetBufferDesc() = vertexBufferDesc;
+	// Create a pointer to the source resource
+	ID3D11Resource* srcResource;
+	srcResource = tBuffer->GetResource();
 
-	D3D11_SUBRESOURCE_DATA vertexBufferData;
-	vertexBufferData.pSysMem = tLights;
-	vertexBufferData.SysMemPitch = 0;
-	vertexBufferData.SysMemSlicePitch = 0;
+	// Create a pointer to the source constant buffer
+	ID3D11Buffer* srcBuffer;
+	srcResource->QueryInterface(IID_ID3D11Buffer, (void**)&srcBuffer);
 
-//	pRenderer.GetDevice()->GetImmediateContext(&a);
-	//ID3D12Device::GetCopyableFootprints
-	ResourcePtr resLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataLights, true);
-
-
-	ConstantBufferParameterWriterDX11* tCbufferWriter = material->Parameters.GetConstantBufferParameterWriter(L"cLights");
-	int id = resLights->m_iResource;// setValue()->m_iResource;
-	ResourceDX11* res = pRenderer.GetResourceByIndex(id);
-
-	pRenderer.GetDevice()->GetImmediateContext(&a);
+	//// get buffer description
+	//D3D11_BUFFER_DESC srcDesc;
+	//srcBuffer->GetDesc(&srcDesc);
 
 
+	// Download the data from the source buffer and save it in MappedResource
+	D3D11_MAPPED_SUBRESOURCE MappedResource = { 0 };
+	tContext->Map(srcBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 
+	// Create a pointer to the BufferData from the source buffer
+	BufferData* b = &((BufferData*)(MappedResource.pData))[0];
 
-
-
-
-
-	ConstantBufferDX11* buf;
-	BufferComPtr pBuffer;
-	//HRESULT hr = pRenderer.GetDevice()->(tBuffConfig, pData, pBuffer.GetAddressOf());
-
-	/*pRenderer.GetDevice()->CreateBuffer(
-		&vertexBufferDesc,
-		&dataLights,
-		pBuffer.GetAddressOf()
-	);*/
-
-	LightInfo info;
-
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	//  Disable GPU access to the vertex buffer data.
-	auto m_d3dContext = a;
-	m_d3dContext->Map(res->GetResource(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	//  Update the vertex buffer here.
-	//info = *(LightInfo*)mappedResource.pData;
-	memcpy(mappedResource.pData, tLights, sizeof(mappedResource));
-	a->UpdateSubresource(res->GetResource(), 0, 0, &mappedResource, 0, 0);
-	ID3D11Buffer* buf1 = (ID3D11Buffer*)res->GetResource();
-	for (int i = 0; i < 14; i++)
+	// Modify the data from the source buffer by changing the values in the mapped resource
+	for (int i = 0; i < 100; i++)
 	{
-		m_d3dContext->PSSetConstantBuffers(i, 1, &buf1);
+		b->Lights[i] = tLights[i];
 	}
 
-	//  Reenable GPU access to the vertex buffer data.
-	m_d3dContext->Unmap(res->GetResource(), 0);
-
-	//ResourcePtr = &pBuffer;
-	//info = *(LightInfo*)mappedResource.pData;
-
-
-	auto m_d3dContext2 = a;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	////ID3D11Buffer* buf;
-	//ConstantBufferDX11* buf;
-	//BufferComPtr pBuffer;
-	////HRESULT hr = pRenderer.GetDevice()->(tBuffConfig, pData, pBuffer.GetAddressOf());
-
-	//pRenderer.GetDevice()->CreateBuffer(
-	//	&vertexBufferDesc,
-	//	&dataLights,
-	//	pBuffer.GetAddressOf()
-	//);
-
-	//LightInfo info;
-
-	//D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	////  Disable GPU access to the vertex buffer data.
-	//auto m_d3dContext = a;
-	//m_d3dContext->Map(pBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	////  Update the vertex buffer here.
-	//info = *(LightInfo*)mappedResource.pData;
-	//memcpy(mappedResource.pData, tLights, sizeof(tLights));
-	////  Reenable GPU access to the vertex buffer data.
-	//m_d3dContext->Unmap(pBuffer.Get(), 0);
-
-	////ResourcePtr = &pBuffer;
-	//info = *(LightInfo*)mappedResource.pData;
-
-
-	//auto m_d3dContext2 = a;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*	a->Map(pBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &dataLights);
-		a->UpdateSubresource(pBuffer.Get(), 0, 0, &dataLights2, 0, 0);*/
-		//a->Unmap(tCBuffer->GetResource(), 0);
-
-		//ConstantBufferParameterWriterDX11* tCbufferWriter2 = material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
-	//	ConstantBufferParameterWriterDX11* tCbufferWriter2 = material->Parameters.SetConstantBufferParameter(L"cLights", &pBuffer);
-
-
-
-
-
-
-
-	//BufferDX11* b = pRenderer.GetGenericBufferByIndex(resLights->m_iResource);//GetSwapChainResource(resLights->m_iResource);
-
-	//material->Parameters.GetConstantBufferParameterWriter(L"cLights")->GetRenderParameterRef()->SetParameterData(&dataLights);
-	//ConstantBufferParameterWriterDX11* writer = material->Parameters.GetConstantBufferParameterWriter(L"cLights");
-	//ConstantBufferParameterDX11* par = new ConstantBufferParameterDX11();
-	///*par->SetParameterData(&dataLights, 2);
-
-	//writer->SetRenderParameterRef(par);*/
-	///*int  i = pRenderer.m_pParamMgr->SetConstantBufferParameter(L"cLights", resLights);
-	//BufferDX11* buf = pRenderer.GetConstantBufferByIndex(i);*/
-
-	//writer->SetValue(resLights);
-	////ResourcePtr test = writer->GetValue();
-	////test->m_pBufferConfig->SetDefaultConstantBuffer(0, true);
-	////*test = *resLights;
-	////writer->SetValue(test);
-
-	//Vector4f tNewVec(1.0f, 1.0f, 1.0f, 1.0f);
-	//material->Parameters.GetVectorParameterWriter(L"SurfaceEmissiveColour")->GetRenderParameterRef()->InitializeParameterData(&tNewVec);
-	////material->Parameters.GetVectorParameterWriter(L"SurfaceEmissiveColour")->SetValue(tNewVec);
-	//Vector4f tCurVec;
-
-	//tCurVec = material->Parameters.GetVectorParameterWriter(L"SurfaceEmissiveColour")->GetValue();
-
-	//int m = 0;
-	////material->Parameters.GetShaderResourceParameterWriter(L"cLights");
-
-	////if(b->m_iResource != -1)
-	////material->Parameters.SetConstantBufferParameter(L"cLights", b);
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//
-////	resLights->m_iResource;
-//	ConstantBufferDX11* tCBuffer = pRenderer.GetConstantBufferByIndex(resLights->m_iResource);
-//
-//
-//	/*	D3D11_MAPPED_SUBRESOURCE mappedResource;
-//	pDeviceContext->Map(&m_ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)
-//
-//		VS_CONSTANT_BUFFER* dataPtr = (VS_CONSTANT_BUFFER*)mappedResource.pData;
-//
-//	dataPtr->mWorldViewProj = view;*/
-//
-//	//pDeviceContext->Unmap(m_ConstantBuffer, 0);
-//	/*ConstantBufferDX11* tCBuffer;
-//	tCBuffer->GetResource();*/
-//
-//
-//
-//	/*a->Map(tCBuffer->GetResource(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &dataLights2);
-//	a->UpdateSubresource(tCBuffer->GetResource(), 0, 0, &dataLights2, 0, 0);
-//	a->Unmap(tCBuffer->GetResource(), 0);*/
-//
-//
-//
-//
-//
-//	//tCBuffer->GetResource()
-//
-//	ConstantBufferParameterWriterDX11* tCbufferWriter = material->Parameters.GetConstantBufferParameterWriter(L"cLights");
-//
-////	RenderParameterDX11* tRef = tCbufferWriter->GetRenderParameterRef();
-////	ResourcePtr ptr2;
-////	ptr2->m_pBufferConfig->
-////
-//////	tRef.SetParameterData(tLights);
-////
-////
-////	//ResourceProxyDX11* a;
-////	ConstantBufferParameterDX11* a = (ConstantBufferParameterDX11*)tCbufferWriter->GetRenderParameterRef();
-////	//tCbufferWriter->SetValue(resLights);
-////	tRef->SetParameterData(&dataLights);
-////	tRef->InitializeParameterData(&dataLights);
-////	a->SetParameterData(&dataLights);
-//
-//
-//
-//	/*ResourceProxyDX11(int ResourceID, BufferConfigDX11 * pConfig, RendererDX11 * pRenderer,
-//		ShaderResourceViewConfigDX11 * pSRVConfig = NULL,
-//		RenderTargetViewConfigDX11 * pRTVConfig = NULL,
-//		UnorderedAccessViewConfigDX11 * pUAVConfig = NULL);*/
-//	if (buffer)
-//	{
-//		ResourceProxyDX11* proxy = new ResourceProxyDX11(buffer->m_iResource, &tBuffConfig, &pRenderer);
-//		ResourcePtr ptr(proxy);
-//		ConstantBufferDX11* tCBuffer = pRenderer.GetConstantBufferByIndex(buffer->m_iResource);
-//		//pRenderer.DeleteResource(buffer)
-////tCbufferWriter->SetValue()
-//		//	ResourcePtr Proxy(new ResourceProxyDX11(resLights->m_iResource, &tBuffConfig, &pRenderer));
-//
-//			/*ResourceProxyDX11* proxy = (ResourceProxyDX11*)material->Parameters.GetConstantBufferParameterWriter(L"cLights");
-//			ResourcePtr ptr = ;*/
-//
-//		pRenderer.GetDevice()->GetImmediateContext(&a);
-//
-//		a->Map(tCBuffer->GetResource(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &dataLights2);
-//		a->UpdateSubresource(tCBuffer->GetResource(), 0, 0, &dataLights2, 0, 0);
-//		//a->Unmap(tCBuffer->GetResource(), 0);
-//
-//			//ConstantBufferParameterWriterDX11* tCbufferWriter2 = material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
-//		ConstantBufferParameterWriterDX11* tCbufferWriter2 = material->Parameters.SetConstantBufferParameter(L"cLights", buffer);
-//		//tCbufferWriter->SetRenderParameterRef(a);
-//	}
-
+	// Finish operation by unmapping the buffer
+	tContext->Unmap(srcBuffer, 0);
 }
 
 MaterialPtr MaterialGenerator::createGSInstancingMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile)

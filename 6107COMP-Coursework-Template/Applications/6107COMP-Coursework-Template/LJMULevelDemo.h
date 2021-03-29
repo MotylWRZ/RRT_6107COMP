@@ -90,8 +90,6 @@ namespace LJMUDX
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 
-		ResourcePtr m_data;
-
 		Planet* m_planet;
 		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;

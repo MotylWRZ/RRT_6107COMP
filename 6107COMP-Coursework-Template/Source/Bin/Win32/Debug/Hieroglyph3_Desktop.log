@@ -1,6 +1,81 @@
-﻿  RendererDX11.cpp
+﻿  Application.cpp
+  RenderApplication.cpp
+  SingleWindowGlyphlet.cpp
+  main.cpp
+  Actor.cpp
+  ActorGenerator.cpp
+  BoundsVisualizerActor.cpp
+  Camera.cpp
+  ConsoleActor.cpp
+  Entity3D.cpp
+  FirstPersonCamera.cpp
+  FullscreenActor.cpp
+  GeometryActor.cpp
+  GlyphletActor.cpp
+  Light.cpp
+  Node3D.cpp
+  ObjectSpaceCameraPositionWriter.cpp
+  PointLight.cpp
+  PositionExtractorController.cpp
+  RotationController.cpp
+  Generating Code...
+  Compiling...
+  ScaleSetpointController.cpp
+  Scene.cpp
+  SkinnedActor.cpp
+  SkinnedBoneController.cpp
+  SkyboxActor.cpp
+  SpatialController.cpp
+  TextActor.cpp
+  TextureActor.cpp
+  TextureSpaceCameraPositionWriter.cpp
+  TextureSpaceLightPositionWriter.cpp
+  VolumeActor.cpp
+  ConstantBufferDX11.cpp
+  ConstantBufferParameterDX11.cpp
+  ConstantBufferParameterWriterDX11.cpp
+  EntityRenderParams.cpp
+  GeometryGeneratorDX11.cpp
+  GeometryLoaderDX11.cpp
+  MaterialDX11.cpp
+  MaterialGeneratorDX11.cpp
+  MaterialManager.cpp
+  Generating Code...
+  Compiling...
+  MatrixArrayParameterWriterDX11.cpp
+  MatrixParameterWriterDX11.cpp
+  ParameterContainer.cpp
+  ParameterManagerDX11.cpp
+  ParameterWriter.cpp
+  PipelineManagerDX11.cpp
+  RenderEffectDX11.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\Rendering\RenderEffectDX11.cpp(145,28): warning C4834: discarding return value of function with 'nodiscard' attribute
+  RendererDX11.cpp
 D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\Rendering\RendererDX11.cpp(1858,2): warning C4018: '<': signed/unsigned mismatch
 D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\Rendering\RendererDX11.cpp(1866,2): warning C4018: '<': signed/unsigned mismatch
 D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\Rendering\RendererDX11.cpp(1874,2): warning C4018: '<': signed/unsigned mismatch
 D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\Rendering\RendererDX11.cpp(1882,2): warning C4018: '<': signed/unsigned mismatch
+  SamplerParameterWriterDX11.cpp
+  SceneRenderTask.cpp
+  ShaderReflectionDX11.cpp
+  ShaderReflectionFactoryDX11.cpp
+  ShaderResourceParameterWriterDX11.cpp
+  SpriteRendererDX11.cpp
+  Task.cpp
+  UnorderedAccessParameterWriterDX11.cpp
+  VectorParameterWriterDX11.cpp
+  ViewAmbientOcclusion.cpp
+  ViewDepthNormal.cpp
+  ViewOcclusion.cpp
+  Generating Code...
+  Compiling...
+  ViewPerspective.cpp
+  ViewTextOverlay.cpp
+  LuaApp.cpp
+  LuaGeometryActor.cpp
+  LuaScene.cpp
+  LuaTextActor.cpp
+  ScriptIntfActor.cpp
+  ScriptIntfApp.cpp
+  Generating Code...
   Hieroglyph3_Desktop.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Source\..\SDK\Library\Win32\Debug\Hieroglyph3.lib

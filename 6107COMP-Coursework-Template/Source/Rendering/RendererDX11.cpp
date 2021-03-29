@@ -664,7 +664,7 @@ ResourcePtr RendererDX11::CreateConstantBuffer( BufferConfigDX11* pConfig,  D3D1
 
 	BufferComPtr pBuffer;
 	HRESULT hr = m_pDevice->CreateBuffer( &pConfig->m_State, pData, pBuffer.GetAddressOf() );
-	
+
 	if ( pBuffer )
 	{
 		ConstantBufferDX11* pConstantBuffer = new ConstantBufferDX11( pBuffer );

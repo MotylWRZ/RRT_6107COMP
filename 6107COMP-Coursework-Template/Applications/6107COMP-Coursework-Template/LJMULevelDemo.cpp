@@ -92,16 +92,19 @@ void LJMULevelDemo::setupGeometry()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
+
+
+
+
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);
-	//MaterialPtr tTerrainMaterial = MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"brown_mud_dry_diff_2k.tiff"));
+
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	this->m_pScene->AddActor(this->m_LandscapeActor);
 
-	this->m_data = MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tTerrainMaterial, this->m_lights, tMatInfo);
 
 	// Create test Cube Mesh and Actor
 	this->m_CubeActor = new Actor();
@@ -114,7 +117,6 @@ void LJMULevelDemo::setupGeometry()
 	this->m_pScene->AddActor(this->m_CubeActor);
 
 
-
 	Actor* tPlanetActor = new Actor();
 	BasicMeshPtr tMesh2 = MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1, 1, 1, 1));
 	MaterialPtr tPlanetMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);// MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"brown_mud_dry_diff_2k.tiff");
@@ -124,9 +126,11 @@ void LJMULevelDemo::setupGeometry()
 	tPlanetActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	//this->m_pScene->AddActor(tPlanetActor);
 
-	MaterialPtr tInstMaterial = MaterialGenerator::createGSInstancingMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"));
+
+
+	//MaterialPtr tInstMaterial = MaterialGenerator::createGSInstancingMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"));
 	this->m_planet = new Planet();
-	this->m_planet->Initialize(tInstMaterial);
+	this->m_planet->Initialize(tPlanetMaterial);
 	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_pScene->AddActor(this->m_planet);
 }
@@ -254,6 +258,29 @@ void LJMULevelDemo::Initialize()
 		                                   static_cast<float>(GLYPH_PI) / 2.0f);
 
 	this->m_pScene->AddCamera(this->m_pCamera);*/
+
+	//LightInfo tLights[10];
+
+	//BufferConfigDX11 tBuffConfig;
+	////tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), true);
+	//tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
+	//tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
+	//tBuffConfig.SetMiscFlags(0);
+	//tBuffConfig.SetStructureByteStride(0);
+	//tBuffConfig.SetUsage(D3D11_USAGE_DEFAULT);
+	//tBuffConfig.SetCPUAccessFlags(0);
+
+	//D3D11_SUBRESOURCE_DATA dataLights;
+	//dataLights.pSysMem = tLights;
+	//dataLights.SysMemPitch = 0;
+	//dataLights.SysMemSlicePitch = 0;
+
+	//Vec = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceConstants");
+	//EmissiveCol = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceEmissiveColour");
+
+	//m_Buf2 = this->m_pRenderer11->CreateConstantBuffer(&tBuffConfig, &dataLights);
+	//this->m_pRenderer11->m_pParamMgr->SetConstantBufferParameter(L"cLights", m_Buf2);
+	//m_Buf = this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights");
 }
 
 ///////////////////////////////////
@@ -288,20 +315,11 @@ void LJMULevelDemo::Update()
 
 	if (tMat && tPlanetMat)
 	{
-		//MaterialGenerator::setLightToMaterial(*m_pRenderer11, tMat, this->m_lights, tMatInfo);
-		//MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tPlanetMat, this->m_lights);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo, this->m_data);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);
 	}
-	else
-	{
-		int a = 1;
-	}
-
-
-
 
 	this->m_planet->Update(tDT);
-
 
 
 	//----------START RENDERING--------------------------------------------------------------
@@ -309,6 +327,114 @@ void LJMULevelDemo::Update()
 		this->m_pScene->Render(this->m_pRenderer11);
 	//--------END RENDERING-------------------------------------------------------------
 	this->m_pRenderer11->Present(this->m_pWindow->GetHandle(), this->m_pWindow->GetSwapChain());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//	// VECTOR PARAM
+	//
+	//	VectorParameterDX11* vecTest;
+	//	Vec = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceConstants");
+	//
+	//	Vector4f a(2.0f, 1.0f, 1.0f, 1.0f);
+	//	Vector4f b(0.0f, 1.0f, 1.0f, 20.0f);
+	//	Vec->InitializeParameterData(&b);
+	//
+	//	Vector4f em(0.0f, 0.0f, 0.0f, 1.0f);
+	//	this->EmissiveCol = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceEmissiveColour");
+	//	this->EmissiveCol->InitializeParameterData(&em);
+	//
+	//
+	//
+	//	// CONST BUFFER PARAM
+	//
+	//	LightInfo tLights[10];
+	//	//LightInfo tLights2[30];
+	//
+	//	// Check if the maximum number of lights is not exceeded
+	//	if (this->m_lights.size() > LIGHTS_NUM_MAX)
+	//	{
+	//		assert(!"MaterialGenerator:Number of lights exeeds the maximum number of lights");
+	//	}
+	//
+	//	// Load Lights info structs
+	//	for (int i = 0; i < m_lights.size(); i++)
+	//	{
+	//		tLights[i] = m_lights[i]->getLightInfo();// tVecLights[i]->getLightInfo();
+	//	}
+	//
+	//
+	////
+
+	//	BufferConfigDX11 tBuffConfig;
+	//	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), true);
+	//	tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
+	//	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
+	//	tBuffConfig.SetMiscFlags(0);
+	//	tBuffConfig.SetStructureByteStride(0);
+	//	tBuffConfig.SetUsage(D3D11_USAGE_DEFAULT);
+	//	tBuffConfig.SetCPUAccessFlags(0);
+	//
+	//	D3D11_SUBRESOURCE_DATA dataLights;
+	//	dataLights.pSysMem = tLights;
+	//	dataLights.SysMemPitch = 0;
+	//	dataLights.SysMemSlicePitch = 0;
+	//
+	//	D3D11_MAPPED_SUBRESOURCE mapped;
+	//	unsigned int* pCount = 0;
+	//	mapped.pData = &tLight;
+	//
+	//	ResourcePtr stagingbuffer = this->m_Buf2;
+	//	mapped = RendererDX11::Get()->pImmPipeline->MapResource(this->m_Buf2->m_iResource, 0, D3D11_MAP_READ, 0);
+	//	mapped = RendererDX11::Get()->pImmPipeline->MapResource(this->m_Buf2->m_iResource, 0, D3D11_MAP_WRITE, 0);
+	//
+	//	/*RendererDX11::Get()->pImmPipeline->BindConstantBufferParameter()
+	//	RendererDX11::Get()->pImmPipeline->UpdateSubresource();*/
+	//
+	//	pCount = (unsigned int*)(mapped.pData);
+	//
+	//	this->m_Buf2 = this->m_pRenderer11->CreateConstantBuffer(&tBuffConfig, &dataLights);
+	//
+	////	this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights")->SetParameterData(&dataLights);
+	//	//RendererDX11::Get()->pImmPipeline->UpdateSubresource(this->m_Buf2->m_iResource, 0, 0, &dataLights, 0, 0);
+	//	this->m_pRenderer11->m_pParamMgr->SetConstantBufferParameter(L"cLights", this->m_Buf2);
+	//
+	//
+	//	//RendererDX11::Get()->pImmPipeline->UnMapResource(stagingbuffer->m_iResource, 0);
+	//	//this->m_Buf = this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights");
+	//	//this->m_Buf->InitializeParameterData(&dataLights);
+	//
+	//	//tMat->Parameters.SetVectorParameter(L"SurfaceConstants", Vec->GetVector());
+	//	//VectorParameterDX11* vecTest2;
+	//	//vecTest2 = (VectorParameterDX11*)tMat->Parameters.GetVectorParameterWriter(L"SurfaceConstants")->GetRenderParameterRef();
+	//	//a = vecTest2->GetVector();
+	//
+	//	//vecTest2->InitializeParameterData(this->Vec);
+	//
+	//
+	//	//material->Parameters.GetVectorParameterWriter(L"SurfaceConstants")->GetRenderParameterRef();
+	//	//vecTest->InitializeParameterData(&vecNewTest);
+
+
+
+
+
+
+
 }
 
 ///////////////////////////////////
