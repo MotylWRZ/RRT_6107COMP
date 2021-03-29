@@ -15,53 +15,18 @@
 #include "Texture2dConfigDX11.h"
 #include "MaterialGeneratorDX11.h"
 
+
 #include "Light_Directional.h"
 #include "Light_Point.h"
 #include "Light_Spot.h"
 
 #include "ConstantBufferDX11.h"
 
-#define LIGHT_NONE			 0
-#define LIGHT_POINT         1
-#define LIGHT_SPOT          2
-#define LIGHT_DIRECTIONAL   3
-
-struct Light
-{
-	Vector4f iLightType = Vector4f(LIGHT_NONE, 0.0f, 0.0f, 0.0f);
-	Vector4f LightColour = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
-	Vector4f LightPosition = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
-	Vector4f LightDirection = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
-	Vector4f LightRange = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
-	Vector4f LightFocus = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
-};
-
-struct PointLightInfo
-{
-	Vector4f PointLightColour;
-	Vector4f PointLightPosition;
-	Vector4f PointLightRange;
-};
-
-struct DirectionalLightInfo
-{
-	Vector4f DirectionalLightColour;
-	Vector4f DirectionalLightDirection;
-};
-
-struct SpotLightInfo
-{
-	Vector4f SpotLightColour;
-	Vector4f SpotLightPosition;
-	Vector4f SpotLightDirection;
-	Vector4f SpotLightRange;
-	Vector4f SpotLightFocus;
-};
-
 struct BufferData
 {
 	LightInfo Lights[100];
 };
+
 
 
 MaterialGenerator::MaterialGenerator()
@@ -301,6 +266,60 @@ MaterialPtr MaterialGenerator::createMultiTextureMaterial(RendererDX11& pRendere
 	}
 
 	tEffect->m_iRasterizerState = iRasterizerState;
+
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
+
+	return tNewMaterial;
+}
+
+MaterialPtr MaterialGenerator::createMaterialWithGS(RendererDX11& renderer, std::wstring shaderFile)
+{
+	MaterialPtr tNewMaterial = MaterialPtr(new MaterialDX11());
+	RenderEffectDX11* tEffect = new RenderEffectDX11();
+
+	tEffect->SetVertexShader(renderer.LoadShader(ShaderType::VERTEX_SHADER,
+		std::wstring(shaderFile),
+		std::wstring(L"VSMain"),
+		std::wstring(L"vs_4_0"),
+		true));
+
+	tEffect->SetPixelShader(renderer.LoadShader(ShaderType::PIXEL_SHADER,
+		std::wstring(shaderFile),
+		std::wstring(L"PSMain"),
+		std::wstring(L"ps_4_0"),
+		true));
+
+	tEffect->SetGeometryShader(renderer.LoadShader(ShaderType::GEOMETRY_SHADER,
+		std::wstring(shaderFile),
+		std::wstring(L"GSMain"),
+		std::wstring(L"gs_5_0")));
+
+	SamplerStateConfigDX11 tSamplerConfig;
+	tSamplerConfig.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	tSamplerConfig.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	tSamplerConfig.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	tSamplerConfig.MaxAnisotropy = 0;
+
+	int tTextureSampler = RendererDX11::Get()->CreateSamplerState(&tSamplerConfig);
+	tNewMaterial->Parameters.SetSamplerParameter(L"TextureSampler", tTextureSampler);
+
+	BlendStateConfigDX11 blendConfig;
+	blendConfig.AlphaToCoverageEnable = false;
+	blendConfig.IndependentBlendEnable = false;
+	for (int i = 0; i < 8; ++i)
+	{
+		blendConfig.RenderTarget[i].BlendEnable = true;
+		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendConfig.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		blendConfig.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+		blendConfig.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+
+	tEffect->m_iBlendState = RendererDX11::Get()->CreateBlendState(&blendConfig);
 
 	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
 	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
@@ -595,3 +614,121 @@ MaterialPtr MaterialGenerator::createGSInstancingMultiTextureMaterial(RendererDX
 
 	return tNewMaterial;
 }
+//
+//MaterialPtr MaterialGenerator::createGSInstancing2(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, std::vector<StaticMeshInstance>& instances)
+//{
+//	StaticMeshInstance tInstances[32];
+//
+//	for (int i = 0; i < instances.size(); i++)
+//	{
+//		tInstances[i] = instances[i];
+//	}
+//
+//	MaterialPtr tNewMaterial = MaterialPtr(new MaterialDX11());
+//	RenderEffectDX11* tEffect = new RenderEffectDX11();
+//
+//	tEffect->SetVertexShader(renderer.LoadShader(ShaderType::VERTEX_SHADER,
+//		std::wstring(L"RTR_MultiTextureInstancing2.hlsl"),
+//		std::wstring(L"VSMain"),
+//		std::wstring(L"vs_4_0"),
+//		true));
+//
+//	tEffect->SetPixelShader(renderer.LoadShader(ShaderType::PIXEL_SHADER,
+//		std::wstring(L"RTR_MultiTextureInstancing2.hlsl"),
+//		std::wstring(L"PSMain"),
+//		std::wstring(L"ps_4_0"),
+//		true));
+//
+//	tEffect->SetGeometryShader(renderer.LoadShader(ShaderType::GEOMETRY_SHADER,
+//		std::wstring(L"RTR_MultiTextureInstancing2.hlsl"),
+//		std::wstring(L"GSMain"),
+//		std::wstring(L"gs_5_0")));
+//
+//	ResourcePtr tTexture1 = RendererDX11::Get()->LoadTexture(std::wstring(L"earth.tif"));
+//	ResourcePtr tTexture2 = RendererDX11::Get()->LoadTexture(std::wstring(L"mars.tif"));
+//	ResourcePtr tTexture3 = RendererDX11::Get()->LoadTexture(std::wstring(L"TerrainGrass.tif"));
+//	ResourcePtr tTexture4 = RendererDX11::Get()->LoadTexture(std::wstring(L"SnowScuffedGround.tif"));
+//
+//	tNewMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture1", tTexture1);
+//	tNewMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture2", tTexture2);
+//	tNewMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture3", tTexture3);
+//	tNewMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture4", tTexture4);
+//
+//	Vector4f tInstancePos1(30.0f, 30.0f, 30.0f, 1.0f);
+//	Vector4f tInstancePos2(30.0f, -30.0f, 30.0f, 1.0f);
+//	Vector4f tInstancePos3(30.0f, 30.0f, -30.0f, 1.0f);
+//	Vector4f tInstancePos4(30.0f, -30.0f, -30.0f, 1.0f);
+//
+//	tNewMaterial->Parameters.SetVectorParameter(L"instancePosition1", tInstancePos1);
+//	tNewMaterial->Parameters.SetVectorParameter(L"instancePosition2", tInstancePos2);
+//	tNewMaterial->Parameters.SetVectorParameter(L"instancePosition3", tInstancePos3);
+//	tNewMaterial->Parameters.SetVectorParameter(L"instancePosition4", tInstancePos4);
+//
+//
+//	//D3D11_SAMPLER_DESC tSamplerConfig;
+//	SamplerStateConfigDX11 tSamplerConfig;
+//	tSamplerConfig.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+//	tSamplerConfig.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+//	tSamplerConfig.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+//	tSamplerConfig.MaxAnisotropy = 0;
+//
+//	int tTextureSampler = RendererDX11::Get()->CreateSamplerState(&tSamplerConfig);
+//	tNewMaterial->Parameters.SetSamplerParameter(L"TextureSampler", tTextureSampler);
+//
+//	BlendStateConfigDX11 blendConfig;
+//	blendConfig.AlphaToCoverageEnable = false;
+//	blendConfig.IndependentBlendEnable = false;
+//	for (int i = 0; i < 8; ++i)
+//	{
+//		blendConfig.RenderTarget[i].BlendEnable = true;
+//		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+//		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+//		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+//		blendConfig.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+//		blendConfig.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
+//		blendConfig.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+//		blendConfig.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+//	}
+//
+//	tEffect->m_iBlendState = RendererDX11::Get()->CreateBlendState(&blendConfig);
+//
+//	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
+//	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
+//
+//
+//
+//
+//
+//	BufferConfigDX11 tBuffConfig;
+//	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
+//	tBuffConfig.SetByteWidth(sizeof(tInstances));
+//	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
+//	tBuffConfig.SetMiscFlags(0);
+//	tBuffConfig.SetStructureByteStride(0);
+//	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);// D3D11_USAGE_DEFAULT);
+//	tBuffConfig.SetCPUAccessFlags(D3D11_CPU_ACCESS_WRITE);
+//
+//	BufferData2 tData;
+//	//tData.Lights = tLights;
+//
+//	for (int i = 0; i < 32; i++)
+//	{
+//		tData.Instances[i] = tInstances[i];
+//	}
+//
+//	D3D11_SUBRESOURCE_DATA dataLights;
+//	dataLights.pSysMem = &tData;
+//	dataLights.SysMemPitch = 0;
+//	dataLights.SysMemSlicePitch = 0;
+//
+//	ResourcePtr res = renderer.CreateConstantBuffer(&tBuffConfig, &dataLights);
+//
+//	tNewMaterial->Parameters.SetConstantBufferParameter(L"cInstances", res);
+//
+//
+//
+//
+//
+//
+//	return tNewMaterial;
+//}

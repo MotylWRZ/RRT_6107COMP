@@ -23,6 +23,7 @@
 #include "Planet.h"
 
 class Light_Base;
+class InstancedStaticMesh;
 
 using namespace Glyph3;
 
@@ -89,6 +90,7 @@ namespace LJMUDX
 		Actor* m_LandscapeActor;
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
+		InstancedStaticMesh* m_pInstancedStaticMesh;
 
 		Planet* m_planet;
 		std::vector<Actor*> m_actors;

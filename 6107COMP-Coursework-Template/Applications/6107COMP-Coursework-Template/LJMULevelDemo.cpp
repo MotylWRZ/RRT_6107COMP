@@ -9,6 +9,7 @@
 #include "Light_Point.h"
 #include "Light_Spot.h"
 #include "MeshImporter.h"
+#include "InstancedStaticMesh.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -133,6 +134,13 @@ void LJMULevelDemo::setupGeometry()
 	this->m_planet->Initialize(tPlanetMaterial);
 	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_pScene->AddActor(this->m_planet);
+
+	this->m_pInstancedStaticMesh = new InstancedStaticMesh(*this->m_pRenderer11);
+	this->m_pInstancedStaticMesh->GetBody()->SetGeometry(tMesh2);
+	this->m_pInstancedStaticMesh->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+	this->m_pInstancedStaticMesh->initialise();
+
+	this->m_pScene->AddActor(this->m_pInstancedStaticMesh);
 }
 
 void LJMULevelDemo::animateGeometry(float DT)
@@ -321,6 +329,7 @@ void LJMULevelDemo::Update()
 
 	this->m_planet->Update(tDT);
 
+	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.1f, 0.1f, 0.1f);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());

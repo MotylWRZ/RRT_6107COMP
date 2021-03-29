@@ -1,6 +1,5 @@
 
 #pragma once
-
 #include "RendererDX11.h"
 #include "MaterialDX11.h"
 
@@ -31,6 +30,7 @@ public:
 	static MaterialPtr createBasicMaterial(RendererDX11& pRenderer);
 	static MaterialPtr createTextureMaterial(RendererDX11& pRenderer, std::wstring shaderFile, std::wstring textureFile);
 	static MaterialPtr createMultiTextureMaterial(RendererDX11& pRenderer, std::wstring shaderFile, std::wstring textureFile1, std::wstring textureFile2);
+	static MaterialPtr createMaterialWithGS(RendererDX11& pRenderer, std::wstring shaderFile);
 
 	// Concrete Materials
 	static MaterialPtr createTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile);
@@ -42,6 +42,7 @@ public:
 
 	static MaterialPtr createGSInstancingMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile);
 	static MaterialPtr createGSInstancingMultiTextureMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile);
+	//static MaterialPtr createGSInstancing2(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, std::vector<StaticMeshInstance>& instances);
 
 
 };
