@@ -27,7 +27,7 @@ namespace Glyph3
 
 		void SetRenderParameterRef( ConstantBufferParameterDX11* pParam );
 		void SetValue( ResourcePtr Value );
-		ResourcePtr GetValue() { return m_Value; };
+		const ResourcePtr GetValue() const { return m_Value; };
 
 		virtual void WriteParameter( IParameterManager* pParamMgr );
 		virtual void InitializeParameter( );
