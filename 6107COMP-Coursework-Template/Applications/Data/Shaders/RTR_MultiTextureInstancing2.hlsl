@@ -4,6 +4,8 @@ Texture2D		DiffuseTexture3 : register(t2);
 Texture2D		DiffuseTexture4 : register(t3);
 SamplerState    TextureSampler : register( s0 );
 
+#define INSTANCES_NUM_MAX 32
+
 cbuffer GSTransformMatrices
 {
 	matrix WorldMatrix;
@@ -17,12 +19,13 @@ struct StaticMeshInstanceInfo
 {
     float3 InstancePosition;
     int InstanceTexture;
+    int InstanceId;
+    float3 padding;
 };
 
 cbuffer cInstances
 {
-    //int instanceNum;
-    StaticMeshInstanceInfo instanceInfos[32];
+    StaticMeshInstanceInfo instanceInfos[INSTANCES_NUM_MAX];
 };
 
 struct VS_INPUT
@@ -57,7 +60,7 @@ float4x4 TransMatrix(float4 trans)
 
 
 // Geometry Shader
-[instance(32)]
+[instance(INSTANCES_NUM_MAX)]
 [maxvertexcount(3)]
 void GSMain(triangle GS_INPUTOUTPUT input[3],
 	inout TriangleStream<GS_INPUTOUTPUT> TriangleOutputStream,
@@ -65,11 +68,11 @@ void GSMain(triangle GS_INPUTOUTPUT input[3],
 {
 	GS_INPUTOUTPUT GSOutput;
 
-	//float4 instancePositions[4];
-	//instancePositions[0] = instancePosition1;
-	//instancePositions[1] = instancePosition2;
-	//instancePositions[2] = instancePosition3;
-	//instancePositions[3] = instancePosition4;
+    if(instanceInfos[InstanceID].InstanceId == -1)
+    {
+        return;
+    }
+
 
     float4 instancePosition;
 	instancePosition.x = instanceInfos[InstanceID].InstancePosition.x;

@@ -21,7 +21,9 @@ using namespace Glyph3;
 struct StaticMeshInstance
 {
 	Vector3f InstancePosition;
-	int InstanceTexture;
+	int InstanceTexture = -1;
+	int InstanceId = -1;
+	Vector3f padding;
 };
 
 struct InstancedMeshMatCBuffData

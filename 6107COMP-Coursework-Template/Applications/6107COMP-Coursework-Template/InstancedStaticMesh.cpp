@@ -30,6 +30,7 @@ void InstancedStaticMesh::addInstance(Vector3f instancePosition, EInstanceTextur
 	StaticMeshInstance tNewInstance;
 	tNewInstance.InstancePosition = instancePosition;
 	tNewInstance.InstanceTexture = static_cast<float>(instanceTexture);
+	tNewInstance.InstanceId = this->m_instances.size();
 
 	this->m_instances.push_back(tNewInstance);
 

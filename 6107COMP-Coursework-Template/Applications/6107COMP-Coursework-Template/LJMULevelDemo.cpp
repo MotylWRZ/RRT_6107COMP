@@ -346,8 +346,8 @@ void LJMULevelDemo::Update()
 
 	if (tMat && tPlanetMat)
 	{
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);
+		/*MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);*/
 	}
 
 	this->m_planet->Update(tDT);

@@ -5,7 +5,7 @@
 
 class Light_Base;
 
-static constexpr int LIGHTS_NUM_MAX = 100;
+static constexpr int LIGHTS_NUM_MAX = 20;
 
 using namespace Glyph3;
 
@@ -25,25 +25,28 @@ class MaterialGenerator
 public:
 	MaterialGenerator();
 	~MaterialGenerator();
+	/*
+	* Abstract Materials (allows for specifying the shader file)
+	* These materials might require a post initialisation setup (loading shader resources etc.)
+	*/
+	static MaterialPtr createBasicMaterial(RendererDX11& renderer);
 
-	// Abstract Materials (allows for specifying the shader file)
-	static MaterialPtr createBasicMaterial(RendererDX11& pRenderer);
-	static MaterialPtr createTextureMaterial(RendererDX11& pRenderer, std::wstring shaderFile, std::wstring textureFile);
-	static MaterialPtr createMultiTextureMaterial(RendererDX11& pRenderer, std::wstring shaderFile, std::wstring textureFile1, std::wstring textureFile2);
-	static MaterialPtr createMaterialWithGS(RendererDX11& pRenderer, std::wstring shaderFile);
+	//// Create basic material with Vertex Shader and Pixel Shader with specified HLSL file (it has to contain both shaders)
+	static MaterialPtr createBasicMaterial(RendererDX11& renderer, std::wstring shaderFile);
 
-	// Concrete Materials
+	// Create material with Vertex, Pixel and Geometry Shader with specified HLSL file (all three shaders should be inlcuded in the HLSL file)
+	static MaterialPtr createMaterialWithGS(RendererDX11& renderer, std::wstring shaderFile);	static MaterialPtr createTextureMaterial(RendererDX11& renderer, std::wstring shaderFile, std::wstring textureFile);
+
+
+	/*
+	* Concrete Materials
+	* These materials will be setup and any resources will be loaded upon initialisation
+	*/
+	static MaterialPtr createMultiTextureMaterial(RendererDX11& renderer, std::wstring shaderFile, std::wstring textureFile1, std::wstring textureFile2);
 	static MaterialPtr createTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile);
-
 	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 
-	static void setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
-	static void updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
-
-	static MaterialPtr createGSInstancingMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile);
-	static MaterialPtr createGSInstancingMultiTextureMaterial(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile);
-	//static MaterialPtr createGSInstancing2(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, std::vector<StaticMeshInstance>& instances);
-
-
+	static void setLightToMaterial(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	static void updateMaterialLight(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 };
 
