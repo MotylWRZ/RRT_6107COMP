@@ -1,11 +1,12 @@
 #include "InstancedStaticMesh.h"
 
+#include "ConstantBufferDX11.h"
+
 #include "MaterialGenerator.h"
 
 InstancedStaticMesh::InstancedStaticMesh(RendererDX11& renderer)
 	:m_pRenderer(&renderer)
 {
-	//MaterialGenerator::createGSInstancingMultiTextureMaterial(renderer)
 }
 
 InstancedStaticMesh::~InstancedStaticMesh()
@@ -14,36 +15,25 @@ InstancedStaticMesh::~InstancedStaticMesh()
 
 void InstancedStaticMesh::initialise()
 {
-	Vector4f tInstancePos1(30.0f, 30.0f, 30.0f, 1.0f);
-	Vector4f tInstancePos2(30.0f, -30.0f, 30.0f, 1.0f);
-	Vector4f tInstancePos3(30.0f, 30.0f, -30.0f, 1.0f);
-	Vector4f tInstancePos4(30.0f, -30.0f, -30.0f, 1.0f);
-
-	StaticMeshInstance i1;
-	StaticMeshInstance i2;
-	StaticMeshInstance i3;
-	StaticMeshInstance i4;
-
-	i1.InstancePosition = Vector3f(30.0f, 30.0f, 30.0f);
-	i2.InstancePosition = Vector3f(30.0f, -30.0f, 30.0f);
-	i3.InstancePosition = Vector3f(30.0f, 30.0f, -30.0f);
-	i4.InstancePosition = Vector3f(30.0f, -30.0f, -30.0f);
-
-	this->m_instances.push_back(i1);
-	this->m_instances.push_back(i2);
-	this->m_instances.push_back(i3);
-	this->m_instances.push_back(i4);
 	this->setupMaterial();
 	this->GetBody()->SetMaterial(this->m_Material);
 }
 
-void InstancedStaticMesh::addInstance(Vector3f instancePosition)
+void InstancedStaticMesh::addInstance(Vector3f instancePosition, EInstanceTexture instanceTexture)
 {
+	// Do not add another instance if the limit of instances has been reached
+	if (this->m_instances.size() + 1 > INSTANCE_NUM_MAX)
+	{
+		return;
+	}
+
 	StaticMeshInstance tNewInstance;
 	tNewInstance.InstancePosition = instancePosition;
-	//tNewInstance.InstanceId = static_cast<int>(this->m_instances.size());
+	tNewInstance.InstanceTexture = static_cast<float>(instanceTexture);
 
 	this->m_instances.push_back(tNewInstance);
+
+	this->updateMaterial();
 }
 
 const StaticMeshInstance& InstancedStaticMesh::getInstance(int instanceId) const
@@ -55,20 +45,39 @@ void InstancedStaticMesh::updateInstance(int instanceId, Vector3f newInstancePos
 {
 }
 
+void InstancedStaticMesh::loadTextures(std::wstring texture1, std::wstring texture2, std::wstring texture3, std::wstring texture4)
+{
+	ResourcePtr tTexture1 = RendererDX11::Get()->LoadTexture(texture1);
+	ResourcePtr tTexture2 = RendererDX11::Get()->LoadTexture(texture2);
+	ResourcePtr tTexture3 = RendererDX11::Get()->LoadTexture(texture3);
+	ResourcePtr tTexture4 = RendererDX11::Get()->LoadTexture(texture4);
+
+	this->m_textures.emplace(EInstanceTexture::TEXTURE1, tTexture1);
+	this->m_textures.emplace(EInstanceTexture::TEXTURE2, tTexture2);
+	this->m_textures.emplace(EInstanceTexture::TEXTURE3, tTexture3);
+	this->m_textures.emplace(EInstanceTexture::TEXTURE4, tTexture4);
+
+	if (this->m_Material)
+	{
+		this->m_Material->Parameters.SetShaderResourceParameter(L"DiffuseTexture1", this->m_textures.at(EInstanceTexture::TEXTURE1));
+		this->m_Material->Parameters.SetShaderResourceParameter(L"DiffuseTexture2", this->m_textures.at(EInstanceTexture::TEXTURE2));
+		this->m_Material->Parameters.SetShaderResourceParameter(L"DiffuseTexture3", this->m_textures.at(EInstanceTexture::TEXTURE3));
+		this->m_Material->Parameters.SetShaderResourceParameter(L"DiffuseTexture4", this->m_textures.at(EInstanceTexture::TEXTURE4));
+	}
+
+}
+
 void InstancedStaticMesh::setupMaterial()
 {
 	MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTR_MultiTextureInstancing2.hlsl");
 
-	ResourcePtr tTexture1 = RendererDX11::Get()->LoadTexture(std::wstring(L"earth.tif"));
-	ResourcePtr tTexture2 = RendererDX11::Get()->LoadTexture(std::wstring(L"mars.tif"));
-	ResourcePtr tTexture3 = RendererDX11::Get()->LoadTexture(std::wstring(L"TerrainGrass.tif"));
-	ResourcePtr tTexture4 = RendererDX11::Get()->LoadTexture(std::wstring(L"SnowScuffedGround.tif"));
-
-	tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture1", tTexture1);
-	tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture2", tTexture2);
-	tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture3", tTexture3);
-	tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture4", tTexture4);
-
+	if (this->m_textures.size() > 0)
+	{
+		tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture1", this->m_textures.at(EInstanceTexture::TEXTURE1));
+		tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture2", this->m_textures.at(EInstanceTexture::TEXTURE2));
+		tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture3", this->m_textures.at(EInstanceTexture::TEXTURE3));
+		tMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture4", this->m_textures.at(EInstanceTexture::TEXTURE4));
+	}
 
 	InstancedMeshMatCBuffData tData;
 
@@ -79,15 +88,12 @@ void InstancedStaticMesh::setupMaterial()
 
 
 	BufferConfigDX11 tBuffConfig;
-	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
 	tBuffConfig.SetByteWidth(sizeof(tData.Instances));
 	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
 	tBuffConfig.SetMiscFlags(0);
 	tBuffConfig.SetStructureByteStride(0);
-	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);// D3D11_USAGE_DEFAULT);
+	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);
 	tBuffConfig.SetCPUAccessFlags(D3D11_CPU_ACCESS_WRITE);
-
-
 
 	D3D11_SUBRESOURCE_DATA dataLights;
 	dataLights.pSysMem = &tData;
@@ -99,4 +105,51 @@ void InstancedStaticMesh::setupMaterial()
 	tMaterial->Parameters.SetConstantBufferParameter(L"cInstances", res);
 
 	this->m_Material = tMaterial;
+}
+
+void InstancedStaticMesh::updateMaterial()
+{
+	if (!this->m_Material)
+	{
+		return;
+	}
+
+	// Get CBuffer Paramameter Writer from the material
+	ConstantBufferParameterWriterDX11* tWriter = this->m_Material->Parameters.GetConstantBufferParameterWriter(L"cInstances");
+
+	if (!tWriter)
+	{
+		return;
+	}
+
+	// Get actual constant buffer from the renderer
+	ConstantBufferDX11* tBuffer = this->m_pRenderer->GetConstantBufferByIndex(tWriter->GetValue()->m_iResource);
+
+	// Create a pointer to the DeviceContext
+	ID3D11DeviceContext* tContext;
+	this->m_pRenderer->GetDevice()->GetImmediateContext(&tContext);
+
+	// Create a pointer to the source resource
+	ID3D11Resource* srcResource;
+	srcResource = tBuffer->GetResource();
+
+	// Create a pointer to the source constant buffer
+	ID3D11Buffer* srcBuffer;
+	srcResource->QueryInterface(IID_ID3D11Buffer, (void**)&srcBuffer);
+
+	// Download the data from the source buffer and save it in MappedResource
+	D3D11_MAPPED_SUBRESOURCE MappedResource = { 0 };
+	tContext->Map(srcBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+
+	// Create a pointer to the BufferData from the source buffer
+	InstancedMeshMatCBuffData* b = &((InstancedMeshMatCBuffData*)(MappedResource.pData))[0];
+
+	// Modify the data from the source buffer by changing the values in the mapped resource
+	for (int i = 0; i < this->m_instances.size(); i++)
+	{
+		b->Instances[i] = this->m_instances[i];
+	}
+
+	// Finish operation by unmapping the buffer
+	tContext->Unmap(srcBuffer, 0);
 }

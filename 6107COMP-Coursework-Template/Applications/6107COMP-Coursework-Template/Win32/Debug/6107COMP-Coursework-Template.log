@@ -1,6 +1,5 @@
-﻿  LJMULevelDemo.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(460,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(460,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(498,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(498,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
+﻿  InstancedStaticMesh.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(32,52): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(84,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(148,20): warning C4018: '<': signed/unsigned mismatch
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

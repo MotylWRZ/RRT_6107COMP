@@ -16,20 +16,13 @@ cbuffer GSTransformMatrices
 struct StaticMeshInstanceInfo
 {
     float3 InstancePosition;
-    float padding;
+    int InstanceTexture;
 };
 
 cbuffer cInstances
 {
     //int instanceNum;
     StaticMeshInstanceInfo instanceInfos[32];
-};
-cbuffer instance
-{
-	float4 instancePosition1;
-	float4 instancePosition2;
-	float4 instancePosition3;
-	float4 instancePosition4;
 };
 
 struct VS_INPUT
@@ -64,7 +57,7 @@ float4x4 TransMatrix(float4 trans)
 
 
 // Geometry Shader
-[instance(3)]
+[instance(32)]
 [maxvertexcount(3)]
 void GSMain(triangle GS_INPUTOUTPUT input[3],
 	inout TriangleStream<GS_INPUTOUTPUT> TriangleOutputStream,
@@ -84,24 +77,22 @@ void GSMain(triangle GS_INPUTOUTPUT input[3],
     instancePosition.z = instanceInfos[InstanceID].InstancePosition.z;
     instancePosition.w = 1.0f;
 
-	//float4x4 transMatrix = TransMatrix(instancePositions[InstanceID]);
-    float4x4 transMatrix = TransMatrix(instancePosition); //TransMatrix(instanceInfos[InstanceID].InstancePosition);
+    float4x4 transMatrix = TransMatrix(instancePosition);
 
 
-	for (int i = 0; i < 3; i++)
-	{
-		float4 position = input[i].position;
-			//position = mul(position, WorldViewProjMatrix);
-		position = mul(position, WorldMatrix);
-		position = mul(position, transMatrix);
-		position = mul(position, ViewMatrix);
-		GSOutput.position = mul(position, ProjMatrix );
-		GSOutput.tex = input[i].tex;
-		GSOutput.texType.x = InstanceID;
-		GSOutput.texType.y = 0;
+    for (int i = 0; i < 3; i++)
+    {
+        float4 position = input[i].position;
+        position = mul(position, WorldMatrix);
+        position = mul(position, transMatrix);
+        position = mul(position, ViewMatrix);
+        GSOutput.position = mul(position, ProjMatrix);
+        GSOutput.tex = input[i].tex;
+        GSOutput.texType.x = instanceInfos[InstanceID].InstanceTexture;
+        GSOutput.texType.y = 0;
 
-		TriangleOutputStream.Append(GSOutput);
-	}
+        TriangleOutputStream.Append(GSOutput);
+    }
 
 
 
@@ -141,7 +132,6 @@ float4 PSMain(in GS_INPUTOUTPUT input) : SV_Target
 	{
 		pixelcolour = DiffuseTexture4.Sample(TextureSampler, input.tex);
 	}
-	//float4 pixelcolour = DiffuseTexture1.Sample(TextureSampler, input.tex);
 
 	return pixelcolour;;
 }

@@ -138,7 +138,31 @@ void LJMULevelDemo::setupGeometry()
 	this->m_pInstancedStaticMesh = new InstancedStaticMesh(*this->m_pRenderer11);
 	this->m_pInstancedStaticMesh->GetBody()->SetGeometry(tMesh2);
 	this->m_pInstancedStaticMesh->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+
+	Vector3f tInstancePos1(30.0f, 30.0f, 30.0f);
+	Vector3f tInstancePos2(30.0f, -30.0f, 30.0f);
+	Vector3f tInstancePos3(30.0f, 30.0f, -30.0f);
+	Vector3f tInstancePos4(30.0f, -30.0f, -30.0f);
+	Vector3f tInstancePos5(130.0f, 130.0f, 130.0f);
+	Vector3f tInstancePos6(130.0f, -130.0f, 130.0f);
+	Vector3f tInstancePos7(130.0f, 130.0f, -130.0f);
+	Vector3f tInstancePos8(130.0f, -130.0f, -130.0f);
+
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos1);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos2);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos3);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos4, EInstanceTexture::TEXTURE2);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos5, EInstanceTexture::TEXTURE2);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos6, EInstanceTexture::TEXTURE2);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos7, EInstanceTexture::TEXTURE3);
+	this->m_pInstancedStaticMesh->addInstance(tInstancePos8, EInstanceTexture::TEXTURE3);
+
+	this->m_pInstancedStaticMesh->loadTextures(L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+
+
 	this->m_pInstancedStaticMesh->initialise();
+
+
 
 	this->m_pScene->AddActor(this->m_pInstancedStaticMesh);
 }
@@ -151,7 +175,6 @@ void LJMULevelDemo::setupCamera()
 {
 	this->m_pCamera = new FirstPersonCamera();
 	this->m_pCamera->SetEventManager(&this->EvtManager);
-
 	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
 	this->m_pCamera->Spatial().SetTranslation(tCameraPos);
 	this->m_pCamera->Spatial().RotateXBy(20 * DEG_TO_RAD);
@@ -329,121 +352,13 @@ void LJMULevelDemo::Update()
 
 	this->m_planet->Update(tDT);
 
-	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.1f, 0.1f, 0.1f);
+	this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());
 		this->m_pScene->Render(this->m_pRenderer11);
 	//--------END RENDERING-------------------------------------------------------------
 	this->m_pRenderer11->Present(this->m_pWindow->GetHandle(), this->m_pWindow->GetSwapChain());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//	// VECTOR PARAM
-	//
-	//	VectorParameterDX11* vecTest;
-	//	Vec = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceConstants");
-	//
-	//	Vector4f a(2.0f, 1.0f, 1.0f, 1.0f);
-	//	Vector4f b(0.0f, 1.0f, 1.0f, 20.0f);
-	//	Vec->InitializeParameterData(&b);
-	//
-	//	Vector4f em(0.0f, 0.0f, 0.0f, 1.0f);
-	//	this->EmissiveCol = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceEmissiveColour");
-	//	this->EmissiveCol->InitializeParameterData(&em);
-	//
-	//
-	//
-	//	// CONST BUFFER PARAM
-	//
-	//	LightInfo tLights[10];
-	//	//LightInfo tLights2[30];
-	//
-	//	// Check if the maximum number of lights is not exceeded
-	//	if (this->m_lights.size() > LIGHTS_NUM_MAX)
-	//	{
-	//		assert(!"MaterialGenerator:Number of lights exeeds the maximum number of lights");
-	//	}
-	//
-	//	// Load Lights info structs
-	//	for (int i = 0; i < m_lights.size(); i++)
-	//	{
-	//		tLights[i] = m_lights[i]->getLightInfo();// tVecLights[i]->getLightInfo();
-	//	}
-	//
-	//
-	////
-
-	//	BufferConfigDX11 tBuffConfig;
-	//	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), true);
-	//	tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
-	//	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
-	//	tBuffConfig.SetMiscFlags(0);
-	//	tBuffConfig.SetStructureByteStride(0);
-	//	tBuffConfig.SetUsage(D3D11_USAGE_DEFAULT);
-	//	tBuffConfig.SetCPUAccessFlags(0);
-	//
-	//	D3D11_SUBRESOURCE_DATA dataLights;
-	//	dataLights.pSysMem = tLights;
-	//	dataLights.SysMemPitch = 0;
-	//	dataLights.SysMemSlicePitch = 0;
-	//
-	//	D3D11_MAPPED_SUBRESOURCE mapped;
-	//	unsigned int* pCount = 0;
-	//	mapped.pData = &tLight;
-	//
-	//	ResourcePtr stagingbuffer = this->m_Buf2;
-	//	mapped = RendererDX11::Get()->pImmPipeline->MapResource(this->m_Buf2->m_iResource, 0, D3D11_MAP_READ, 0);
-	//	mapped = RendererDX11::Get()->pImmPipeline->MapResource(this->m_Buf2->m_iResource, 0, D3D11_MAP_WRITE, 0);
-	//
-	//	/*RendererDX11::Get()->pImmPipeline->BindConstantBufferParameter()
-	//	RendererDX11::Get()->pImmPipeline->UpdateSubresource();*/
-	//
-	//	pCount = (unsigned int*)(mapped.pData);
-	//
-	//	this->m_Buf2 = this->m_pRenderer11->CreateConstantBuffer(&tBuffConfig, &dataLights);
-	//
-	////	this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights")->SetParameterData(&dataLights);
-	//	//RendererDX11::Get()->pImmPipeline->UpdateSubresource(this->m_Buf2->m_iResource, 0, 0, &dataLights, 0, 0);
-	//	this->m_pRenderer11->m_pParamMgr->SetConstantBufferParameter(L"cLights", this->m_Buf2);
-	//
-	//
-	//	//RendererDX11::Get()->pImmPipeline->UnMapResource(stagingbuffer->m_iResource, 0);
-	//	//this->m_Buf = this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights");
-	//	//this->m_Buf->InitializeParameterData(&dataLights);
-	//
-	//	//tMat->Parameters.SetVectorParameter(L"SurfaceConstants", Vec->GetVector());
-	//	//VectorParameterDX11* vecTest2;
-	//	//vecTest2 = (VectorParameterDX11*)tMat->Parameters.GetVectorParameterWriter(L"SurfaceConstants")->GetRenderParameterRef();
-	//	//a = vecTest2->GetVector();
-	//
-	//	//vecTest2->InitializeParameterData(this->Vec);
-	//
-	//
-	//	//material->Parameters.GetVectorParameterWriter(L"SurfaceConstants")->GetRenderParameterRef();
-	//	//vecTest->InitializeParameterData(&vecNewTest);
-
-
-
-
-
-
-
 }
 
 ///////////////////////////////////

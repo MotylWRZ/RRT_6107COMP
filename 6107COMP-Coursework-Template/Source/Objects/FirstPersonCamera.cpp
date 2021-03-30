@@ -1,11 +1,11 @@
 //--------------------------------------------------------------------------------
 // This file is a portion of the Hieroglyph 3 Rendering Engine.  It is distributed
-// under the MIT License, available in the root of this distribution and 
+// under the MIT License, available in the root of this distribution and
 // at the following URL:
 //
 // http://www.opensource.org/licenses/mit-license.php
 //
-// Copyright (c) Jason Zink 
+// Copyright (c) Jason Zink
 //--------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
@@ -22,7 +22,7 @@
 //--------------------------------------------------------------------------------
 using namespace Glyph3;
 //--------------------------------------------------------------------------------
-const UINT FirstPersonCamera::KeyBindings[NumControlKeys] = 
+const UINT FirstPersonCamera::KeyBindings[NumControlKeys] =
 {
     'W', 'S', 'A', 'D', 'Q', 'E', VK_SPACE
 };
@@ -53,7 +53,7 @@ float WrapAngle( float Angle )
     // If the modulo'd value was negative, restore negation
     if ( Angle < 0.0f )
         fTemp = -fTemp;
-    
+
     return fTemp;
 }
 //--------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ bool FirstPersonCamera::HandleEvent( EventPtr pEvent )
     else if ( e == SYSTEM_MOUSE_MOVE )
     {
         EvtMouseMovePtr pMouseMove = std::static_pointer_cast<EvtMouseMove>(pEvent);
-        
+
         m_iMouseDeltaX = 0;
         m_iMouseDeltaY = 0;
 
@@ -141,7 +141,7 @@ bool FirstPersonCamera::HandleEvent( EventPtr pEvent )
         m_iLastMouseY = InvalidMousePos;
     }
     else if ( e == SYSTEM_RBUTTON_DOWN )
-    {        
+    {
         m_iLastMouseX = InvalidMousePos;
         m_iLastMouseY = InvalidMousePos;
 
@@ -150,7 +150,7 @@ bool FirstPersonCamera::HandleEvent( EventPtr pEvent )
     else if ( e == SYSTEM_RBUTTON_UP )
     {
         m_iLastMouseX = InvalidMousePos;
-        m_iLastMouseY = InvalidMousePos; 
+        m_iLastMouseY = InvalidMousePos;
 
 		return true;
     }
@@ -170,10 +170,10 @@ std::wstring Glyph3::FirstPersonCamera::GetName()
 void FirstPersonCamera::Update()
 {
     timer.Update();
-    float timeDelta = timer.Elapsed();    
+    float timeDelta = timer.Elapsed();
 
     float CamMoveSpeed = 10.0f * timeDelta;
-    const float CamRotSpeed = 0.24f * timeDelta;    
+    const float CamRotSpeed = 0.24f * timeDelta;
 
     // Move the camera with keyboard input
     if ( m_bPressedKeys[SpeedUpKey] )
@@ -206,7 +206,7 @@ void FirstPersonCamera::Update()
         m_fRotationX = -PiOver2;
     else if ( m_fRotationX > PiOver2 )
         m_fRotationX = PiOver2;
-    
+
     m_fRotationY = WrapAngle( m_fRotationY );
 
     // Make a rotation matrix from the X/Y rotation
