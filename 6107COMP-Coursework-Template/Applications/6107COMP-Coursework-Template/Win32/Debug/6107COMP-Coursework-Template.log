@@ -1,14 +1,11 @@
 ﻿  InstancedStaticMesh.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(32,52): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(85,20): warning C4018: '<': signed/unsigned mismatch
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(149,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(38,52): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(92,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(156,20): warning C4018: '<': signed/unsigned mismatch
   LJMULevelDemo.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(375,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(375,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(413,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(413,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-  MaterialGenerator.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\MaterialGenerator.cpp(430,20): warning C4018: '<': signed/unsigned mismatch
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\MaterialGenerator.cpp(482,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(379,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(379,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(417,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(417,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
   Generating Code...
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

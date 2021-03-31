@@ -13,22 +13,26 @@
 #include <vector>
 
 static constexpr int INSTANCE_NUM_MAX = 32;
-
-
 using namespace Glyph3;
 
 
-struct StaticMeshInstance
+
+struct ISMInstanceInfo
 {
+	ISMInstanceInfo() {};
+	ISMInstanceInfo(int NewInstanceId) { InstanceId = NewInstanceId; }
+
 	Vector3f InstancePosition;
 	int InstanceTexture = -1;
+
+private:
 	int InstanceId = -1;
 	Vector3f padding;
 };
 
 struct InstancedMeshMatCBuffData
 {
-	StaticMeshInstance Instances[INSTANCE_NUM_MAX];
+	ISMInstanceInfo ISMInstances[INSTANCE_NUM_MAX];
 };
 
 // Mesh Instances can use one from the 4 supported textures (texture have to be loaded first into the ISM)
@@ -54,15 +58,15 @@ public:
 	// Load all textures
 	void loadTextures(std::wstring texture1, std::wstring texture2 = L"none", std::wstring texture3 = L"none", std::wstring texture4 = L"none");
 
-	const std::vector<StaticMeshInstance>& getInstances() const { return m_instances; }
-	const StaticMeshInstance& getInstance(int instanceId) const;
+	const std::vector<ISMInstanceInfo>& getInstances() const { return m_instances; }
+	const ISMInstanceInfo& getInstance(int instanceId) const;
 
 private:
 	 void setupMaterial();
 	 void updateMaterial();
 
 private:
-	std::vector<StaticMeshInstance> m_instances;
+	std::vector<ISMInstanceInfo> m_instances;
 	std::map<EInstanceTexture, ResourcePtr> m_textures;
 	RendererDX11* m_pRenderer;
 	MaterialPtr m_Material;

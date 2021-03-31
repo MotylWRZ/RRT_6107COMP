@@ -66,6 +66,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shaders", "Shaders", "{587F
 		Applications\Data\Shaders\PhongShading.hlsl = Applications\Data\Shaders\PhongShading.hlsl
 		Applications\Data\Shaders\PhongShadingPlanarRefl.hlsl = Applications\Data\Shaders\PhongShadingPlanarRefl.hlsl
 		Applications\Data\Shaders\RotatingCube.hlsl = Applications\Data\Shaders\RotatingCube.hlsl
+		Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl = Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl
 		Applications\Data\Shaders\SeparableBilateralCS.hlsl = Applications\Data\Shaders\SeparableBilateralCS.hlsl
 		Applications\Data\Shaders\Skybox.hlsl = Applications\Data\Shaders\Skybox.hlsl
 		Applications\Data\Shaders\SolidSkinnedShading.hlsl = Applications\Data\Shaders\SolidSkinnedShading.hlsl

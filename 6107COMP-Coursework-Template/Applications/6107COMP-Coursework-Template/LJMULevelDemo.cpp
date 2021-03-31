@@ -159,6 +159,10 @@ void LJMULevelDemo::setupGeometry()
 
 	this->m_pInstancedStaticMesh->loadTextures(L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
 
+	/*MaterialPtr tMatt = this->m_pInstancedStaticMesh->GetBody()->GetMaterial();
+
+	MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tMatt, this->m_lights, tMatInfo);*/
+
 
 	this->m_pInstancedStaticMesh->initialise();
 
@@ -227,7 +231,7 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	Vector4f SpotLightColour(0.0f, 1.0f, 0.0f, 1.0f);
 	Vector3f SpotLightDirection(0.0f, -1.0f, 0.0f);
-	Vector3f SpotLightPosition(400.0f, 50.0f, 100.0f);
+	Vector3f SpotLightPosition(400.0f, 100.0f, 100.0f);
 	Vector2f SpotLightRange(100.0f, 0.0f);
 	Vector2f SpotLightFocus(1.0f, 0.0f);
 	//SpotLightDirection.Normalize();

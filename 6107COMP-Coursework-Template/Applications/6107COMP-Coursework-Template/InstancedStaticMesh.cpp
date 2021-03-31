@@ -1,11 +1,14 @@
 #include "InstancedStaticMesh.h"
+#include "LJMULevelDemo.h"
 
 #include "ConstantBufferDX11.h"
 
 #include "MaterialGenerator.h"
+#include "MeshImporter.h"
 
-InstancedStaticMesh::InstancedStaticMesh(RendererDX11& renderer)
+InstancedStaticMesh::InstancedStaticMesh(RendererDX11& renderer)// , LJMULevelDemo& Level)
 	:m_pRenderer(&renderer)
+	//, m_Level(&Level)
 {
 }
 
@@ -16,7 +19,10 @@ InstancedStaticMesh::~InstancedStaticMesh()
 void InstancedStaticMesh::initialise()
 {
 	this->setupMaterial();
+	//this->GetBody()->SetGeometry(MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1.0f, 1.0f, 1.0f, 1.0f)));
 	this->GetBody()->SetMaterial(this->m_Material);
+
+
 }
 
 void InstancedStaticMesh::addInstance(Vector3f instancePosition, EInstanceTexture instanceTexture)
@@ -27,17 +33,16 @@ void InstancedStaticMesh::addInstance(Vector3f instancePosition, EInstanceTextur
 		return;
 	}
 
-	StaticMeshInstance tNewInstance;
+	ISMInstanceInfo tNewInstance(this->m_instances.size());
 	tNewInstance.InstancePosition = instancePosition;
 	tNewInstance.InstanceTexture = static_cast<float>(instanceTexture);
-	tNewInstance.InstanceId = this->m_instances.size();
 
 	this->m_instances.push_back(tNewInstance);
 
 	this->updateMaterial();
 }
 
-const StaticMeshInstance& InstancedStaticMesh::getInstance(int instanceId) const
+const ISMInstanceInfo& InstancedStaticMesh::getInstance(int instanceId) const
 {
 	return this->m_instances[instanceId];
 }
@@ -71,6 +76,8 @@ void InstancedStaticMesh::loadTextures(std::wstring texture1, std::wstring textu
 void InstancedStaticMesh::setupMaterial()
 {
 	MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTR_MultiTextureInstancing2.hlsl");
+	//MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTR_MultiLitTextureInstancing.hlsl");
+
 
 	if (this->m_textures.size() > 0)
 	{
@@ -84,12 +91,12 @@ void InstancedStaticMesh::setupMaterial()
 
 	for (int i = 0; i < this->m_instances.size(); i++)
 	{
-		tData.Instances[i] = this->m_instances[i];
+		tData.ISMInstances[i] = this->m_instances[i];
 	}
 
 
 	BufferConfigDX11 tBuffConfig;
-	tBuffConfig.SetByteWidth(sizeof(tData.Instances));
+	tBuffConfig.SetByteWidth(sizeof(tData.ISMInstances));
 	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
 	tBuffConfig.SetMiscFlags(0);
 	tBuffConfig.SetStructureByteStride(0);
@@ -148,7 +155,7 @@ void InstancedStaticMesh::updateMaterial()
 	// Modify the data from the source buffer by changing the values in the mapped resource
 	for (int i = 0; i < this->m_instances.size(); i++)
 	{
-		b->Instances[i] = this->m_instances[i];
+		b->ISMInstances[i] = this->m_instances[i];
 	}
 
 	// Finish operation by unmapping the buffer

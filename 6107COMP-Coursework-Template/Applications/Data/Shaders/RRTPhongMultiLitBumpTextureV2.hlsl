@@ -8,7 +8,6 @@ SamplerState    TextureSampler : register(s0);
 
 Texture2D       DiffuseTexture : register(t0);
 Texture2D       BumpTexture : register(t1);
-Texture2D       LightTexture : register(t2);
 
 cbuffer WorldTransforms
 {
@@ -24,14 +23,14 @@ cbuffer SurfaceReflectanceInfo
 
 struct Light
 {
-	float	iLightType;
+    float iLightType;
 	float3 Padding;
-	float4 LightColour;
-	float3 LightPosition;
-	float3 LightDirection;
-	float2 LightRange;
-	float2 LightFocus;
-	float2 Padding2;
+    float4 LightColour;
+    float3 LightPosition;
+    float3 LightDirection;
+    float2 LightRange;
+    float2 LightFocus;
+    float2 Padding2;
 };
 
 cbuffer cLights
@@ -145,12 +144,12 @@ VS_OUTPUT VSMain(in VS_INPUT input)
 
 float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
-
-	float3 bump = 4 * (BumpTexture.Sample(TextureSampler, input.tex) - 0.5f);
-	float3 normalVector = input.normal + bump.x * input.tangent + bump.y * input.binormal;
-	normalVector = normalize(normalVector);
+    float3 bump = 4 * (BumpTexture.Sample(TextureSampler, input.tex) - 0.5f);
+    float3 normalVector = input.normal + bump.x * input.tangent + bump.y * input.binormal;
+    normalVector = normalize(normalVector);
 
 	float3 worldPosition = input.worldPos.xyz;
+
 
 	float3 pointlightIntensity = float3(0.0f, 0.0f, 0.0f);
 	float3 directionallightIntensity = float3(0.0f, 0.0f, 0.0f);
@@ -173,6 +172,7 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
         if (Lights[i].iLightType == LIGHT_TYPE_SPOT)
         {
             spotlightIntensity += calculateSpotLight(Lights[i], normalVector, worldPosition);
+
             continue;
         }
         if (Lights[i].iLightType == LIGHT_TYPE_DIRECTIONAL)
