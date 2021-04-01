@@ -94,13 +94,10 @@ MaterialPtr MaterialGenerator::createBasicMaterial(RendererDX11& pRenderer)
 		Log::Get().Write(L"Failed to create light ratserizer state");
 		assert(false);
 	}
-
 	tEffect->m_iRasterizerState = iRasterizerState;
 
 	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
 	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
-
-
 
 	return tNewMaterial;
 }

@@ -41,6 +41,34 @@
     <ClInclude Include="Light_Spot.h" />
     <ClInclude Include="TerrainGenerator.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Data\Shaders\RRTLightsInclude.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VSMain2</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain2</EntryPointName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LightsInclude</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">inc/LightsInclude.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LightsInclude</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">inc/LightsInclude.h</HeaderFileOutput>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">IncludeTest</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">inc/IncludeTest</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IncludeTest</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">inc/IncludeTest</HeaderFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{78E22633-FE9D-428D-80AD-7DEAA7B59E22}</ProjectGuid>
     <RootNamespace>6107COMPCourseworkTemplate</RootNamespace>

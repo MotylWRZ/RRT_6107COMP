@@ -107,4 +107,12 @@
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Data\Shaders\RRTLightsInclude.hlsl">
+      <Filter>Header Files</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>
