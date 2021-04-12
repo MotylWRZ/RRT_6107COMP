@@ -236,6 +236,7 @@ MaterialPtr MaterialGenerator::createTextureMaterial(RendererDX11& pRenderer, st
 
 	RasterizerStateConfigDX11 rsConfig;
 	rsConfig.CullMode = D3D11_CULL_BACK;
+
 	int iRasterizerState = pRenderer.CreateRasterizerState(&rsConfig);
 
 	if (iRasterizerState == -1)
@@ -526,7 +527,7 @@ void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr
 	BufferData* b = &((BufferData*)(MappedResource.pData))[0];
 
 	// Modify the data from the source buffer by changing the values in the mapped resource
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < LIGHTS_NUM_MAX; i++)
 	{
 		b->Lights[i] = tLights[i];
 	}

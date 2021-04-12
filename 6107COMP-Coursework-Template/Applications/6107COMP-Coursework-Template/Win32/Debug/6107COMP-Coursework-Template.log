@@ -1,13 +1,6 @@
-﻿D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(50,21-61): warning X3206: 'mul': implicit truncation of vector type
-  compilation object save succeeded; see D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\RRTPhongLitBumpTextureIncludeTest.cso
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(50,5-61): warning X3206: implicit truncation of vector type
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(52,22-63): warning X3206: 'mul': implicit truncation of vector type
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(52,5-63): warning X3206: implicit truncation of vector type
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(53,23-65): warning X3206: 'mul': implicit truncation of vector type
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl(53,5-65): warning X3206: implicit truncation of vector type
-  
-  failed writing D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\inc\IncludeTest
-  MaterialGenerator.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\MaterialGenerator.cpp(428,20): warning C4018: '<': signed/unsigned mismatch
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\MaterialGenerator.cpp(480,20): warning C4018: '<': signed/unsigned mismatch
+﻿  LJMULevelDemo.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(407,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(407,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(445,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(445,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

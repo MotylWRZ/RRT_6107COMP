@@ -3,7 +3,8 @@
 #include "MeshImporter.h"
 
 Planet::Planet()
-	:m_rotationSpeed(1.0f)
+	:m_rotationSpeed(100.f)
+	,m_rotationDirection(0.0f, 1.0f, 0.0f)
 {
 }
 
@@ -15,10 +16,12 @@ void Planet::Initialize(MaterialPtr planetMaterial, std::wstring planetMesh)
 
 void Planet::Update(float deltaTime)
 {
-	this->m_planetrotation += this->m_rotationSpeed * deltaTime;
+	float tAngle = (this->m_rotationSpeed * (GLYPH_PI / 180.0f)) * deltaTime;
+
 	Matrix3f tRotationMatrix;
-	tRotationMatrix.RotationZYX(Vector3f(GLYPH_PI, this->m_planetrotation, 0.0f));
-	this->GetBody()->Rotation() = tRotationMatrix;
+
+	tRotationMatrix.RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), tAngle);
+	this->GetBody()->Rotation() *= tRotationMatrix;
 }
 
 void Planet::UpdateEntities(float deltaTime)

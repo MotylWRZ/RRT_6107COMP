@@ -64,6 +64,8 @@
     <ClCompile Include="InstancedStaticMesh.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="SolarSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -106,6 +108,8 @@
     <ClInclude Include="InstancedStaticMesh.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="SolarSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl">

@@ -12,6 +12,11 @@
 
 #include <vector>
 
+#include "InstancedStaticMesh.h"
+#include "RRTVertexDX11.h"
+
+typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
+
 static constexpr int INSTANCE_NUM_MAX = 32;
 using namespace Glyph3;
 
@@ -47,7 +52,7 @@ enum class EInstanceTexture
 class InstancedStaticMesh : public Actor
 {
 public:
-	InstancedStaticMesh(RendererDX11& renderer);
+	InstancedStaticMesh(BasicMeshPtr mesh, Vector3f origin,  RendererDX11& renderer);
 	~InstancedStaticMesh();
 
 	void initialise();
@@ -70,5 +75,7 @@ private:
 	std::map<EInstanceTexture, ResourcePtr> m_textures;
 	RendererDX11* m_pRenderer;
 	MaterialPtr m_Material;
+
+
 };
 

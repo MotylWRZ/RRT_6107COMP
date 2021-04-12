@@ -37,7 +37,6 @@ private:
 	void UpdateEntities(float deltaTime);
 
 private:
-	float m_planetrotation;
 	float m_rotationSpeed;
 	Vector3f m_rotationDirection;
 };

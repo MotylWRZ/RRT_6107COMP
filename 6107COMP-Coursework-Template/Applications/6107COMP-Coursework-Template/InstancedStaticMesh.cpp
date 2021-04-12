@@ -6,10 +6,11 @@
 #include "MaterialGenerator.h"
 #include "MeshImporter.h"
 
-InstancedStaticMesh::InstancedStaticMesh(RendererDX11& renderer)// , LJMULevelDemo& Level)
+InstancedStaticMesh::InstancedStaticMesh(BasicMeshPtr mesh, Vector3f origin, RendererDX11& renderer)// , LJMULevelDemo& Level)
 	:m_pRenderer(&renderer)
-	//, m_Level(&Level)
 {
+	this->GetBody()->SetGeometry(mesh);
+	this->GetBody()->Position() = origin;
 }
 
 InstancedStaticMesh::~InstancedStaticMesh()
@@ -49,6 +50,12 @@ const ISMInstanceInfo& InstancedStaticMesh::getInstance(int instanceId) const
 
 void InstancedStaticMesh::updateInstance(int instanceId, Vector3f newInstancePosition)
 {
+	if (this->m_instances.size() > instanceId)
+	{
+		this->m_instances[instanceId].InstancePosition = newInstancePosition;
+	}
+
+	this->updateMaterial();
 }
 
 void InstancedStaticMesh::loadTextures(std::wstring texture1, std::wstring texture2, std::wstring texture3, std::wstring texture4)

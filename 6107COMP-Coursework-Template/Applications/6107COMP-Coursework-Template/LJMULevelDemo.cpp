@@ -10,6 +10,7 @@
 #include "Light_Spot.h"
 #include "MeshImporter.h"
 #include "InstancedStaticMesh.h"
+#include "SolarSystem.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -135,40 +136,34 @@ void LJMULevelDemo::setupGeometry()
 	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_pScene->AddActor(this->m_planet);
 
-	this->m_pInstancedStaticMesh = new InstancedStaticMesh(*this->m_pRenderer11);
-	this->m_pInstancedStaticMesh->GetBody()->SetGeometry(tMesh2);
-	this->m_pInstancedStaticMesh->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+
+	this->m_solarSystem = std::make_shared<SolarSystem>();
+
+	this->m_solarSystem->addISM(tMesh2, Vector3f(400.0f, 300.0f, 300.0f), this->m_pRenderer11, this->m_pScene,
+		L"rocks_ground_06_diff_2k.tiff",
+		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
 
 	Vector3f tInstancePos1(30.0f, 30.0f, 30.0f);
-	Vector3f tInstancePos2(30.0f, -30.0f, 30.0f);
-	Vector3f tInstancePos3(30.0f, 30.0f, -30.0f);
-	Vector3f tInstancePos4(30.0f, -30.0f, -30.0f);
-	Vector3f tInstancePos5(130.0f, 130.0f, 130.0f);
-	Vector3f tInstancePos6(130.0f, -130.0f, 130.0f);
-	Vector3f tInstancePos7(130.0f, 130.0f, -130.0f);
-	Vector3f tInstancePos8(130.0f, -130.0f, -130.0f);
-
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos1);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos2);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos3);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos4, EInstanceTexture::TEXTURE2);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos5, EInstanceTexture::TEXTURE2);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos6, EInstanceTexture::TEXTURE2);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos7, EInstanceTexture::TEXTURE3);
-	this->m_pInstancedStaticMesh->addInstance(tInstancePos8, EInstanceTexture::TEXTURE3);
-
-	this->m_pInstancedStaticMesh->loadTextures(L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
-
-	/*MaterialPtr tMatt = this->m_pInstancedStaticMesh->GetBody()->GetMaterial();
-
-	MaterialGenerator::setLightToMaterial(*this->m_pRenderer11, tMatt, this->m_lights, tMatInfo);*/
+Vector3f tInstancePos2(30.0f, -30.0f, 30.0f);
+Vector3f tInstancePos3(30.0f, 30.0f, -30.0f);
+Vector3f tInstancePos4(30.0f, -30.0f, -30.0f);
+Vector3f tInstancePos5(130.0f, 130.0f, 130.0f);
+Vector3f tInstancePos6(130.0f, -130.0f, 130.0f);
+Vector3f tInstancePos7(130.0f, 130.0f, -130.0f);
+Vector3f tInstancePos8(130.0f, -130.0f, -130.0f);
 
 
-	this->m_pInstancedStaticMesh->initialise();
+	this->m_solarSystem->addPlanet(0, tInstancePos1, EInstanceTexture::TEXTURE1);
+	this->m_solarSystem->addPlanet(0, tInstancePos2, EInstanceTexture::TEXTURE1);
+	this->m_solarSystem->addPlanet(0, tInstancePos3, EInstanceTexture::TEXTURE3);
+	this->m_solarSystem->addPlanet(0, tInstancePos4, EInstanceTexture::TEXTURE3);
+	this->m_solarSystem->addPlanet(0, tInstancePos5, EInstanceTexture::TEXTURE2);
+	this->m_solarSystem->addPlanet(0, tInstancePos6, EInstanceTexture::TEXTURE2);
+	this->m_solarSystem->addPlanet(0, tInstancePos7, EInstanceTexture::TEXTURE1);
 
 
+	this->setupSkySphere();
 
-	this->m_pScene->AddActor(this->m_pInstancedStaticMesh);
 }
 
 void LJMULevelDemo::animateGeometry(float DT)
@@ -192,12 +187,9 @@ void LJMULevelDemo::setupCamera()
 		std::wstring(L"Cambria"),
 		25);
 	this->m_pCamera->SetOverlayView(this->m_pRender_text);
-	this->m_pCamera->SetProjectionParams(0.1f, 1000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
+	this->m_pCamera->SetProjectionParams(0.1f, 1000000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
 		static_cast<float>(GLYPH_PI) / 2.0f);
 	this->m_pScene->AddCamera(this->m_pCamera);
-
-	this->m_pCamera2 = new FirstPersonCamera();
-	*this->m_pCamera2 = *this->m_pCamera;
 }
 
 void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
@@ -259,6 +251,42 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	//	this->addLight(tPointLight);
 	//}
+}
+
+void LJMUDX::LJMULevelDemo::setupSkySphere()
+{
+	// Setup Skyphere
+	Actor* tSkySphereActor = new Actor();
+
+	tSkySphereActor->GetNode()->Position() = Vector3f(200.0f, 50.0f, 100.0f);;
+	BasicMeshPtr tSkySphereMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1, 1, 1, 1));
+	tSkySphereActor->GetBody()->SetGeometry(tSkySphereMesh);
+	MaterialPtr tSkySphereMaterial = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RTRSkySphere.hlsl", L"stars.tif");
+
+
+	tSkySphereActor->GetBody()->SetMaterial(tSkySphereMaterial);
+	tSkySphereActor->GetBody()->Scale() = Vector3f(10000.0f, 10000.0f, 10000.0f);
+
+	// Modify ratserizer state
+	MaterialPtr tMat = tSkySphereActor->GetBody()->GetMaterial();
+	RenderEffectDX11* tEffect = tMat->Params[VT_PERSPECTIVE].pEffect;
+
+	// Modify the rasterizer state
+	RasterizerStateConfigDX11 rsConfig;
+	RasterizerStateComPtr rstatePtr = this->m_pRenderer11->GetRasterizerState(tEffect->m_iRasterizerState);
+	rstatePtr->GetDesc(&rsConfig);
+
+	// Set FrontCulling
+	rsConfig.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+
+	int iRasterizerState = this->m_pRenderer11->CreateRasterizerState(&rsConfig);
+	tEffect->m_iRasterizerState = iRasterizerState;
+	tMat->Params[VT_PERSPECTIVE].bRender = true;
+	tMat->Params[VT_PERSPECTIVE].pEffect = tEffect;
+
+	this->m_actors.push_back(tSkySphereActor);
+
+	this->m_pScene->AddActor(tSkySphereActor);
 }
 
 ////////////////////////////////////
@@ -350,13 +378,13 @@ void LJMULevelDemo::Update()
 
 	if (tMat && tPlanetMat)
 	{
-		/*MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);*/
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);
 	}
 
 	this->m_planet->Update(tDT);
-
-	this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
+	this->m_solarSystem->Update(tDT);
+	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());

@@ -24,6 +24,7 @@
 
 class Light_Base;
 class InstancedStaticMesh;
+class SolarSystem;
 
 using namespace Glyph3;
 
@@ -74,7 +75,7 @@ namespace LJMUDX
 		void setupCamera();
 		void addLight(LightBasePtr pLight);
 		void setupLighting();
-
+		void setupSkySphere();
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -92,9 +93,11 @@ namespace LJMUDX
 		Actor* m_pCubeActor;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
 
+		std::shared_ptr<SolarSystem> m_solarSystem;
 		Planet* m_planet;
 		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;
+
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
