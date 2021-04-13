@@ -19,6 +19,8 @@
 #include "Texture2dConfigDX11.h"
 #include "MaterialGeneratorDX11.h"
 
+//typedef  std::shared_ptr<Light_Base> LightBasePtr;
+
 using namespace Glyph3;
 
 //#define LIGHT_TYPE_NONE		   0

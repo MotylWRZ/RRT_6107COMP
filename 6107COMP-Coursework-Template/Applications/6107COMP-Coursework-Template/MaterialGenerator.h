@@ -9,7 +9,7 @@ static constexpr int LIGHTS_NUM_MAX = 20;
 
 using namespace Glyph3;
 
-typedef std::shared_ptr<Light_Base> LightBasePtr;
+typedef  std::shared_ptr<Light_Base> LightBasePtr;
 
 struct MaterialReflectanceInfo
 {
@@ -47,6 +47,6 @@ public:
 	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 
 	static void setLightToMaterial(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
-	static void updateMaterialLight(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	static void updateMaterialLight(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights);
 };
 

@@ -463,7 +463,7 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
 }
 
-void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
+void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights)
 {
 	if (!material)
 	{
@@ -482,9 +482,6 @@ void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr
 	{
 		tLights[i] = lights[i]->getLightInfo();
 	}
-
-	material->Parameters.SetVectorParameter(L"SurfaceConstants", MatReflectanceInfo.SurfaceEmissiveColour);
-	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", Vector4f(MatReflectanceInfo.Ambient, MatReflectanceInfo.Diffuse, MatReflectanceInfo.Specular, MatReflectanceInfo.Shininess));
 
 	D3D11_SUBRESOURCE_DATA dataLights;
 	dataLights.pSysMem = tLights;

@@ -11,6 +11,7 @@
 #include "MeshImporter.h"
 #include "InstancedStaticMesh.h"
 #include "SolarSystem.h"
+#include "Terrain.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -39,6 +40,7 @@
 #include "MaterialGeneratorDX11.h"
 
 #include "FirstPersonCamera.h"
+
 
 //Add a Using Directive to avoid typing Glyph3 for basic constructs
 using namespace Glyph3;
@@ -105,7 +107,11 @@ void LJMULevelDemo::setupGeometry()
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
-	this->m_pScene->AddActor(this->m_LandscapeActor);
+//	this->m_pScene->AddActor(this->m_LandscapeActor);
+
+	this->m_terrain = new Terrain(255, 10, 1);
+	this->m_terrain->setMaterial(tTerrainMaterial);
+	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 
 
 	// Create test Cube Mesh and Actor
@@ -213,7 +219,7 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	Vector4f tLightColour3(1.0f, 1.0f, 1.0f, 1.0f);
 	Vector3f tLightPosition3(300.0f, 30.0f, 100.0f);
-	Vector2f tLightRange3(40.0f, 0.0f);
+	Vector2f tLightRange3(100.0f, 0.0f);
 
 
 	//Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
@@ -378,9 +384,11 @@ void LJMULevelDemo::Update()
 
 	if (tMat && tPlanetMat)
 	{
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights, tMatInfo);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights, tMatInfo);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights);
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
 	}
+
+	this->m_terrain->updateLighting(this->m_pRenderer11, this->m_lights);
 
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);

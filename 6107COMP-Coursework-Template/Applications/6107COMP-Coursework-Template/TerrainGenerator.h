@@ -10,8 +10,14 @@
 #include <vector>
 
 #include "RRTVertexDX11.h"
+#include "TerrainChunk.h"
+
+class TerrainChunk;
+class Terrain;
+class Light_Base;
 
 using namespace Glyph3;
+//typedef  std::shared_ptr<Light_Base> LightBasePtr;
 
 typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
@@ -27,5 +33,9 @@ public:
 
 	static void createSegmentedTerrainActor(std::vector<Actor*>& terrainSegments);
 	static Actor* createTerrainActor(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
+
+	static TerrainChunk* generateTerrainChunk(const Terrain& terrain, int offsetX, int offsetZ);
+
+
 };
 

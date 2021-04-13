@@ -25,6 +25,7 @@
     <ClCompile Include="Light_Spot.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainChunk.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +44,7 @@
     <ClInclude Include="Light_Spot.h" />
     <ClInclude Include="SolarSystem.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainChunk.h" />
     <ClInclude Include="TerrainGenerator.h" />
   </ItemGroup>
   <ItemGroup>

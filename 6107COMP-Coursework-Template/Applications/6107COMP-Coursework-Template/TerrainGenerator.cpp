@@ -6,6 +6,9 @@
 //Include the DirectX Rendering Components
 #include "MaterialGeneratorDX11.h"
 
+#include "Terrain.h"
+#include "TerrainChunk.h"
+
 TerrainGenerator::TerrainGenerator()
 {
 }
@@ -178,4 +181,17 @@ Actor* TerrainGenerator::createTerrainActor(int offsetX, int offsetZ, int terrai
 	tTerrainActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 
 	return tTerrainActor;
+}
+
+TerrainChunk* TerrainGenerator::generateTerrainChunk(const Terrain& terrain, int offsetX, int offsetZ)
+{
+	int tChunkSize = terrain.getTerrainResoultion();
+
+	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMesh(offsetX, offsetZ, tChunkSize, terrain.getTerrainSpacing());
+
+	TerrainChunk* tChunk = new TerrainChunk();
+
+	tChunk->GetBody()->SetGeometry(tMesh);
+
+	return tChunk;
 }

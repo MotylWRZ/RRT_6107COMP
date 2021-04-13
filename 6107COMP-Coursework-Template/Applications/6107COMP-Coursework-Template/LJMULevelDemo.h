@@ -22,14 +22,17 @@
 #include "RRTVertexDX11.h"
 #include "Planet.h"
 
+
 class Light_Base;
 class InstancedStaticMesh;
 class SolarSystem;
+class Terrain;
 
 using namespace Glyph3;
 
 const float DEG_TO_RAD = GLYPH_PI / 180.0f;
 
+typedef  std::shared_ptr<Light_Base> LightBasePtr;
 
 namespace LJMUDX
 {
@@ -43,7 +46,7 @@ namespace LJMUDX
 	//AUTHORS:  DR PO YANG
 	//			DR CHRIS CARTER
 	//////////////////////////////////////
-	typedef  std::shared_ptr<Light_Base> LightBasePtr;
+
 	typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
 	class LJMULevelDemo : public Application //Inherit from the Hieroglyph Base Class
@@ -89,6 +92,7 @@ namespace LJMUDX
 
 		// Actors
 		Actor* m_LandscapeActor;
+		Terrain* m_terrain;
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
