@@ -18,10 +18,9 @@ public:
 	TerrainChunk();
 	~TerrainChunk();
 
-
-
-	BasicMeshPtr m_chunkMesh;
-
-
+	BasicMeshPtr ChunkMesh;
+	std::vector<Vector3f> Vertices;
+	std::vector<Vector4f> Colors;
+	std::vector<Vector2f> TextureCoords;
 };
 

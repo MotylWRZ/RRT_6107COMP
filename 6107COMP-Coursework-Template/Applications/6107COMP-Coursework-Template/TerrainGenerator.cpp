@@ -44,6 +44,98 @@ BasicMeshPtr TerrainGenerator::generateTerrainMesh(int offsetX, int offsetZ, int
 	std::vector<Vector2f> tTextureCoords;
 	float tTextureMappingFactor = 0.1f;
 
+	for (int i = 0; i < tTerrainWidth / 5; i++)
+	{
+		for (int j = 0; j < tTerrainLength / 5; j++)
+		{
+			int X = i + tOffsetX;
+			int Z = j + tOffsetZ;
+
+			float tMajorPeriodicHeightX = sin(static_cast<float>(X) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
+			float tMajorPeriodicHeightZ = cos(static_cast<float>(Z) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
+			float tMajorPeriodicHeight = tMajorPeriodicHeightX * tMajorPeriodicHeightZ;
+
+			float tMinorPeriodicHeightX = sin(static_cast<float>(X) / tTerrainWidth * tMinorHeightFrequency * GLYPH_PI) * tMinorHeight;
+			float tMinorPeriodicHeightZ = cos(static_cast<float>(Z) / tTerrainWidth * tMinorHeightFrequency * GLYPH_PI) * tMinorHeight;
+			float tMinorPeriodicHeight = tMinorPeriodicHeightX * tMinorPeriodicHeightZ;
+
+			float tHeight = (tMajorPeriodicHeight + tMinorPeriodicHeight) * tHeightScale;
+
+			float tPosX = (X * tSpacing) + tOffsetX;
+			float tPosY = tHeight;
+			float tPosZ = (Z * tSpacing) + tOffsetZ;
+
+			tVertices.push_back(Vector3f(tPosX, tPosY, tPosZ));
+
+			float tShade = (tHeight / tHeightScale + 1) / 2.0f;
+
+			if (tShade < 0)
+			{
+				tShade = 0;
+			}
+			else if (tShade > 1)
+			{
+				tShade = 1;
+			}
+
+			tVertexColors.push_back(Vector4f(tShade, 1 - tShade, tShade / 2, 1));
+
+			// Calculate Texture Coordinate and store them in the array
+			tTextureCoords.push_back(Vector2f(i * tTextureMappingFactor, j * tTextureMappingFactor));
+		}
+	}
+
+	std::vector<int> tIndices;
+	TerrainGenerator::createTerrainIndexArray(tTerrainWidth / 5, tTerrainLength / 5, true, tIndices);
+
+	int tNumberOfIndices = tIndices.size();
+	int tNumberOfTriangles = tNumberOfIndices / 3;
+
+	BasicMeshPtr tTerrainMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tTerrainMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
+	tTerrainMesh->SetPrimitiveType(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	tTerrainMesh->SetMaxVertexCount(tNumberOfIndices);
+
+	RRTVertexDX11::Vertex tVertex;
+
+	for (int i = 0; i < tNumberOfIndices; i++)
+	{
+		tVertex.position = tVertices[tIndices[i]];
+		tVertex.color = tVertexColors[tIndices[i]];
+		tVertex.texcoords = tTextureCoords[tIndices[i]];
+
+		tTerrainMesh->AddVertex(tVertex);
+	}
+
+	return tTerrainMesh;
+}
+
+void TerrainGenerator::generateterainMeshVertices(std::vector<Vector3f>& verticesOut, int offsetX, int offsetZ, int terrainResolution, int terrainSpacing)
+{
+	float tMajorHeightFrequency = 5.0f;
+	float tMajorHeight = 1.0f;
+
+	float tMinorHeightFrequency = 75.0f;
+	float tMinorHeight = 0.25f;
+
+	float tSpacing = terrainSpacing;
+	float tHeightScale = 12.0f;
+
+	int tTerrainWidth = terrainResolution;
+	int tTerrainLength = terrainResolution;
+
+	int tOffsetX = offsetX * (terrainResolution - 1);
+	int tOffsetZ = offsetZ * (terrainResolution - 1);
+
+	std::vector<Vector3f> tVertices;
+	std::vector<Vector4f> tVertexColors;
+
+	//this->m_vTextureBoundary = Vector4f(0.5f, 0.0f, 0.0f, 0.0f) * tHeightScale;
+
+	// Texture
+	std::vector<Vector2f> tTextureCoords;
+	float tTextureMappingFactor = 0.1f;
+
 	for (int i = 0; i < tTerrainWidth; i++)
 	{
 		for (int j = 0; j < tTerrainLength; j++)
@@ -85,29 +177,7 @@ BasicMeshPtr TerrainGenerator::generateTerrainMesh(int offsetX, int offsetZ, int
 		}
 	}
 
-	std::vector<int> tIndices;
-	TerrainGenerator::createTerrainIndexArray(tTerrainWidth, tTerrainLength, true, tIndices);
-
-	int tNumberOfIndices = tIndices.size();
-	int tNumberOfTriangles = tNumberOfIndices / 3;
-
-	BasicMeshPtr tTerrainMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
-	tTerrainMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
-	tTerrainMesh->SetPrimitiveType(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	tTerrainMesh->SetMaxVertexCount(tNumberOfIndices);
-
-	RRTVertexDX11::Vertex tVertex;
-
-	for (int i = 0; i < tNumberOfIndices; i++)
-	{
-		tVertex.position = tVertices[tIndices[i]];
-		tVertex.color = tVertexColors[tIndices[i]];
-		tVertex.texcoords = tTextureCoords[tIndices[i]];
-
-		tTerrainMesh->AddVertex(tVertex);
-	}
-
-	return tTerrainMesh;
+	verticesOut = tVertices;
 }
 
 void TerrainGenerator::createTerrainIndexArray(int terrainWidth, int terrainLength,
@@ -185,7 +255,7 @@ Actor* TerrainGenerator::createTerrainActor(int offsetX, int offsetZ, int terrai
 
 TerrainChunk* TerrainGenerator::generateTerrainChunk(const Terrain& terrain, int offsetX, int offsetZ)
 {
-	int tChunkSize = terrain.getTerrainResoultion();
+	int tChunkSize = (terrain.getTerrainResoultion() - 1) / terrain.getChunksNum();
 
 	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMesh(offsetX, offsetZ, tChunkSize, terrain.getTerrainSpacing());
 
@@ -194,4 +264,234 @@ TerrainChunk* TerrainGenerator::generateTerrainChunk(const Terrain& terrain, int
 	tChunk->GetBody()->SetGeometry(tMesh);
 
 	return tChunk;
+}
+
+void TerrainGenerator::generateEqualChunksFromVertices(std::vector<Vector3f>& meshVertices, std::vector<TerrainChunk>& chunksOut)
+{
+	// Calculate terrain Resolution from the number of vertices
+	int tTerrainResolution = sqrt(static_cast<int>(meshVertices.size()));
+
+	int terrainWidth = tTerrainResolution;
+	int terrainLength = tTerrainResolution;
+
+	int currVerWidth = 0;
+	int currVerLength = 0;
+	int maxVerWidth = 0;
+	int maxVerLength = 0;
+
+	int tChunkId = 0;
+
+	static int IndexOffset = 2;
+
+	std::vector<TerrainChunk> tChunks;
+
+	// Divide to equal 4 chunks
+	for (int OffsetX = -1; OffsetX < 1; OffsetX++)
+	{
+		for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
+		{
+
+			int Id = tChunkId;
+
+			std::vector<Vector3f> vertices;
+
+			if (Id == 0)
+			{
+				currVerWidth = 0;
+				currVerLength = 0;
+
+				maxVerWidth = terrainWidth / 2;
+				maxVerLength = terrainLength / 2;
+
+
+			}
+			if (Id == 1)
+			{
+				currVerWidth = (terrainWidth / 2) - IndexOffset;
+				currVerLength = 0;
+
+				maxVerWidth = terrainWidth - IndexOffset;
+				maxVerLength = terrainLength / 2;
+			}
+			if (Id == 2)
+			{
+				currVerWidth = (terrainWidth / 2) - IndexOffset;
+				currVerLength = (terrainLength / 2) - IndexOffset;
+
+				maxVerWidth = terrainWidth - IndexOffset;
+				maxVerLength = terrainLength - IndexOffset;
+			}
+			if (Id == 3)
+			{
+				currVerWidth = 0;
+				currVerLength = (terrainLength / 2) - IndexOffset;
+
+				maxVerWidth = terrainWidth / 2;
+				maxVerLength = terrainLength - IndexOffset;
+			}
+
+			tChunkId++;
+
+			for (int i = currVerWidth; i < maxVerWidth; i++)
+			{
+				for (int p = currVerLength; p < maxVerLength; p++)
+				{
+					Vector3f tVert = meshVertices[i * terrainLength + p];
+
+					vertices.push_back(tVert);
+				}
+			}
+			// Create a new chunk instance
+			TerrainChunk tNewChunk;
+			// Add vertices for the chunk mesh
+			tNewChunk.Vertices = vertices;
+
+			// add the chunk to the out array of chunks
+			chunksOut.push_back(tNewChunk);
+		}
+	}
+}
+
+void TerrainGenerator::generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut, int resolution, int terrainSpacing, float heightScale, float majorHeightFrequency,
+	float majorHeight,
+	float minorHeightFrequency,
+	float minorHeight)
+{
+	float tMajorHeightFrequency = majorHeightFrequency;
+	float tMajorHeight = majorHeight;
+
+	float tMinorHeightFrequency = minorHeightFrequency;
+	float tMinorHeight = minorHeight;
+
+	float tSpacing = terrainSpacing;
+	float tHeightScale = heightScale;
+
+	int tTerrainWidth = resolution;
+	int tTerrainLength = resolution;
+
+	std::vector<Vector3f> tVertices;
+
+	for (int i = 0; i < tTerrainWidth; i++)
+	{
+		for (int j = 0; j < tTerrainLength; j++)
+		{
+			int X = i;
+			int Z = j;
+
+			float tMajorPeriodicHeightX = sin(static_cast<float>(X) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
+			float tMajorPeriodicHeightZ = cos(static_cast<float>(Z) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
+			float tMajorPeriodicHeight = tMajorPeriodicHeightX * tMajorPeriodicHeightZ;
+
+			float tMinorPeriodicHeightX = sin(static_cast<float>(X) / tTerrainWidth * tMinorHeightFrequency * GLYPH_PI) * tMinorHeight;
+			float tMinorPeriodicHeightZ = cos(static_cast<float>(Z) / tTerrainWidth * tMinorHeightFrequency * GLYPH_PI) * tMinorHeight;
+			float tMinorPeriodicHeight = tMinorPeriodicHeightX * tMinorPeriodicHeightZ;
+
+			float tHeight = (tMajorPeriodicHeight + tMinorPeriodicHeight) * tHeightScale;
+
+			float tPosX = (X * tSpacing);
+			float tPosY = tHeight;
+			float tPosZ = (Z * tSpacing);
+
+			tVertices.push_back(Vector3f(tPosX, tPosY, tPosZ));
+		}
+	}
+
+	verticesOut = tVertices;
+}
+
+BasicMeshPtr TerrainGenerator::generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor)
+{
+	// Calculate terrain Resolution from the number of vertices
+	int tTerrainResolution = sqrt(static_cast<int>(meshVertices.size()));
+
+	float tHeightScale = heightScale;
+
+	int tTerrainWidth = tTerrainResolution;
+	int tTerrainLength = tTerrainResolution;
+
+	std::vector<Vector3f> tVertices;
+	std::vector<Vector4f> tVertexColors;
+
+	// Texture
+	std::vector<Vector2f> tTextureCoords;
+	float tTextureMappingFactor = 0.1f;
+
+	for (int i = 0; i < tTerrainWidth; i++)
+	{
+		for (int j = 0; j < tTerrainLength; j++)
+		{
+			Vector3f tPos = meshVertices[i * tTerrainLength + j];
+
+			float tHeight = tPos.y;
+
+			tVertices.push_back(tPos);
+
+			float tShade = (tHeight / tHeightScale + 1) / 2.0f;
+
+			if (tShade < 0)
+			{
+				tShade = 0;
+			}
+			else if (tShade > 1)
+			{
+				tShade = 1;
+			}
+
+			tVertexColors.push_back(Vector4f(tShade, 1 - tShade, tShade / 2, 1));
+
+			// Calculate Texture Coordinate and store them in the array
+			tTextureCoords.push_back(Vector2f(i * tTextureMappingFactor, j * tTextureMappingFactor));
+		}
+	}
+
+	std::vector<int> tIndices;
+	TerrainGenerator::createTerrainIndexArray(tTerrainWidth, tTerrainLength, true, tIndices);
+
+	int tNumberOfIndices = tIndices.size();
+	int tNumberOfTriangles = tNumberOfIndices / 3;
+
+	BasicMeshPtr tTerrainMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tTerrainMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
+	tTerrainMesh->SetPrimitiveType(D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	tTerrainMesh->SetMaxVertexCount(tNumberOfIndices);
+
+	RRTVertexDX11::Vertex tVertex;
+
+	for (int i = 0; i < tNumberOfIndices; i++)
+	{
+		tVertex.position = tVertices[tIndices[i]];
+		tVertex.color = tVertexColors[tIndices[i]];
+		tVertex.texcoords = tTextureCoords[tIndices[i]];
+
+		tTerrainMesh->AddVertex(tVertex);
+	}
+
+	return tTerrainMesh;
+}
+
+void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertices, std::vector<std::vector<Vector3f>>& verticesOut)
+{
+	int res = sqrt(meshVertices.size());
+
+	// cache mesh vertices locally
+	std::vector<Vector3f> verts;// = meshVertices;
+
+	for (int OffsetX = -1; OffsetX < 1; OffsetX++)
+	{
+		for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
+		{
+			//TerrainGenerator::generateTerrainMesh(OffsetX, OffsetZ, res, 3);
+			TerrainGenerator::generateterainMeshVertices(verts, OffsetX, OffsetZ, res, 3);
+
+
+			/*for (auto& Vertex : verts)
+			{
+				Vertex.x += OffsetX * 254 * 3;
+				Vertex.z += OffsetZ * 254 * 3;
+			}*/
+
+			verticesOut.push_back(verts);
+			verts.clear();
+		}
+	}
 }

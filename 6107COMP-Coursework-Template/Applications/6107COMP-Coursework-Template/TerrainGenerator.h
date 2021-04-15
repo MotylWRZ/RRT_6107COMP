@@ -28,6 +28,7 @@ class TerrainGenerator
 
 public:
 	static BasicMeshPtr generateTerrainMesh(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
+	static void generateterainMeshVertices(std::vector<Vector3f>& verticesOut, int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
 	static void createTerrainIndexArray(int terrainWidth, int terrainLength,
 		bool winding, std::vector<int>& indices);
 
@@ -35,6 +36,22 @@ public:
 	static Actor* createTerrainActor(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
 
 	static TerrainChunk* generateTerrainChunk(const Terrain& terrain, int offsetX, int offsetZ);
+
+	// Divid terrain mesh into 4 equal chunks
+	// Returns 4 equal array of vertices
+	static void generateEqualChunksFromVertices(std::vector<Vector3f>& meshVertices, std::vector<TerrainChunk>& chunksOut);
+
+	static void generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut, int resolution, int terrainSpacing, float heightScale = 12.0f, float majorHeightFrequency = 5.0f,
+		float majorHeight = 1.0f,
+		float minorHeightFrequency = 75.0f,
+		float minorHeight = 0.25f);
+
+	static BasicMeshPtr generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor);
+
+	// Create 4 equal arrays of vertices that can be used to create 4 duplicated meshes with position offsets
+	static void extendTerrainMesh(const std::vector<Vector3f>& meshVertices, std::vector<std::vector<Vector3f>>& verticesOut);
+
+	//Terrain* generateBasicTerrain();
 
 
 };
