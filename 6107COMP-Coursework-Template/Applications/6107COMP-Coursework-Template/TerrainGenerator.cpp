@@ -682,3 +682,70 @@ void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertic
 		}
 	}
 }
+
+void TerrainGenerator::divideTerrainMesh(const std::vector<Vector3f>& meshVertices, std::vector<std::vector<Vector3f>>& verticesOut, int terrainWidth, int terrainLength)
+{
+	int currVerWidth = 0;
+	int currVerLength = 0;
+	int maxVerWidth = terrainWidth;
+	int maxVerLength = terrainLength;
+
+	int tChunkId = 0;
+	int IndexOffset = 1;
+
+		// Divide to equal 4 chunks
+	for (int OffsetX = -1; OffsetX < 1; OffsetX++)
+	{
+		for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
+		{
+			int Id = tChunkId;
+			std::vector<Vector3f> vertices;
+
+			if (Id == 0)
+			{
+				currVerWidth = 0;
+				currVerLength = 0;
+
+				maxVerWidth = terrainWidth / 2;
+				maxVerLength = terrainLength / 2;
+			}
+			if (Id == 1)
+			{
+				currVerWidth = (terrainWidth / 2) - IndexOffset;
+				currVerLength = 0;
+
+				maxVerWidth = terrainWidth - IndexOffset;
+				maxVerLength = terrainLength / 2;
+			}
+			if (Id == 2)
+			{
+				currVerWidth = (terrainWidth / 2) - IndexOffset;
+				currVerLength = (terrainLength / 2) - IndexOffset;
+
+				maxVerWidth = terrainWidth - IndexOffset;
+				maxVerLength = terrainLength - IndexOffset;
+			}
+			if (Id == 3)
+			{
+				currVerWidth = 0;
+				currVerLength = (terrainLength / 2) - IndexOffset;
+
+				maxVerWidth = terrainWidth / 2;
+				maxVerLength = terrainLength - IndexOffset;
+			}
+
+			tChunkId++;
+
+			for (int i = currVerWidth; i < maxVerWidth; i++)
+			{
+				for (int p = currVerLength; p < maxVerLength; p++)
+				{
+					Vector3f tVert = meshVertices[i * terrainLength + p];
+
+					vertices.push_back(tVert);
+				}
+			}
+			verticesOut.push_back(vertices);
+		}
+	}
+}

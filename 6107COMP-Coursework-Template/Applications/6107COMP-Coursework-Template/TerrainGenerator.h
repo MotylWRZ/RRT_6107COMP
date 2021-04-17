@@ -79,8 +79,7 @@ public:
 	// Create 4 equal arrays of vertices that can be used to create 4 duplicated meshes with position offsets
 	static void extendTerrainMesh(const std::vector<Vector3f>& meshVertices, std::vector<std::vector<Vector3f>>& verticesOut);
 
-	//Terrain* generateBasicTerrain();
-
-
+	// Divide a terrain mesh into 4 equal chunks. Allows for rendering bigger meshes in several parts.
+	static void divideTerrainMesh(const std::vector<Vector3f>& meshVertices, std::vector<std::vector<Vector3f>>& verticesOut, int terrainWidth, int terrainLength);
 };
 
