@@ -432,6 +432,121 @@ void TerrainGenerator::generateTerrainMeshVerticesFromNoise(std::vector<Vector3f
 	verticesOut = vertices;
 }
 
+void TerrainGenerator::generateTerrainMeshVerticesFromHeightmap(std::vector<Vector3f>& verticesOut, const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainLength, int terrainWidth, int terrainSpacing, float heightScale, int OffsetX, int OffsetZ)
+{
+	int tOffsetX = OffsetX * (terrainWidth - 1);
+	int tOffsetZ = OffsetZ * (terrainLength - 1);
+
+	// Load the heightmap
+	double* tHeightmap = TerrainGenerator::loadRawHightMap(filename, actualTerrainWidth, actualterrainLength, terrainWidth, terrainLength);
+
+	std::vector<Vector3f> tVertices;
+
+	for (int i = 0; i < terrainWidth; i++)
+	{
+		for (int p = 0; p < terrainLength; p++)
+		{
+			int X = i + tOffsetX;
+			int Z = p + tOffsetZ;
+
+			float height = tHeightmap[i * terrainLength + p] * heightScale;
+
+			float tPosX = (X * terrainSpacing);
+			float tPosY = height;
+			float tPosZ = (Z * terrainSpacing);
+
+			Vector3f tVert(tPosX, tPosY, tPosZ);
+
+			tVertices.push_back(tVert);
+		}
+	}
+	verticesOut = tVertices;
+}
+
+double* TerrainGenerator::loadRawHightMap(const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainWidth, int terrainLength)
+{
+	// Calculate the size of the raw image data
+	int imageSize = terrainLength * terrainWidth;
+	int actualSize = actualTerrainWidth * actualterrainLength;
+
+	// Allocate memory for the raw image data
+	unsigned short* rawImage = new unsigned short[actualSize];
+
+	if (!rawImage)
+	{
+		return nullptr;
+	}
+
+	double* heightmap = new double[imageSize];
+
+	if (!heightmap)
+	{
+		return nullptr;
+
+	}
+
+	FILE* filePtr;
+
+	// Open the 16 bit raw height map file for reading in binary
+	int error = fopen_s(&filePtr, filename, "rb");
+
+	if (error != 0)
+	{
+		return nullptr;
+	}
+
+	// Read the raw image data
+	int count = fread(rawImage, sizeof(unsigned short), actualSize, filePtr);
+
+	if (count != actualSize)
+	{
+		return nullptr;
+	}
+
+	// Close the file
+	error = fclose(filePtr);
+
+	if (error != 0)
+	{
+		return nullptr;
+	}
+
+	double maxHeight = 0;
+	double minHeight = 1000000;
+
+	int i, j, index;
+
+	for (j = 0; j < terrainLength; j++)
+	{
+		for (i = 0; i < terrainWidth; i++)
+		{
+			int index = (terrainWidth * j) + i;
+			int actualindex = (actualTerrainWidth * j * 2) + i * 2;
+
+			//Store the height at this point in the height map array
+			heightmap[index] = static_cast<double>(rawImage[actualindex]);
+			if (maxHeight < heightmap[index])
+				maxHeight = heightmap[index];
+
+			if (minHeight > heightmap[index])
+				minHeight = heightmap[index];
+
+		}
+	}
+
+
+	double range = maxHeight - minHeight;
+
+	for (i = 0; i < imageSize; i++)
+	{
+		heightmap[i] = (heightmap[i] - minHeight) / range;
+	}
+	// Release the biutmap image data
+	delete[] rawImage;
+	rawImage = 0;
+	return heightmap;
+}
+
 BasicMeshPtr TerrainGenerator::generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor)
 {
 	// Calculate terrain Resolution from the number of vertices

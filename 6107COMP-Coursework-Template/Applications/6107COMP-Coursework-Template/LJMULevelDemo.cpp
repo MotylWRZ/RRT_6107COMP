@@ -115,7 +115,8 @@ void LJMULevelDemo::setupGeometry()
 	//this->m_terrain->initializeBasic();
 	//this->m_terrain->initializeBasicChunkedTerrain(true, 254, 3);
 	//this->m_terrain->generateTerrainFromNoise(254, 3, 128);
-	this->m_terrain->generateChunkedTerrainFromNoise(true, 254, 3, 128);
+	//this->m_terrain->generateChunkedTerrainFromNoise(true, 255, 3, 128);
+	this->m_terrain->generateTerrainFromHeightmap("heightmap.r16", 1025, 1025, 255, 255, 3, 33);
 	this->m_terrain->setMaterial(tTerrainMaterial);
 	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 
@@ -216,15 +217,15 @@ void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
 void LJMUDX::LJMULevelDemo::setupLighting()
 {
 	Vector4f tLightColour(0.0f, 1.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition(100.0f, 30.0f, 300.0f);
+	Vector3f tLightPosition(100.0f, -70.0f, 300.0f);
 	Vector2f tLightRange(100.0f, 0.0f);
 
 	Vector4f tLightColour2(1.0f, 0.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition2(300.0f, 0.0f, 400.0f);
+	Vector3f tLightPosition2(300.0f, -70.0f, 400.0f);
 	Vector2f tLightRange2(100.0f, 0.0f);
 
 	Vector4f tLightColour3(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector3f tLightPosition3(300.0f, 30.0f, 100.0f);
+	Vector3f tLightPosition3(300.0f, -70.0f, 100.0f);
 	Vector2f tLightRange3(100.0f, 0.0f);
 
 

@@ -83,6 +83,18 @@ void Terrain::generateTerrainFromNoise(int terrainResolution, float spacing, flo
 	this->m_chunks.push_back(tChunk);
 }
 
+void Terrain::generateTerrainFromHeightmap(const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainWidth, int terrainLength, int terrainSpacing, float heightScale)
+{
+	std::vector<Vector3f> vertices;
+	TerrainGenerator::generateTerrainMeshVerticesFromHeightmap(vertices, filename, actualTerrainWidth, actualterrainLength, terrainWidth, terrainLength, terrainSpacing, heightScale);
+	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(vertices, this->m_heightScale, 0.1f);
+	TerrainChunk* tChunk = new TerrainChunk();
+
+	tChunk->GetBody()->SetGeometry(tMesh);
+
+	this->m_chunks.push_back(tChunk);
+}
+
 void Terrain::initializeBasicChunkedTerrain(bool extend, int resolution, int terrainSpacing, float heightScale, float majorHeightFrequency,
 	float majorHeight,
 	float minorHeightFrequency,

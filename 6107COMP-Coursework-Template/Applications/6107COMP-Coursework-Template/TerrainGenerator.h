@@ -42,10 +42,15 @@ public:
 	// Returns 4 equal array of vertices
 	static void generateEqualChunksFromVertices(std::vector<Vector3f>& meshVertices, std::vector<TerrainChunk>& chunksOut);
 
-	static void generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut, int resolution, int terrainSpacing, float heightScale = 12.0f, float majorHeightFrequency = 5.0f,
+	static void generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut,
+		int resolution,
+		int terrainSpacing,
+		float heightScale = 12.0f,
+		float majorHeightFrequency = 5.0f,
 		float majorHeight = 1.0f,
 		float minorHeightFrequency = 75.0f,
 		float minorHeight = 0.25f, int OffsetX = 0, int OffsetZ = 0);
+
 	static void generateTerrainMeshVerticesFromNoise(std::vector<Vector3f>& verticesOut,
 		int terrainResolution,
 		float spacing,
@@ -55,7 +60,19 @@ public:
 		float frequency = 0.01f,
 		int OffsetX = 0,
 		int OffsetZ = 0);
-	static void generateTerrainMeshVerticesFromHeighmap();
+
+	static void generateTerrainMeshVerticesFromHeightmap(std::vector<Vector3f>& verticesOut,
+		const char* filename,
+		int actualTerrainWidth,
+		int actualterrainLength,
+		int terrainWidth,
+		int terrainLength,
+		int terrainSpacing,
+		float heightScale,
+		int OffsetX = 0,
+		int OffsetZ = 0);
+
+	static double* loadRawHightMap(const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainWidth, int terrainLength);
 
 	static BasicMeshPtr generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor);
 

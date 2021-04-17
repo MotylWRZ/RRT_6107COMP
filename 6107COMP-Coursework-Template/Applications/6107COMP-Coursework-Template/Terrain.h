@@ -40,7 +40,13 @@ public:
 		float minorHeight = 0.25f);
 
 	void generateTerrainFromNoise(int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType = FastNoise::NoiseType::SimplexFractal, int seed = 123456, float frequency = 0.01f);
-	void generateterrainfromHeightmap();
+	void generateTerrainFromHeightmap(const char* filename,
+		int actualTerrainWidth,
+		int actualterrainLength,
+		int terrainWidth,
+		int terrainLength,
+		int terrainSpacing,
+		float heightScale);
 
 	// Creates 4 equal chunks of terrain
 	// if extend is false, the terrain will be divided into 4 equal chunks, each chunk with divided resolution
