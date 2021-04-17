@@ -116,7 +116,8 @@ void LJMULevelDemo::setupGeometry()
 	//this->m_terrain->initializeBasicChunkedTerrain(true, 254, 3);
 	//this->m_terrain->generateTerrainFromNoise(254, 3, 128);
 	//this->m_terrain->generateChunkedTerrainFromNoise(true, 255, 3, 128);
-	this->m_terrain->generateTerrainFromHeightmap("heightmap.r16", 1025, 1025, 255, 255, 3, 33);
+	//this->m_terrain->generateTerrainFromHeightmap("heightmap.r16", 1025, 1025, 255, 255, 3, 33);
+	this->m_terrain->generateChunkedTerrainFromHeightmap(true, "heightmap.r16", 1025, 1025, 255, 255, 3, 33);
 	this->m_terrain->setMaterial(tTerrainMaterial);
 	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 

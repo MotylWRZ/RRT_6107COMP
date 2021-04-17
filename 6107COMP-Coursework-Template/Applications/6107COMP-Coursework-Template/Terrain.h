@@ -56,7 +56,13 @@ public:
 		float minorHeightFrequency = 75.0f,
 		float minorHeight = 0.25f);
 	void generateChunkedTerrainFromNoise(bool extend, int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType = FastNoise::NoiseType::SimplexFractal, int seed = 123456, float frequency = 0.01f);
-	void generateTerrainFromHeightmap(bool extend);
+	void generateChunkedTerrainFromHeightmap(bool extend, const char* filename,
+		int actualTerrainWidth,
+		int actualterrainLength,
+		int terrainWidth,
+		int terrainLength,
+		int terrainSpacing,
+		float heightScale);
 
 	void deleteTerrainMesh();
 
