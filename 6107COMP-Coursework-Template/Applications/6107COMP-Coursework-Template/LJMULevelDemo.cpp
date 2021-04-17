@@ -111,9 +111,9 @@ void LJMULevelDemo::setupGeometry()
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
 	//this->m_pScene->AddActor(this->m_LandscapeActor);
 
-	this->m_terrain = new Terrain(254, 3, 12);
+	this->m_terrain = new Terrain(254, 3, 12, this->m_pScene);
 	//this->m_terrain->initializeBasic();
-	this->m_terrain->initializeBasicChunkedTerrain(true);
+	this->m_terrain->initializeBasicChunkedTerrain(true, 111, 10);
 	this->m_terrain->setMaterial(tTerrainMaterial);
 	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 

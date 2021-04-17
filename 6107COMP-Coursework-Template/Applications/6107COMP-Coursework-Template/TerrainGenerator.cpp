@@ -474,7 +474,7 @@ void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertic
 	int res = sqrt(meshVertices.size());
 
 	// cache mesh vertices locally
-	std::vector<Vector3f> verts;// = meshVertices;
+	std::vector<Vector3f> verts = meshVertices;
 
 	for (int OffsetX = -1; OffsetX < 1; OffsetX++)
 	{
@@ -484,14 +484,22 @@ void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertic
 			TerrainGenerator::generateterainMeshVertices(verts, OffsetX, OffsetZ, res, 3);
 
 
-			/*for (auto& Vertex : verts)
-			{
-				Vertex.x += OffsetX * 254 * 3;
-				Vertex.z += OffsetZ * 254 * 3;
-			}*/
+
+			///*for (int Width = 0; Width < res; Width++)
+			//{
+			//	for (int Length = 0; Length < res; Length++)
+			//	{
+			//		Vector3f& tVert = verts[Width * res + Length];
+			//	}
+			//}*/
+
+			///*for (auto& Vertex : verts)
+			//{
+			//	Vertex.x += OffsetX * 128 * 3;
+			//	Vertex.z += OffsetZ * 128 * 3;
+			//}
 
 			verticesOut.push_back(verts);
-			verts.clear();
 		}
 	}
 }

@@ -45,6 +45,8 @@ public:
 		float majorHeight = 1.0f,
 		float minorHeightFrequency = 75.0f,
 		float minorHeight = 0.25f);
+	static void generateTerrainMeshVerticesFromNoise();
+	static void generateTerrainMeshVerticesFromHeighmap();
 
 	static BasicMeshPtr generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor);
 
