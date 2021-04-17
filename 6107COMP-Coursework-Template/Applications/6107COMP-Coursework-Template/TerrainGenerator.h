@@ -11,6 +11,7 @@
 
 #include "RRTVertexDX11.h"
 #include "TerrainChunk.h"
+#include "FastNoise.h"
 
 class TerrainChunk;
 class Terrain;
@@ -44,8 +45,16 @@ public:
 	static void generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut, int resolution, int terrainSpacing, float heightScale = 12.0f, float majorHeightFrequency = 5.0f,
 		float majorHeight = 1.0f,
 		float minorHeightFrequency = 75.0f,
-		float minorHeight = 0.25f);
-	static void generateTerrainMeshVerticesFromNoise();
+		float minorHeight = 0.25f, int OffsetX = 0, int OffsetZ = 0);
+	static void generateTerrainMeshVerticesFromNoise(std::vector<Vector3f>& verticesOut,
+		int terrainResolution,
+		float spacing,
+		float heightScale,
+		FastNoise::NoiseType noiseType = FastNoise::NoiseType::SimplexFractal,
+		int seed = 123456,
+		float frequency = 0.01f,
+		int OffsetX = 0,
+		int OffsetZ = 0);
 	static void generateTerrainMeshVerticesFromHeighmap();
 
 	static BasicMeshPtr generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor);

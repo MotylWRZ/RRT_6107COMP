@@ -71,6 +71,18 @@ void Terrain::generateBasicTerrain(int resolution, int terrainSpacing, float hei
 	this->m_chunks.push_back(tChunk);
 }
 
+void Terrain::generateTerrainFromNoise(int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType, int seed, float frequency)
+{
+	std::vector<Vector3f> vertices;
+	TerrainGenerator::generateTerrainMeshVerticesFromNoise(vertices, terrainResolution, spacing, heightScale, noiseType, seed, frequency);
+	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(vertices, this->m_heightScale, 0.1f);
+	TerrainChunk* tChunk = new TerrainChunk();
+
+	tChunk->GetBody()->SetGeometry(tMesh);
+
+	this->m_chunks.push_back(tChunk);
+}
+
 void Terrain::initializeBasicChunkedTerrain(bool extend, int resolution, int terrainSpacing, float heightScale, float majorHeightFrequency,
 	float majorHeight,
 	float minorHeightFrequency,
@@ -83,19 +95,24 @@ void Terrain::initializeBasicChunkedTerrain(bool extend, int resolution, int ter
 	{
 		std::vector<std::vector<Vector3f>> tChunkVertices;
 
-		TerrainGenerator::generateBasicTerrainMesh(vertices, resolution, terrainSpacing, heightScale, majorHeightFrequency, majorHeight, minorHeightFrequency, minorHeight);
-		// generate vertices for each chunk
-		TerrainGenerator::extendTerrainMesh(vertices, tChunkVertices);
+		for (int OffsetX = -1; OffsetX < 1; OffsetX++)
+		{
+			for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
+			{
+				TerrainGenerator::generateBasicTerrainMesh(vertices, resolution, terrainSpacing, heightScale, majorHeightFrequency, majorHeight, minorHeightFrequency, minorHeight, OffsetX, OffsetZ);
+
+				tChunkVertices.push_back(vertices);
+				vertices.clear();
+			}
+		}
 
 		// Instantiate chunks
 		for (auto& VertsArray : tChunkVertices)
 		{
-			vertices.clear();
-
 			TerrainChunk* tChunk = new TerrainChunk();
 
 			//  generate mesh from vertices
-			BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(VertsArray, this->m_heightScale, 0.1f);
+			BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(VertsArray, heightScale, 0.1f);
 
 			tChunk->GetBody()->SetGeometry(tMesh);
 
@@ -104,8 +121,39 @@ void Terrain::initializeBasicChunkedTerrain(bool extend, int resolution, int ter
 	}
 }
 
-void Terrain::generateTerrainFromNoise(bool extend)
+void Terrain::generateChunkedTerrainFromNoise(bool extend, int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType, int seed, float frequency)
 {
+	this->deleteTerrainMesh();
+
+	std::vector<Vector3f> vertices;
+	if (extend)
+	{
+		std::vector<std::vector<Vector3f>> tChunkVertices;
+
+		for (int OffsetX = -1; OffsetX < 1; OffsetX++)
+		{
+			for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
+			{
+				TerrainGenerator::generateTerrainMeshVerticesFromNoise(vertices, terrainResolution, spacing, heightScale, noiseType, seed, frequency, OffsetX, OffsetZ);
+
+				tChunkVertices.push_back(vertices);
+				vertices.clear();
+			}
+		}
+
+		// Instantiate chunks
+		for (auto& VertsArray : tChunkVertices)
+		{
+			TerrainChunk* tChunk = new TerrainChunk();
+
+			//  generate mesh from vertices
+			BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(VertsArray, heightScale, 0.1f);
+
+			tChunk->GetBody()->SetGeometry(tMesh);
+
+			this->m_chunks.push_back(tChunk);
+		}
+	}
 }
 
 void Terrain::generateTerrainFromHeightmap(bool extend)

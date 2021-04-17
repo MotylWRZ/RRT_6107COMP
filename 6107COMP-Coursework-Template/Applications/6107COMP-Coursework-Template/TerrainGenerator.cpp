@@ -355,7 +355,7 @@ void TerrainGenerator::generateEqualChunksFromVertices(std::vector<Vector3f>& me
 void TerrainGenerator::generateBasicTerrainMesh(std::vector<Vector3f>& verticesOut, int resolution, int terrainSpacing, float heightScale, float majorHeightFrequency,
 	float majorHeight,
 	float minorHeightFrequency,
-	float minorHeight)
+	float minorHeight, int OffsetX, int OffsetZ)
 {
 	float tMajorHeightFrequency = majorHeightFrequency;
 	float tMajorHeight = majorHeight;
@@ -369,14 +369,17 @@ void TerrainGenerator::generateBasicTerrainMesh(std::vector<Vector3f>& verticesO
 	int tTerrainWidth = resolution;
 	int tTerrainLength = resolution;
 
+	int tOffsetX = OffsetX * (tTerrainWidth - 1);
+	int tOffsetZ = OffsetZ * (tTerrainLength - 1);
+
 	std::vector<Vector3f> tVertices;
 
 	for (int i = 0; i < tTerrainWidth; i++)
 	{
 		for (int j = 0; j < tTerrainLength; j++)
 		{
-			int X = i;
-			int Z = j;
+			int X = i + tOffsetX;
+			int Z = j + tOffsetZ;
 
 			float tMajorPeriodicHeightX = sin(static_cast<float>(X) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
 			float tMajorPeriodicHeightZ = cos(static_cast<float>(Z) / tTerrainWidth * tMajorHeightFrequency * GLYPH_PI) * tMajorHeight;
@@ -397,6 +400,36 @@ void TerrainGenerator::generateBasicTerrainMesh(std::vector<Vector3f>& verticesO
 	}
 
 	verticesOut = tVertices;
+}
+
+void TerrainGenerator::generateTerrainMeshVerticesFromNoise(std::vector<Vector3f>& verticesOut, int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType, int seed, float frequency, int OffsetX, int OffsetZ)
+{
+	FastNoise noiseGenerator;
+	noiseGenerator.SetNoiseType(noiseType);
+	noiseGenerator.SetSeed(seed);
+	noiseGenerator.SetFrequency(frequency);
+
+	int terrainWidth = terrainResolution;
+	int terrainLength = terrainResolution;
+
+	int tOffsetX = OffsetX * (terrainWidth - 1);
+	int tOffsetZ = OffsetZ * (terrainLength - 1);
+
+	std::vector<Vector3f> vertices;
+
+	for (int i = 0; i < terrainWidth; i++)
+	{
+		for (int p = 0; p < terrainLength; p++)
+		{
+			int X = i + tOffsetX;
+			int Z = p + tOffsetZ;
+
+			float height = noiseGenerator.GetNoise(X, Z) * heightScale;
+
+			vertices.push_back(Vector3f(X * spacing, height, Z * spacing));
+		}
+	}
+	verticesOut = vertices;
 }
 
 BasicMeshPtr TerrainGenerator::generateTerrainMeshFromVertices(const std::vector<Vector3f>& meshVertices, float heightScale, float textureMappingFactor)
@@ -474,14 +507,14 @@ void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertic
 	int res = sqrt(meshVertices.size());
 
 	// cache mesh vertices locally
-	std::vector<Vector3f> verts = meshVertices;
+	std::vector<Vector3f> verts;// = meshVertices;
 
 	for (int OffsetX = -1; OffsetX < 1; OffsetX++)
 	{
 		for (int OffsetZ = -1; OffsetZ < 1; OffsetZ++)
 		{
 			//TerrainGenerator::generateTerrainMesh(OffsetX, OffsetZ, res, 3);
-			TerrainGenerator::generateterainMeshVertices(verts, OffsetX, OffsetZ, res, 3);
+			//TerrainGenerator::generateterainMeshVertices(verts, OffsetX, OffsetZ, res, 3);
 
 
 
@@ -491,15 +524,46 @@ void TerrainGenerator::extendTerrainMesh(const std::vector<Vector3f>& meshVertic
 			//	{
 			//		Vector3f& tVert = verts[Width * res + Length];
 			//	}
+
 			//}*/
 
-			///*for (auto& Vertex : verts)
-			//{
-			//	Vertex.x += OffsetX * 128 * 3;
-			//	Vertex.z += OffsetZ * 128 * 3;
-			//}
+			int tOffsetX = OffsetX * (res - 1);
+			int tOffsetZ = OffsetZ * (res - 1);
+
+			for (int i = 0; i < res; i++)
+			{
+				for (int p = 0; p < res; p++)
+				{
+					int X = i + tOffsetX;
+					int Z = p + tOffsetZ;
+
+					float tHeight = meshVertices[i * res + p].y;
+
+					Vector3f tVec;// = verts[i * res + p];
+
+				/*	if (OffsetX == -1)
+					{
+						X += 700;
+						Z += 700;
+					}*/
+
+					tVec.x = X * 3;
+					tVec.y = tHeight;
+					tVec.z = Z * 3;
+
+					verts.push_back(tVec);
+
+				}
+			}
+
+			/*for (auto& Vertex : verts)
+			{
+				Vertex.x += OffsetX * res;
+				Vertex.z += OffsetZ * res;
+			}*/
 
 			verticesOut.push_back(verts);
+			verts.clear();
 		}
 	}
 }

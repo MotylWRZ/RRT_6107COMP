@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "TerrainChunk.h"
+#include "TerrainGenerator.h"
 
 class Light_Base;
 
@@ -38,7 +39,7 @@ public:
 		float minorHeightFrequency = 75.0f,
 		float minorHeight = 0.25f);
 
-	void generateTerrainFromNoise();
+	void generateTerrainFromNoise(int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType = FastNoise::NoiseType::SimplexFractal, int seed = 123456, float frequency = 0.01f);
 	void generateterrainfromHeightmap();
 
 	// Creates 4 equal chunks of terrain
@@ -48,7 +49,7 @@ public:
 		float majorHeight = 1.0f,
 		float minorHeightFrequency = 75.0f,
 		float minorHeight = 0.25f);
-	void generateTerrainFromNoise(bool extend);
+	void generateChunkedTerrainFromNoise(bool extend, int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType = FastNoise::NoiseType::SimplexFractal, int seed = 123456, float frequency = 0.01f);
 	void generateTerrainFromHeightmap(bool extend);
 
 	void deleteTerrainMesh();

@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Actors">
       <UniqueIdentifier>{eae38306-883b-4e71-be38-578db9b9b5b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\NoiseLibrary">
+      <UniqueIdentifier>{3a6bedb3-a3b1-4e4f-a51f-74fa865232af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NoiseLibrary">
+      <UniqueIdentifier>{8399b1e7-e9f9-4201-a536-07df0445b327}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
@@ -66,6 +72,10 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
+    <ClCompile Include="TerrainChunk.cpp" />
+    <ClCompile Include="FastNoise.cpp">
+      <Filter>Source Files\NoiseLibrary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -110,6 +120,10 @@
     </ClInclude>
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="SolarSystem.h" />
+    <ClInclude Include="TerrainChunk.h" />
+    <ClInclude Include="FastNoise.h">
+      <Filter>Header Files\NoiseLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Data\Shaders\RRTPhongLitBumpTextureIncludeTest.hlsl">

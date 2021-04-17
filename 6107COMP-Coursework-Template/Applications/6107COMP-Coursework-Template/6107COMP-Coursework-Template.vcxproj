@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FastNoise.cpp" />
     <ClCompile Include="InstancedStaticMesh.cpp" />
     <ClCompile Include="Light_Directional.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="TerrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FastNoise.h" />
     <ClInclude Include="InstancedStaticMesh.h" />
     <ClInclude Include="Light_Directional.h" />
     <ClInclude Include="GeometryGenerator.h" />

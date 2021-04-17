@@ -113,7 +113,9 @@ void LJMULevelDemo::setupGeometry()
 
 	this->m_terrain = new Terrain(254, 3, 12, this->m_pScene);
 	//this->m_terrain->initializeBasic();
-	this->m_terrain->initializeBasicChunkedTerrain(true, 111, 10);
+	//this->m_terrain->initializeBasicChunkedTerrain(true, 254, 3);
+	//this->m_terrain->generateTerrainFromNoise(254, 3, 128);
+	this->m_terrain->generateChunkedTerrainFromNoise(true, 254, 3, 128);
 	this->m_terrain->setMaterial(tTerrainMaterial);
 	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 
