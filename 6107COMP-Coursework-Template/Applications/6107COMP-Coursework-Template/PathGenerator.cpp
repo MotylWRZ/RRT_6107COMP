@@ -96,12 +96,69 @@ void PathGenerator::createCatmullRomPath(float centerX, float centerY, float rad
 
 HermitePoint PathGenerator::Hermite(const HermitePoint& start, const HermitePoint& end, float t)
 {
-    return HermitePoint();
+	Vector3f position0 = start.Position;   // Enter position
+	Vector3f tangentOut0 = start.TangentOut; // Enter tangent
+	Vector3f position1 = end.Position; // Exit position
+	Vector3f tangentIn1 = end.TangentIn; // Exit tangent
+
+	float t2 = t * t; //t-squared
+	float t3 = t2 * t; // t-cubed
+
+	// Calculate Hermite basis
+	float h1 = 2.0f * t3 - 3.0f * t2 + 1.0f;
+	float h2 = -2.0f * t3 + 3.0f * t2;
+	float h3 = t3 - 2.0f * t2 + t;
+	float h4 = t3 - t2;
+
+	HermitePoint result;
+
+	result.Position.x = h1 * position0.x + h3 * tangentOut0.x + h2 * position1.x + h4 * tangentIn1.x;
+	result.Position.y = h1 * position0.y + h3 * tangentOut0.y + h2 * position1.y + h4 * tangentIn1.y;
+	result.Position.z = h1 * position0.z + h3 * tangentOut0.z + h2 * position1.z + h4 * tangentIn1.z;
+
+	return result;
 }
 
-void PathGenerator::createHermitePath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
+void PathGenerator::createHermitePath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
 {
+	std::vector<HermitePoint> HermitePoints;
+	std::vector<Vector3f> tPath;
 
+	for (int i = start; i < end; i = i + increment)
+	{
+		float x = centerX + radius * cos(i * DEG_TO_RAD);
+		float z = centerY + radius * sin(i * DEG_TO_RAD);
+		float y = height + 100 * cos(i * DEG_TO_RAD * 10);
+
+		HermitePoint tNewPoint;
+		tNewPoint.Position = Vector3f(x, y, z);
+
+		HermitePoints.push_back(tNewPoint);
+	}
+
+	int numPoints = HermitePoints.size();
+
+	for (int pt = 1; pt <= numPoints; pt++)
+	{
+		int p0 = (pt - 1);
+		int p1 = pt % numPoints;
+		int numInterpoints = 10;
+
+		HermitePoints[p0].TangentOut = HermitePoints[p1].Position - HermitePoints[p0].Position;
+		HermitePoints[p1].TangentIn = HermitePoints[p1].Position - HermitePoints[p0].Position;
+
+		HermitePoints[p0].TangentOut.Normalize();
+		HermitePoints[p1].TangentIn.Normalize();
+
+		for (int i = 0; i < numInterpoints; i++)
+		{
+			float time = ((float)i) / numInterpoints;
+			HermitePoint pt = Hermite(HermitePoints[p0], HermitePoints[p1], time);
+			tPath.push_back(pt.Position);
+		}
+	}
+
+	pathOut = tPath;
 }
 
 BasicMeshPtr PathGenerator::generatePathMesh(const std::vector<Vector3f>& pathPoints)
