@@ -31,15 +31,18 @@
     <Filter Include="Source Files\NoiseLibrary">
       <UniqueIdentifier>{8399b1e7-e9f9-4201-a536-07df0445b327}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Terrain">
+      <UniqueIdentifier>{1b167ef0-a106-44c9-88e3-be7728e71a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Terrain">
+      <UniqueIdentifier>{2d8fdd6f-acf9-4141-8858-1b69b722e673}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LJMUTextOverlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
@@ -70,11 +73,18 @@
     <ClCompile Include="InstancedStaticMesh.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
-    <ClCompile Include="TerrainChunk.cpp" />
     <ClCompile Include="FastNoise.cpp">
       <Filter>Source Files\NoiseLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainGenerator.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainChunk.cpp">
+      <Filter>Source Files\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +92,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LJMUTextOverlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeometryGenerator.h">
@@ -118,11 +125,18 @@
     <ClInclude Include="InstancedStaticMesh.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h" />
     <ClInclude Include="SolarSystem.h" />
-    <ClInclude Include="TerrainChunk.h" />
     <ClInclude Include="FastNoise.h">
       <Filter>Header Files\NoiseLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainChunk.h">
+      <Filter>Header Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainGenerator.h">
+      <Filter>Header Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

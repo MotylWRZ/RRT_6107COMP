@@ -9,7 +9,6 @@ Terrain::Terrain(int terrainResolution, int terrainSpacing, float heightScale, S
 	,m_heightScale(heightScale)
 	,m_pScene(pScene)
 {
-	//this->generateTerrainChunks();
 }
 
 Terrain::~Terrain()

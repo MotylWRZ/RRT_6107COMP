@@ -157,7 +157,7 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 	float3 lightIntensity = float3(0.0f, 0.0f, 0.0f);
 
 	// Compute Lights
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 100; i++)
 	{
         //pointlightIntensity += calculatePointLight(Lights[i], normalVector, worldPosition);
         if (Lights[i].iLightType == LIGHT_TYPE_NONE)

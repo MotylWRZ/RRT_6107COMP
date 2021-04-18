@@ -398,6 +398,30 @@ MaterialPtr MaterialGenerator::createTerrainMultiTextureMaterial(RendererDX11& p
 	return MaterialGenerator::createMultiTextureMaterial(pRenderer, std::wstring(L"RRTTerrainMultiTextureMapping.hlsl"), highlandsTextureFile, lowlandsTextureFile);
 }
 
+MaterialPtr MaterialGenerator::createLitTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile, const std::vector<LightBasePtr>& lights, const MaterialReflectanceInfo& MatReflectanceInfo)
+{
+	MaterialPtr tMat =  MaterialGenerator::createMultiTextureMaterial(pRenderer, std::wstring(L"RRTTerrainLitMultiTextureMapping.hlsl"), highlandsTextureFile, lowlandsTextureFile);
+
+	MaterialGenerator::setLightToMaterial(pRenderer, tMat, lights, MatReflectanceInfo);
+
+	return tMat;
+}
+
+MaterialPtr MaterialGenerator::createLitBumpTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile, std::wstring highlandsBumpTextureFile, std::wstring lowlandsBumpTextureFile, const std::vector<LightBasePtr>& lights, const MaterialReflectanceInfo& MatReflectanceInfo)
+{
+	MaterialPtr tMat = MaterialGenerator::createMultiTextureMaterial(pRenderer, std::wstring(L"RRTTerrainLitBumpMultiTextureMapping.hlsl"), highlandsTextureFile, lowlandsTextureFile);
+
+	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(highlandsBumpTextureFile);
+	tMat->Parameters.SetShaderResourceParameter(L"BumpTexture1", tBumpTexture);
+
+	ResourcePtr tBumpTexture2 = RendererDX11::Get()->LoadTexture(lowlandsBumpTextureFile);
+	tMat->Parameters.SetShaderResourceParameter(L"BumpTexture2", tBumpTexture2);
+
+	MaterialGenerator::setLightToMaterial(pRenderer, tMat, lights, MatReflectanceInfo);
+
+	return tMat;
+}
+
 MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTextureV2.hlsl"), diffuseTextureFile);

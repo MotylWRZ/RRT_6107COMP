@@ -102,9 +102,10 @@ void LJMULevelDemo::setupGeometry()
 
 	// Create test Landscape
 	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
-	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);
-	//MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"SnowScuffedGround.tif");
-
+	MaterialPtr tTerrainMaterial = //MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);
+	//MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff");
+	MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
+	//MaterialGenerator::createLitBumpTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"rocks_ground_06_nor_2k.tiff", L"brown_mud_dry_nor_2k.tiff", this->m_lights, tMatInfo);
 
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
@@ -113,9 +114,9 @@ void LJMULevelDemo::setupGeometry()
 
 	this->m_terrain = new Terrain(254, 3, 12, this->m_pScene);
 	//this->m_terrain->initializeBasic();
-	this->m_terrain->generateBasicChunkedTerrain(false , 254, 3);
+	//this->m_terrain->generateBasicChunkedTerrain(false , 254, 3);
 	//this->m_terrain->generateTerrainFromNoise(254, 3, 128);
-	//this->m_terrain->generateChunkedTerrainFromNoise(false, 254, 3, 128);
+	this->m_terrain->generateChunkedTerrainFromNoise(true, 254, 3, 33);
 	//this->m_terrain->generateTerrainFromHeightmap("heightmap.r16", 1025, 1025, 255, 255, 3, 33);
 	//this->m_terrain->generateChunkedTerrainFromHeightmap(false, "heightmap.r16", 1025, 1025, 254, 254, 3, 33);
 	this->m_terrain->setMaterial(tTerrainMaterial);
@@ -232,6 +233,7 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	//Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
 	Vector4f tDirLightColour(0.2f, 0.2f, 0.3f, 1.0f);
+	tDirLightColour /= 4;
 	Vector3f tDirLightDirection(0.0f, 0.0f, 1.0f);
 	tDirLightDirection.Normalize();
 
@@ -254,17 +256,17 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 	this->addLight(tDirectionalLight);
 	this->addLight(tSpotLight);
 
-	//for (int i = 0; i < 200;  i++)
-	//{
-	//	tLightPosition.x += 30.0f;
-	//	//tLightColour.x += 0.1f;
-	//	tLightColour.x += 0.1;
-	//	tLightColour.z -= 0.1;
+	for (int i = 0; i < 200;  i++)
+	{
+		tLightPosition.x += 70.0f;
+		//tLightColour.x += 0.1f;
+		tLightColour.x += 0.1;
+		//tLightColour.z += 0.01;
 
-	//	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
+		LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
 
-	//	this->addLight(tPointLight);
-	//}
+		this->addLight(tPointLight);
+	}
 }
 
 void LJMUDX::LJMULevelDemo::setupSkySphere()
@@ -311,53 +313,6 @@ void LJMULevelDemo::Initialize()
 	//Call the Input Assembly Stage to setup the layout of our Engine Objects
 	this->inputAssemblyStage();
 	this->setupCamera();
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	/*this->m_pCamera = new Camera();
-
-	Vector3f tcamerapos(0.0f, 20.0f, -50.0f);
-	this->m_pCamera->Spatial().SetTranslation(tcamerapos);
-
-	this->m_pRenderView = new ViewPerspective(*this->m_pRenderer11,
-		                                     this->m_RenderTarget, this->m_DepthTarget);
-	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-	this->m_pCamera->SetCameraView(this->m_pRenderView);
-
-	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11,
-		                                      this->m_RenderTarget,
-											  std::wstring(L"Cambria"),
-											  25);
-
-	this->m_pCamera->SetOverlayView(this->m_pRender_text);
-
-
-	this->m_pCamera->SetProjectionParams(0.1f, 1000.0f, m_iscreenWidth / m_iscreenHeight,
-		                                   static_cast<float>(GLYPH_PI) / 2.0f);
-
-	this->m_pScene->AddCamera(this->m_pCamera);*/
-
-	//LightInfo tLights[10];
-
-	//BufferConfigDX11 tBuffConfig;
-	////tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), true);
-	//tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
-	//tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
-	//tBuffConfig.SetMiscFlags(0);
-	//tBuffConfig.SetStructureByteStride(0);
-	//tBuffConfig.SetUsage(D3D11_USAGE_DEFAULT);
-	//tBuffConfig.SetCPUAccessFlags(0);
-
-	//D3D11_SUBRESOURCE_DATA dataLights;
-	//dataLights.pSysMem = tLights;
-	//dataLights.SysMemPitch = 0;
-	//dataLights.SysMemSlicePitch = 0;
-
-	//Vec = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceConstants");
-	//EmissiveCol = this->m_pRenderer11->m_pParamMgr->GetVectorParameterRef(L"SurfaceEmissiveColour");
-
-	//m_Buf2 = this->m_pRenderer11->CreateConstantBuffer(&tBuffConfig, &dataLights);
-	//this->m_pRenderer11->m_pParamMgr->SetConstantBufferParameter(L"cLights", m_Buf2);
-	//m_Buf = this->m_pRenderer11->m_pParamMgr->GetConstantBufferParameterRef(L"cLights");
 }
 
 ///////////////////////////////////
@@ -371,14 +326,27 @@ void LJMULevelDemo::Update()
 
 	float tDT = this->m_pTimer->Elapsed();
 
-	LightBasePtr tLight = this->m_lights[2];
+	/*LightBasePtr tLight = this->m_lights[2];
 	static float speed = 0.0f;
 	speed += 0.001f;
 	LightInfo tInfo;
 	tInfo = tLight->getLightInfo();
 	tInfo.LightPosition.x += cos(speed) * 0.2f;
 
-	tLight->setLightInfo(tInfo);
+	tLight->setLightInfo(tInfo);*/
+
+	for (int i = 2; i < this->m_lights.size(); i++)
+	{
+		LightBasePtr tLight = this->m_lights[i];
+		static float speed = 0.0f;
+		speed += 0.001f;
+		LightInfo tInfo;
+		tInfo = tLight->getLightInfo();
+		tInfo.LightPosition.x += cos(speed / 2) * 1.1f;
+
+		tLight->setLightInfo(tInfo);
+	}
+
 
 	MaterialReflectanceInfo tMatInfo;
 	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
