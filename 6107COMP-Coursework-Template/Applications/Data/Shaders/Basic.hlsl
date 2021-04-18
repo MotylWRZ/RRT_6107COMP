@@ -1,5 +1,4 @@
-
-// Constant buffers we want to use
+//-----------------------------------------------------------------------------
 cbuffer Transforms
 {
 	matrix WorldMatrix;
@@ -7,35 +6,40 @@ cbuffer Transforms
 	matrix ProjMatrix;
 };
 
+//-----------------------------------------------------------------------------
 struct VS_INPUT
 {
-	float4 Position : POSITION;
-	float4 Color : COLOR;
+	float3 position : POSITION;
+	float4 color : COLOR;
 };
 
 struct VS_OUTPUT
 {
-	float4 Position : SV_Position;
-	float4 Color : COLOR;
+	float4 position : SV_Position;
+	float4 color : COLOR;
 };
 
+//-----------------------------------------------------------------------------
 VS_OUTPUT VSMain(in VS_INPUT v)
 {
-	VS_OUTPUT Output;
+	VS_OUTPUT o;
 
-	float4 WorldSpace = mul(v.Position, WorldMatrix);
+	float4 input4 = float4(v.position, 1.0f);
+
+	float4 WorldSpace = mul(input4, WorldMatrix);
 	float4 ViewSpace = mul(WorldSpace, ViewMatrix);
 	float4 ScreenSpace = mul(ViewSpace, ProjMatrix);
 
-	Output.Position = ScreenSpace;
-	Output.Color = v.Color;
+	o.position = ScreenSpace;
+	o.color = v.color;
 
-	return Output;
+	return o;
 }
 
-//Pixel Shader
+//-----------------------------------------------------------------------------
 float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
-	float4 Color = input.Color;
-	return(Color);
+	float4 color = input.color;
+	return(color);
 }
+//-

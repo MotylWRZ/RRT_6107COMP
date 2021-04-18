@@ -7,7 +7,7 @@ Vector3f PathGenerator::LinearInterp(Vector3f p0, Vector3f p1, float t)
     return result;
 }
 
-BasicMeshPtr PathGenerator::createLinearPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
+void PathGenerator::createLinearPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
 {
 
 	std::vector<Vector3f> tLinearCheckpoints;
@@ -37,26 +37,7 @@ BasicMeshPtr PathGenerator::createLinearPath(float centerX, float centerY, float
 		}
 	}
 
-	auto pathMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
-	pathMesh->SetLayoutElements(BasicVertexDX11::GetElementCount(), BasicVertexDX11::Elements);
-	pathMesh->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	pathMesh->SetMaxVertexCount(tPath.size());
-
-	RRTVertexDX11::Vertex tv;
-
-	for (int i = 0; i < tPath.size() + 1; i++)
-	{
-		int j = i % tPath.size();
-		tv.position = tPath[j];
-		tv.color = Vector4f(1, 0, 0, 1);
-		pathMesh->AddVertex(tv);
-	}
-
-	tLinearCheckpoints.clear();
-
 	pathOut = tPath;
-
-	return pathMesh;
 }
 
 Vector3f PathGenerator::CatmullRom(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, float t)
@@ -64,9 +45,9 @@ Vector3f PathGenerator::CatmullRom(Vector3f p0, Vector3f p1, Vector3f p2, Vector
     return Vector3f();
 }
 
-BasicMeshPtr PathGenerator::createCatmullRomPath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
+void PathGenerator::createCatmullRomPath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
 {
-    return BasicMeshPtr();
+
 }
 
 HermitePoint PathGenerator::Hermite(const HermitePoint& start, const HermitePoint& end, float t)
@@ -74,7 +55,32 @@ HermitePoint PathGenerator::Hermite(const HermitePoint& start, const HermitePoin
     return HermitePoint();
 }
 
-BasicMeshPtr PathGenerator::createHermitePath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
+void PathGenerator::createHermitePath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
 {
-    return BasicMeshPtr();
+
+}
+
+BasicMeshPtr PathGenerator::generatePathMesh(const std::vector<Vector3f>& pathPoints)
+{
+	if (pathPoints.size() == 0)
+	{
+		return nullptr;
+	}
+
+	auto pathMesh = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	pathMesh->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
+	pathMesh->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	pathMesh->SetMaxVertexCount(pathPoints.size());
+
+	RRTVertexDX11::Vertex tv;
+
+	for (int i = 0; i < pathPoints.size() + 1; i++)
+	{
+		int j = i % pathPoints.size();
+		tv.position = pathPoints[j];
+		tv.color = Vector4f(1, 0, 0, 1);
+		pathMesh->AddVertex(tv);
+	}
+
+	return pathMesh;
 }

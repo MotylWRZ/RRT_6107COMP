@@ -24,10 +24,11 @@ class PathGenerator
 {
 public:
 	static Vector3f LinearInterp(Vector3f p0, Vector3f p1, float t);
-	static BasicMeshPtr createLinearPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
+	static void createLinearPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
 	static Vector3f CatmullRom(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, float t);
-	static BasicMeshPtr createCatmullRomPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
+	static void createCatmullRomPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
 	static HermitePoint Hermite(const HermitePoint& start, const HermitePoint& end, float t);
-	static BasicMeshPtr createHermitePath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
+	static void createHermitePath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut);
+	static BasicMeshPtr generatePathMesh(const std::vector<Vector3f>& pathPoints);
 };
 

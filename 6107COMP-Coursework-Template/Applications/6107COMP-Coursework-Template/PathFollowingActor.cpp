@@ -1,9 +1,10 @@
 #include "PathFollowingActor.h"
 
-PathFollowingActor::PathFollowingActor(float movementSpeed, float rotationSpeed, bool generateDefaultPath)
+PathFollowingActor::PathFollowingActor(Scene* pScene, float movementSpeed, float rotationSpeed, bool generateDefaultPath)
 	: m_actorMovementSpeed(movementSpeed)
 	, m_actorRotationSpeed(rotationSpeed)
 	, m_actorState(0)
+	, m_pScene(pScene)
 {
 	if (generateDefaultPath)
 	{
@@ -13,6 +14,7 @@ PathFollowingActor::PathFollowingActor(float movementSpeed, float rotationSpeed,
 
 PathFollowingActor::~PathFollowingActor()
 {
+//	this->m_pPath->removePathActorFromScene(this->m_pScene);
 }
 
 void PathFollowingActor::Update(float deltaTime)
@@ -30,7 +32,7 @@ void PathFollowingActor::generateNewPath(EPathType pathType, float centerX, floa
 {
 	if (!this->m_pPath)
 	{
-		this->m_pPath = std::make_shared<Path>();
+		this->m_pPath = new Path();// std::make_shared<Path>();
 	}
 
 	this->m_pPath->generatePath(pathType, centerX, centerY, radius, height, start, end, increment);
@@ -59,16 +61,16 @@ void PathFollowingActor::generateNewPath(EPathType pathType, float centerX, floa
 	this->GetNode()->Position() = this->m_pPath->getPathPoints()[m_currentCheckpointID];
 }
 
-void PathFollowingActor::setPath(std::shared_ptr<Path> pPath)
-{
-	this->m_pPath = pPath;
-}
+//void PathFollowingActor::setPath(std::shared_ptr<Path> pPath)
+//{
+//	this->m_pPath = pPath;
+//}
 
-void PathFollowingActor::addPathActorToScene(Scene* pScene)
+void PathFollowingActor::addPathActorToScene(Scene* pScene, RendererDX11* pRenderer)
 {
 	if (this->m_pPath)
 	{
-		this->m_pPath->addPathActorToScene(pScene);
+		this->m_pPath->addPathActorToScene(pScene, pRenderer);
 	}
 }
 

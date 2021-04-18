@@ -87,6 +87,8 @@ MaterialPtr MaterialGenerator::createBasicMaterial(RendererDX11& pRenderer)
 
 	RasterizerStateConfigDX11 rsConfig;
 	rsConfig.CullMode = D3D11_CULL_BACK;
+	rsConfig.FillMode = D3D11_FILL_SOLID;
+
 	int iRasterizerState = pRenderer.CreateRasterizerState(&rsConfig);
 
 	if (iRasterizerState == -1)

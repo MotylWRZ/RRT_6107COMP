@@ -97,14 +97,17 @@ void LJMULevelDemo::setupGeometry()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
-	this->m_pSpaceship = new PathFollowingActor(160.0f, 1.0f, true);
+	this->m_pSpaceship = new PathFollowingActor(this->m_pScene, 160.0f, 1.0f, true);
 	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"spaceship.obj", Vector4f(1, 1, 1, 1));
 	MaterialPtr tSpaceshipMat = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"wedge_p1_diff_v1.png");
 	this->m_pSpaceship->GetBody()->SetGeometry(tSpaceshipMesh);
 	this->m_pSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
 	this->m_pSpaceship->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
 	this->m_pScene->AddActor(this->m_pSpaceship);
+	this->m_pSpaceship->addPathActorToScene(this->m_pScene, this->m_pRenderer11);
+	/*Path* p = new Path();
 
+	this->m_pScene->AddActor(p);*/
 
 
 	// Create test Landscape

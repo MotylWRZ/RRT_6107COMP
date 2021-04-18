@@ -11,22 +11,22 @@
 class PathFollowingActor : public Actor
 {
 public:
-	PathFollowingActor(float movementSpeed = 160.0f, float RotationSpeed = 1.0f, bool generateDefaultPath = false);
+	PathFollowingActor(Scene* pScene, float movementSpeed = 160.0f, float RotationSpeed = 1.0f, bool generateDefaultPath = false);
 	~PathFollowingActor();
 
 	void Update(float deltaTime);
 
-	inline const std::shared_ptr<Path> getPath() const { return m_pPath; }
+	inline const Path* getPath() const { return m_pPath; }
 	void generateNewPath(EPathType pathType, float centerX, float centerY, float radius, float height, float start, float end, float increment);
 	void setPath(std::shared_ptr<Path> pPath);
-	void addPathActorToScene(Scene* pScene);
+	void addPathActorToScene(Scene* pScene, RendererDX11* pRenderer);
 	void removePathActorFromScene(Scene* pScene);
 
 private:
 	void moveActor(float deltaTime);
 
 private:
-	std::shared_ptr<Path>  m_pPath;
+	Path*  m_pPath;
 	Vector3f m_actorDirection;
 	Vector3f m_actorRefDirection;
 	Vector3f m_actorTargetDirection;
@@ -37,5 +37,7 @@ private:
 
 	int m_currentCheckpointID;
 	int m_nextCheckpointID;
+
+	Scene* m_pScene;
 };
 
