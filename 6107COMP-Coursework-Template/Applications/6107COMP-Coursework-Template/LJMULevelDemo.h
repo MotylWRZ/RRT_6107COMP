@@ -21,7 +21,7 @@
 
 #include "RRTVertexDX11.h"
 #include "Planet.h"
-
+#include "Path.h"
 
 class Light_Base;
 class InstancedStaticMesh;
@@ -80,6 +80,7 @@ namespace LJMUDX
 		void addLight(LightBasePtr pLight);
 		void setupLighting();
 		void setupSkySphere();
+		void setupPaths();
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -98,7 +99,9 @@ namespace LJMUDX
 		Actor* m_pCubeActor;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
 		PathFollowingActor* m_pSpaceship;
+		PathFollowingActor* m_pSpaceship2;
 
+		std::vector<Path*> m_paths;
 		std::shared_ptr<SolarSystem> m_solarSystem;
 		Planet* m_planet;
 		std::vector<Actor*> m_actors;

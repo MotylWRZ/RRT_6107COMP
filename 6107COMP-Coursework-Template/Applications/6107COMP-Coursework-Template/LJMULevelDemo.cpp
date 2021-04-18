@@ -90,6 +90,8 @@ void LJMULevelDemo::inputAssemblyStage()
 
 void LJMULevelDemo::setupGeometry()
 {
+	this->setupPaths();
+
 	MaterialReflectanceInfo tMatInfo;
 	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
 	tMatInfo.Ambient = 0.0f;
@@ -97,17 +99,29 @@ void LJMULevelDemo::setupGeometry()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
-	this->m_pSpaceship = new PathFollowingActor(this->m_pScene, 160.0f, 1.0f, true);
+	this->m_pSpaceship = new PathFollowingActor(160.0f, 1.0f);
 	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"spaceship.obj", Vector4f(1, 1, 1, 1));
 	MaterialPtr tSpaceshipMat = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"wedge_p1_diff_v1.png");
 	this->m_pSpaceship->GetBody()->SetGeometry(tSpaceshipMesh);
 	this->m_pSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
 	this->m_pSpaceship->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
 	this->m_pScene->AddActor(this->m_pSpaceship);
-	this->m_pSpaceship->addPathActorToScene(this->m_pScene, this->m_pRenderer11);
-	/*Path* p = new Path();
 
-	this->m_pScene->AddActor(p);*/
+	this->m_pSpaceship2 = new PathFollowingActor(360.0f, 3.0f);
+	this->m_pSpaceship2->GetBody()->SetGeometry(tSpaceshipMesh);
+	this->m_pSpaceship2->GetBody()->SetMaterial(tSpaceshipMat);
+	this->m_pSpaceship2->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
+	this->m_pScene->AddActor(this->m_pSpaceship2);
+
+	this->m_pSpaceship->setPath(this->m_paths[0]);
+	this->m_pSpaceship2->setPath(this->m_paths[0]);
+
+	for (auto& Path : this->m_paths)
+	{
+		Path->generatePathMesh(this->m_pRenderer11);
+		this->m_pScene->AddActor(this->m_paths[0]);
+	}
+
 
 
 	// Create test Landscape
@@ -320,6 +334,14 @@ void LJMUDX::LJMULevelDemo::setupSkySphere()
 	this->m_pScene->AddActor(tSkySphereActor);
 }
 
+void LJMUDX::LJMULevelDemo::setupPaths()
+{
+	Path* tSpaceshipPath = new Path();
+	tSpaceshipPath->generatePath(EPathType::Path_Hermite, 1250.0f, 1250.0f, 1000.0f, 256.0f, -180.0f, 180.0f, 3);
+
+	this->m_paths.push_back(tSpaceshipPath);
+}
+
 ////////////////////////////////////
 // Initialise our DirectX 3D Scene
 ////////////////////////////////////
@@ -384,6 +406,7 @@ void LJMULevelDemo::Update()
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);
 	this->m_pSpaceship->Update(tDT);
+	this->m_pSpaceship2->Update(tDT);
 	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
 	//----------START RENDERING--------------------------------------------------------------

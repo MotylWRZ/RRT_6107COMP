@@ -29,10 +29,8 @@ public:
 
 	void generatePath(EPathType pathType, float centerX, float centerY, float radius, float height, float start, float end, float increment);
 
-	void addPathActorToScene(Scene* pScene, RendererDX11* pRenderer);
-	void removePathActorFromScene(Scene* pScene);
-
 	inline const std::vector<Vector3f> getPathPoints() const { return m_pathPoints; }
+	void generatePathMesh(RendererDX11* pRenderer);
 
 private:
 	std::vector<Vector3f> m_pathPoints;

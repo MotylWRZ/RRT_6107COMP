@@ -1,15 +1,10 @@
 #include "PathFollowingActor.h"
 
-PathFollowingActor::PathFollowingActor(Scene* pScene, float movementSpeed, float rotationSpeed, bool generateDefaultPath)
+PathFollowingActor::PathFollowingActor(float movementSpeed, float rotationSpeed)
 	: m_actorMovementSpeed(movementSpeed)
 	, m_actorRotationSpeed(rotationSpeed)
 	, m_actorState(0)
-	, m_pScene(pScene)
 {
-	if (generateDefaultPath)
-	{
-		this->generateNewPath(EPathType::Path_Hermite, 1250.0f, 1250.0f, 1000.0f, 256.0f, -180.0f, 180.0f, 1);
-	}
 }
 
 PathFollowingActor::~PathFollowingActor()
@@ -27,58 +22,11 @@ void PathFollowingActor::Update(float deltaTime)
 
 }
 
-void PathFollowingActor::generateNewPath(EPathType pathType, float centerX, float centerY, float radius, float height, float start, float end, float increment)
+void PathFollowingActor::setPath(const Path* pPath)
 {
-	if (!this->m_pPath)
-	{
-		this->m_pPath = new Path();// std::make_shared<Path>();
-	}
+	this->m_pPath = pPath;
 
-	this->m_pPath->generatePath(pathType, centerX, centerY, radius, height, start, end, increment);
-
-
-	// Placing the actor at the start checkpoint and facing the next checkpoint
-	m_currentCheckpointID = 0;
-	m_nextCheckpointID = m_currentCheckpointID + 1;
-	m_actorState = 0;
-
-	Matrix3f tstartRotation;
-	m_actorRefDirection = Vector3f(-1, 0, 0);
-	m_actorDirection = m_actorRefDirection;
-	m_actorTargetDirection = this->m_pPath->getPathPoints()[m_nextCheckpointID] - this->m_pPath->getPathPoints()[m_currentCheckpointID];
-	m_actorPrevDist2Target = m_actorTargetDirection.Magnitude();
-	m_actorTargetDirection.Normalize();
-
-	float angle = acos(m_actorRefDirection.Dot(m_actorTargetDirection));
-
-	Vector3f axis = m_actorRefDirection.Cross(m_actorTargetDirection);
-	axis.Normalize();
-
-	tstartRotation.RotationEuler(axis, angle);
-
-	this->GetNode()->Rotation() = tstartRotation;
-	this->GetNode()->Position() = this->m_pPath->getPathPoints()[m_currentCheckpointID];
-}
-
-//void PathFollowingActor::setPath(std::shared_ptr<Path> pPath)
-//{
-//	this->m_pPath = pPath;
-//}
-
-void PathFollowingActor::addPathActorToScene(Scene* pScene, RendererDX11* pRenderer)
-{
-	if (this->m_pPath)
-	{
-		this->m_pPath->addPathActorToScene(pScene, pRenderer);
-	}
-}
-
-void PathFollowingActor::removePathActorFromScene(Scene* pScene)
-{
-	if (this->m_pPath)
-	{
-		this->m_pPath->removePathActorFromScene(pScene);
-	}
+	this->resetActorPosition();
 }
 
 void PathFollowingActor::moveActor(float deltaTime)
@@ -165,4 +113,30 @@ void PathFollowingActor::moveActor(float deltaTime)
 			m_actorDirection.Normalize();
 		}
 	}
+}
+
+void PathFollowingActor::resetActorPosition()
+{
+
+	// Placing the actor at the start checkpoint and facing the next checkpoint
+	m_currentCheckpointID = 0;
+	m_nextCheckpointID = m_currentCheckpointID + 1;
+	m_actorState = 0;
+
+	Matrix3f tstartRotation;
+	m_actorRefDirection = Vector3f(-1, 0, 0);
+	m_actorDirection = m_actorRefDirection;
+	m_actorTargetDirection = this->m_pPath->getPathPoints()[m_nextCheckpointID] - this->m_pPath->getPathPoints()[m_currentCheckpointID];
+	m_actorPrevDist2Target = m_actorTargetDirection.Magnitude();
+	m_actorTargetDirection.Normalize();
+
+	float angle = acos(m_actorRefDirection.Dot(m_actorTargetDirection));
+
+	Vector3f axis = m_actorRefDirection.Cross(m_actorTargetDirection);
+	axis.Normalize();
+
+	tstartRotation.RotationEuler(axis, angle);
+
+	this->GetNode()->Rotation() = tstartRotation;
+	this->GetNode()->Position() = this->m_pPath->getPathPoints()[m_currentCheckpointID];
 }

@@ -11,22 +11,21 @@
 class PathFollowingActor : public Actor
 {
 public:
-	PathFollowingActor(Scene* pScene, float movementSpeed = 160.0f, float RotationSpeed = 1.0f, bool generateDefaultPath = false);
+	PathFollowingActor(float movementSpeed = 160.0f, float RotationSpeed = 1.0f);
 	~PathFollowingActor();
 
 	void Update(float deltaTime);
 
 	inline const Path* getPath() const { return m_pPath; }
-	void generateNewPath(EPathType pathType, float centerX, float centerY, float radius, float height, float start, float end, float increment);
-	void setPath(std::shared_ptr<Path> pPath);
-	void addPathActorToScene(Scene* pScene, RendererDX11* pRenderer);
-	void removePathActorFromScene(Scene* pScene);
+	void setPath(const Path* pPath);
+
 
 private:
 	void moveActor(float deltaTime);
+	void resetActorPosition();
 
 private:
-	Path*  m_pPath;
+	const Path* m_pPath;
 	Vector3f m_actorDirection;
 	Vector3f m_actorRefDirection;
 	Vector3f m_actorTargetDirection;
