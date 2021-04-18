@@ -42,12 +42,56 @@ void PathGenerator::createLinearPath(float centerX, float centerY, float radius,
 
 Vector3f PathGenerator::CatmullRom(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, float t)
 {
-    return Vector3f();
+	// Calculate Catmull-Rom basis
+	Vector3f cm0 = p1;
+	Vector3f cm1 = (p2 - p0) * 0.5f;
+	Vector3f cm2 = (p0 * 2 - p1 * 5 + p2 * 4 - p3) * 0.5f;
+	Vector3f cm3 = ((p1 - p2) * 3 + p3 - p0) * 0.5f;
+
+	float t2 = t * t;
+	float t3 = t2 * t;
+
+	Vector3f result;
+
+	result = cm0 + cm1 * t + cm2 * t2 + cm3 * t3;
+
+	return result;
 }
 
-void PathGenerator::createCatmullRomPath(float centerX, float centeY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
+void PathGenerator::createCatmullRomPath(float centerX, float centerY, float radius, float height, float start, float end, float increment, std::vector<Vector3f>& pathOut)
 {
 
+	std::vector<Vector3f> CatmullRomPoints;
+	std::vector<Vector3f> tPath;
+
+	for (int i = start; i < end; i = i + increment)
+	{
+		float x = centerX + radius * cos(i * DEG_TO_RAD);
+		float z = centerY + radius * sin(i * DEG_TO_RAD);
+		float y = height + 100 * cos(i * DEG_TO_RAD * 10);
+		CatmullRomPoints.push_back(Vector3f(x, y, z));
+	}
+
+	int numPoints = CatmullRomPoints.size();
+
+	for (int pt = 1; pt <= numPoints; pt++)
+	{
+		int p0 = (pt - 1);
+		int p1 = pt % numPoints;
+		int p2 = (pt + 1) % numPoints;
+		int p3 = (pt + 2) % numPoints;
+		int numInterpoints = 10;
+
+		for (int i = 0; i < numInterpoints; i++)
+		{
+			float time = ((float)i) / numInterpoints;
+			Vector3f pt = CatmullRom(CatmullRomPoints[p0], CatmullRomPoints[p1],
+				CatmullRomPoints[p2], CatmullRomPoints[p3], time);
+			tPath.push_back(pt);
+		}
+	}
+
+	pathOut = tPath;
 }
 
 HermitePoint PathGenerator::Hermite(const HermitePoint& start, const HermitePoint& end, float t)

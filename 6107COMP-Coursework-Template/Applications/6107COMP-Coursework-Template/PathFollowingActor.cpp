@@ -8,13 +8,12 @@ PathFollowingActor::PathFollowingActor(Scene* pScene, float movementSpeed, float
 {
 	if (generateDefaultPath)
 	{
-		this->generateNewPath(EPathType::Path_Linear, 1250.0f, 1250.0f, 1000.0f, 256.0f, -180.0f, 180.0f, 15);
+		this->generateNewPath(EPathType::Path_CatmullRom, 1250.0f, 1250.0f, 1000.0f, 256.0f, -180.0f, 180.0f, 15);
 	}
 }
 
 PathFollowingActor::~PathFollowingActor()
 {
-//	this->m_pPath->removePathActorFromScene(this->m_pScene);
 }
 
 void PathFollowingActor::Update(float deltaTime)
