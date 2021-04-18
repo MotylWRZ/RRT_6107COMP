@@ -5,7 +5,7 @@
 
 class Light_Base;
 
-static constexpr int LIGHTS_NUM_MAX = 20;
+static constexpr int LIGHTS_NUM_MAX = 100;
 
 using namespace Glyph3;
 

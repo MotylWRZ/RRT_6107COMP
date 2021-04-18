@@ -21,10 +21,13 @@
     <ClCompile Include="MaterialGenerator.cpp" />
     <ClCompile Include="Light_Point.cpp" />
     <ClCompile Include="MeshImporter.cpp" />
+    <ClCompile Include="Path.cpp" />
+    <ClCompile Include="PathGenerator.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="RRTVertexDX11.cpp" />
     <ClCompile Include="Light_Spot.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
+    <ClCompile Include="PathFollowingActor.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainChunk.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
@@ -41,10 +44,13 @@
     <ClInclude Include="MaterialGenerator.h" />
     <ClInclude Include="Light_Point.h" />
     <ClInclude Include="MeshImporter.h" />
+    <ClInclude Include="Path.h" />
+    <ClInclude Include="PathGenerator.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="RRTVertexDX11.h" />
     <ClInclude Include="Light_Spot.h" />
     <ClInclude Include="SolarSystem.h" />
+    <ClInclude Include="PathFollowingActor.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainChunk.h" />
     <ClInclude Include="TerrainGenerator.h" />

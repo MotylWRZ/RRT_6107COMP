@@ -41,6 +41,7 @@
 
 #include "FirstPersonCamera.h"
 
+#include "PathFollowingActor.h"
 
 //Add a Using Directive to avoid typing Glyph3 for basic constructs
 using namespace Glyph3;
@@ -96,7 +97,13 @@ void LJMULevelDemo::setupGeometry()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
-
+	this->m_pSpaceship = new PathFollowingActor(160.0f, 1.0f, true);
+	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"spaceship.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tSpaceshipMat = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"wedge_p1_diff_v1.png");
+	this->m_pSpaceship->GetBody()->SetGeometry(tSpaceshipMesh);
+	this->m_pSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
+	this->m_pSpaceship->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
+	this->m_pScene->AddActor(this->m_pSpaceship);
 
 
 
@@ -258,6 +265,11 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 
 	for (int i = 0; i < 200;  i++)
 	{
+		if (tLightPosition.x > 500.0f)
+		{
+			tLightPosition.z += 70.0f;
+			tLightPosition.x = -100.0f;
+		}
 		tLightPosition.x += 70.0f;
 		//tLightColour.x += 0.1f;
 		tLightColour.x += 0.1;
@@ -342,7 +354,7 @@ void LJMULevelDemo::Update()
 		speed += 0.001f;
 		LightInfo tInfo;
 		tInfo = tLight->getLightInfo();
-		tInfo.LightPosition.x += cos(speed / 2) * 1.1f;
+		tInfo.LightPosition.x += cos(speed / 2) * 4.7f;
 
 		tLight->setLightInfo(tInfo);
 	}
@@ -368,6 +380,7 @@ void LJMULevelDemo::Update()
 
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);
+	this->m_pSpaceship->Update(tDT);
 	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
 	//----------START RENDERING--------------------------------------------------------------

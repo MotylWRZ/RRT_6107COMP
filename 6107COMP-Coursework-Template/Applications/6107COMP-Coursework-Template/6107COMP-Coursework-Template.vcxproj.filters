@@ -86,6 +86,11 @@
     <ClCompile Include="TerrainChunk.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="PathGenerator.cpp" />
+    <ClCompile Include="PathFollowingActor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LJMULevelDemo.h">
@@ -138,6 +143,11 @@
     <ClInclude Include="TerrainGenerator.h">
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="PathGenerator.h" />
+    <ClInclude Include="PathFollowingActor.h">
+      <Filter>Header Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="heightmap.r16" />

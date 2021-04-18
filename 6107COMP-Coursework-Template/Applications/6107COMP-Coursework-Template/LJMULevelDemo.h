@@ -27,6 +27,7 @@ class Light_Base;
 class InstancedStaticMesh;
 class SolarSystem;
 class Terrain;
+class PathFollowingActor;
 
 using namespace Glyph3;
 
@@ -96,6 +97,7 @@ namespace LJMUDX
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
+		PathFollowingActor* m_pSpaceship;
 
 		std::shared_ptr<SolarSystem> m_solarSystem;
 		Planet* m_planet;
