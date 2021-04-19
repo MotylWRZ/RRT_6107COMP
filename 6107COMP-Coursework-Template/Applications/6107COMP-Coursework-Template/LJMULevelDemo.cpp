@@ -91,6 +91,7 @@ void LJMULevelDemo::inputAssemblyStage()
 void LJMULevelDemo::setupGeometry()
 {
 	this->setupPaths();
+	this->setupTerrain();
 
 	MaterialReflectanceInfo tMatInfo;
 	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
@@ -142,27 +143,6 @@ void LJMULevelDemo::setupGeometry()
 	this->m_actors.push_back(this->m_moonBase);
 
 
-	// Create test Landscape
-	this->m_LandscapeActor = TerrainGenerator::createTerrainActor(0, 0, 200, 3);
-	MaterialPtr tTerrainMaterial = //MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), std::wstring(L"rocks_ground_06_nor_2k.tiff"), this->m_lights, tMatInfo);
-	//MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff");
-	MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
-	//MaterialGenerator::createLitBumpTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"rocks_ground_06_nor_2k.tiff", L"brown_mud_dry_nor_2k.tiff", this->m_lights, tMatInfo);
-	//this->m_dynamicLitMaterials.push_back(tTerrainMaterial);
-	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
-	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
-	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
-	//this->m_pScene->AddActor(this->m_LandscapeActor);
-
-	this->m_terrain = new Terrain(254, 3, 12, this->m_pScene);
-	//this->m_terrain->initializeBasic();
-	//this->m_terrain->generateBasicChunkedTerrain(false , 254, 3);
-	//this->m_terrain->generateTerrainFromNoise(254, 3, 128);
-	this->m_terrain->generateChunkedTerrainFromNoise(true, 254, 3, 33);
-	//this->m_terrain->generateTerrainFromHeightmap("heightmap.r16", 1025, 1025, 255, 255, 3, 33);
-	//this->m_terrain->generateChunkedTerrainFromHeightmap(false, "heightmap.r16", 1025, 1025, 254, 254, 3, 33);
-	this->m_terrain->setMaterial(tTerrainMaterial);
-	this->m_terrain->addTerrainIntoScene(this->m_pScene);
 
 	// Create test Cube Mesh and Actor
 	this->m_CubeActor = new Actor();
@@ -389,6 +369,60 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 	this->m_solarSystem->addPlanet(0, tInstancePos7, EInstanceTexture::TEXTURE1);*/
 }
 
+void LJMUDX::LJMULevelDemo::setupTerrain()
+{
+
+	MaterialReflectanceInfo tMatInfo;
+	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 10.0f);
+	tMatInfo.Ambient = 0.0f;
+	tMatInfo.Diffuse = 0.0f;
+	tMatInfo.Specular = 0.0f;
+	tMatInfo.Shininess = 0.3f;
+
+	// Create test Landscape
+	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
+
+	// Terrain from Heightmap
+	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene);
+	tTerrainHeightmap->generateChunkedTerrainFromHeightmap(false, "heightmap.r16",1025, 1025, 512, 512, 7, 200);
+	tTerrainHeightmap->setMaterial(tTerrainMaterial);
+
+	// Terrain procedurally generated
+	Terrain* tTerrainProcedural = new Terrain(254, 3, 12, this->m_pScene);
+	tTerrainProcedural->generateChunkedTerrainFromNoise(true, 254, 7, 128);
+	tTerrainProcedural->setMaterial(tTerrainMaterial);
+
+	this->m_terrains.push_back(tTerrainHeightmap);
+	this->m_terrains.push_back(tTerrainProcedural);
+
+	this->m_currentTerrainIndex = 0;
+	this->switchTerrainRendering();
+}
+
+void LJMUDX::LJMULevelDemo::switchTerrainRendering()
+{
+	if (this->m_terrains.size() == 0)
+	{
+		return;
+	}
+
+	// Clear the scene from the terrain meshes
+	for (auto& Terrain : this->m_terrains)
+	{
+		Terrain->removeTerrainFromScene(this->m_pScene);
+	}
+
+	this->m_currentTerrainIndex++;
+
+	if (this->m_currentTerrainIndex >= static_cast<int>(this->m_terrains.size()))
+	{
+		this->m_currentTerrainIndex = 0;
+	}
+
+	// Add the terrain to the scene
+	this->m_terrains[this->m_currentTerrainIndex]->addTerrainIntoScene(this->m_pScene);
+}
+
 ////////////////////////////////////
 // Initialise our DirectX 3D Scene
 ////////////////////////////////////
@@ -441,7 +475,6 @@ void LJMULevelDemo::Update()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
-	MaterialPtr tMat = this->m_LandscapeActor->GetBody()->GetMaterial();
 	MaterialPtr tPlanetMat = this->m_planet->GetBody()->GetMaterial();
 
 	for (auto& Actor : this->m_actors)
@@ -450,14 +483,11 @@ void LJMULevelDemo::Update()
 		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
 	}
 
-	/*if (tMat && tPlanetMat)
-	{
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
-		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11)
-	}*/
 
-	this->m_terrain->updateLighting(this->m_pRenderer11, this->m_lights);
+	for (auto& Terrain : this->m_terrains)
+	{
+		Terrain->updateLighting(this->m_pRenderer11, this->m_lights);
+	}
 
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);
@@ -574,6 +604,12 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 	{
 		EvtKeyDownPtr tkey_down = std::static_pointer_cast<EvtKeyDown>(pevent);
 		unsigned int  tkeycode = tkey_down->GetCharacterCode();
+
+		if (tkeycode == VK_UP)
+		{
+			this->switchTerrainRendering();
+		}
+
 	}
 	else if (e == SYSTEM_KEYBOARD_KEYUP)
 	{

@@ -35,6 +35,9 @@ public:
 	// Add all chunk objects into the scene
 	void addTerrainIntoScene(Scene* pScene);
 
+	// remove all terrain chuns from the specified scene
+	void removeTerrainFromScene(Scene* pScene);
+
 	void updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights);
 
 	////

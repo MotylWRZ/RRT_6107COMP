@@ -34,6 +34,17 @@ void Terrain::addTerrainIntoScene(Scene* pScene)
 	}
 }
 
+void Terrain::removeTerrainFromScene(Scene* pScene)
+{
+	if (pScene)
+	{
+		for (auto& Chunk : this->m_chunks)
+		{
+			pScene->RemoveActor(Chunk);
+		}
+	}
+}
+
 void Terrain::updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights)
 {
 	if (!pRenderer)
