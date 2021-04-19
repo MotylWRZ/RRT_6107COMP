@@ -97,9 +97,11 @@ namespace LJMUDX
 		Terrain* m_terrain;
 		Actor* m_CubeActor;
 		Actor* m_pCubeActor;
+		Actor* m_moonBase;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
 		PathFollowingActor* m_pSpaceship;
 		PathFollowingActor* m_pSpaceship2;
+
 
 		std::vector<Path*> m_paths;
 		std::shared_ptr<SolarSystem> m_solarSystem;

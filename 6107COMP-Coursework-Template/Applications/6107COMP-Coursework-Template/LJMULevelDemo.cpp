@@ -101,7 +101,9 @@ void LJMULevelDemo::setupGeometry()
 
 	this->m_pSpaceship = new PathFollowingActor(160.0f, 1.0f);
 	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"spaceship.obj", Vector4f(1, 1, 1, 1));
-	MaterialPtr tSpaceshipMat = MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"wedge_p1_diff_v1.png");
+	MaterialPtr tSpaceshipMat = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, L"wedge_p1_diff_v1.png", this->m_lights, tMatInfo);
+		//MaterialGenerator::createTextureMaterial(*this->m_pRenderer11, L"RRTTextureMapping.hlsl", L"wedge_p1_diff_v1.png");
+
 	this->m_pSpaceship->GetBody()->SetGeometry(tSpaceshipMesh);
 	this->m_pSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
 	this->m_pSpaceship->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
@@ -116,12 +118,28 @@ void LJMULevelDemo::setupGeometry()
 	this->m_pSpaceship->setPath(this->m_paths[0]);
 	this->m_pSpaceship2->setPath(this->m_paths[0]);
 
+	this->m_actors.push_back(m_pSpaceship);
+	this->m_actors.push_back(m_pSpaceship2);
+
+
 	for (auto& Path : this->m_paths)
 	{
 		Path->generatePathMesh(this->m_pRenderer11);
 		this->m_pScene->AddActor(this->m_paths[0]);
 	}
 
+
+	this->m_moonBase = new Actor();
+	BasicMeshPtr tMoonBaseMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Emergency_Backup_Generator.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tMoonBaseMat = //MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Emergency Backup Generator_Default_color.jpg"), std::wstring(L"Emergency Backup Generator_Default_nmap_Blender.jpg"), this->m_lights, tMatInfo);
+	MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, L"Emergency Backup Generator_Default_color.jpg", this->m_lights, tMatInfo);
+	this->m_moonBase->GetBody()->SetGeometry(tMoonBaseMesh);
+	this->m_moonBase->GetBody()->SetMaterial(tMoonBaseMat);
+	this->m_moonBase->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
+	this->m_moonBase->GetNode()->Position() = Vector3f(300.0f, 10.0f, 100.0f);
+	this->m_pScene->AddActor(this->m_moonBase);
+
+	this->m_actors.push_back(this->m_moonBase);
 
 
 	// Create test Landscape
@@ -130,7 +148,7 @@ void LJMULevelDemo::setupGeometry()
 	//MaterialGenerator::createTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff");
 	MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
 	//MaterialGenerator::createLitBumpTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", L"rocks_ground_06_nor_2k.tiff", L"brown_mud_dry_nor_2k.tiff", this->m_lights, tMatInfo);
-
+	//this->m_dynamicLitMaterials.push_back(tTerrainMaterial);
 	this->m_LandscapeActor->GetBody()->SetMaterial(tTerrainMaterial);
 	this->m_LandscapeActor->GetNode()->Position() = Vector3f(100.0f, 30.0f, -5.0f);
 	this->m_LandscapeActor->GetNode()->Scale() = Vector3f(1, 1, 1);
@@ -145,7 +163,6 @@ void LJMULevelDemo::setupGeometry()
 	//this->m_terrain->generateChunkedTerrainFromHeightmap(false, "heightmap.r16", 1025, 1025, 254, 254, 3, 33);
 	this->m_terrain->setMaterial(tTerrainMaterial);
 	this->m_terrain->addTerrainIntoScene(this->m_pScene);
-
 
 	// Create test Cube Mesh and Actor
 	this->m_CubeActor = new Actor();
@@ -175,6 +192,7 @@ void LJMULevelDemo::setupGeometry()
 	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
 	this->m_pScene->AddActor(this->m_planet);
 
+	this->m_actors.push_back(this->m_planet);
 
 	this->m_solarSystem = std::make_shared<SolarSystem>();
 
@@ -337,7 +355,9 @@ void LJMUDX::LJMULevelDemo::setupSkySphere()
 void LJMUDX::LJMULevelDemo::setupPaths()
 {
 	Path* tSpaceshipPath = new Path();
-	tSpaceshipPath->generatePath(EPathType::Path_Hermite, 1250.0f, 1250.0f, 1000.0f, 256.0f, -180.0f, 180.0f, 3);
+//	tSpaceshipPath->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+	tSpaceshipPath->generatePath(EPathType::Path_Hermite, 0.0f, 0.0f, 700.0f, 100.0f, -180.0f, 180.0f, 3);
+
 
 	this->m_paths.push_back(tSpaceshipPath);
 }
@@ -385,6 +405,8 @@ void LJMULevelDemo::Update()
 	}
 
 
+
+
 	MaterialReflectanceInfo tMatInfo;
 	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
 	tMatInfo.Ambient = 0.0f;
@@ -395,18 +417,44 @@ void LJMULevelDemo::Update()
 	MaterialPtr tMat = this->m_LandscapeActor->GetBody()->GetMaterial();
 	MaterialPtr tPlanetMat = this->m_planet->GetBody()->GetMaterial();
 
-	if (tMat && tPlanetMat)
+	for (auto& Actor : this->m_actors)
+	{
+		MaterialPtr tMat = Actor->GetBody()->GetMaterial();
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
+	}
+
+	/*if (tMat && tPlanetMat)
 	{
 		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tPlanetMat, this->m_lights);
 		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
-	}
+		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11)
+	}*/
 
 	this->m_terrain->updateLighting(this->m_pRenderer11, this->m_lights);
 
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);
+
+
+	Vector3f vec;
+
 	this->m_pSpaceship->Update(tDT);
+	LightBasePtr tLight = this->m_lights[1];
+	LightInfo tInfo = tLight->getLightInfo();
+	tInfo.LightPosition.x = this->m_pSpaceship->GetNode()->Position().x;
+	tInfo.LightPosition.y = this->m_pSpaceship->GetNode()->Position().y - 30.0f;
+	tInfo.LightPosition.z = this->m_pSpaceship->GetNode()->Position().z;
+	//this->m_planet->GetBody()->Position() = this->m_pSpaceship2->GetNode()->Position();//Vector3f(0.01f, 0.01f, 0.01f);
+	vec = this->m_pSpaceship2->GetNode()->Position();
+	tLight->setLightInfo(tInfo);
+
 	this->m_pSpaceship2->Update(tDT);
+	LightBasePtr tLight2 = this->m_lights[2];
+	LightInfo tInfo2 = tLight->getLightInfo();
+	tInfo2.LightPosition.x = this->m_pSpaceship2->GetNode()->Position().x;
+	tInfo2.LightPosition.y = this->m_pSpaceship2->GetNode()->Position().y - 30.0f;
+	tInfo2.LightPosition.z = this->m_pSpaceship2->GetNode()->Position().z;
+	tLight2->setLightInfo(tInfo2);
 	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
 	//----------START RENDERING--------------------------------------------------------------

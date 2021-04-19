@@ -426,11 +426,20 @@ MaterialPtr MaterialGenerator::createLitBumpTerrainMultiTextureMaterial(Renderer
 
 MaterialPtr MaterialGenerator::createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
-	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTextureV2.hlsl"), diffuseTextureFile);
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongMultiLitBumpTexture.hlsl"), diffuseTextureFile);
 	//MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitBumpTextureIncludeTest.hlsl"), diffuseTextureFile);
 
 	ResourcePtr tBumpTexture = RendererDX11::Get()->LoadTexture(bumpTextureFile);
 	tMaterial->Parameters.SetShaderResourceParameter(L"BumpTexture", tBumpTexture);
+
+	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial, lights, MatReflectanceInfo);
+
+	return tMaterial;
+}
+
+MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
+{
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(pRenderer, std::wstring(L"RRTPhongLitTexture.hlsl"), diffuseTextureFile);
 
 	MaterialGenerator::setLightToMaterial(pRenderer, tMaterial, lights, MatReflectanceInfo);
 

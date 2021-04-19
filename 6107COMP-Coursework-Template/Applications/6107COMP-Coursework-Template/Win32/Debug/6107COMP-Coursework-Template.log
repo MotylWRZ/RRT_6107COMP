@@ -1,10 +1,8 @@
 ﻿  LJMULevelDemo.cpp
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(292,24): warning C4305: '+=': truncation from 'double' to 'float'
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(375,20): warning C4018: '<': signed/unsigned mismatch
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(430,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(430,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(468,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(468,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
-  PathFollowingActor.cpp
-  Generating Code...
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(310,24): warning C4305: '+=': truncation from 'double' to 'float'
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(395,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(478,43): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(478,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(516,46): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\LJMULevelDemo.cpp(516,30): warning C4244: 'argument': conversion from 'float' to 'UINT', possible loss of data
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

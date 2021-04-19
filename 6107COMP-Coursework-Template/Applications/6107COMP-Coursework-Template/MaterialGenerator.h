@@ -43,10 +43,16 @@ public:
 	* These materials will be setup and any resources will be loaded upon initialisation
 	*/
 	static MaterialPtr createMultiTextureMaterial(RendererDX11& renderer, std::wstring shaderFile, std::wstring textureFile1, std::wstring textureFile2);
+	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	static MaterialPtr createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+	///
+	// Terrain Materials
+	///
 	static MaterialPtr createTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile);
 	static MaterialPtr createLitTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile, const std::vector<LightBasePtr>& lights, const MaterialReflectanceInfo& MatReflectanceInfo);
 	static MaterialPtr createLitBumpTerrainMultiTextureMaterial(RendererDX11& pRenderer, std::wstring highlandsTextureFile, std::wstring lowlandsTextureFile, std::wstring highlandsBumpTextureFile, std::wstring lowlandsBumpTextureFile, const std::vector<LightBasePtr>& lights, const MaterialReflectanceInfo& MatReflectanceInfo);
-	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+
+
 
 	static void setLightToMaterial(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 	static void updateMaterialLight(RendererDX11& renderer, MaterialPtr material, const std::vector<LightBasePtr>& lights);
