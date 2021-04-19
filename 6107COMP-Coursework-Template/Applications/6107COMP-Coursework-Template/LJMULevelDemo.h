@@ -81,6 +81,7 @@ namespace LJMUDX
 		void setupLighting();
 		void setupSkySphere();
 		void setupPaths();
+		void setupSolarSystem();
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:

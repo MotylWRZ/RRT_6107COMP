@@ -1,8 +1,13 @@
 #include "SolarSystem.h"
 
-SolarSystem::SolarSystem()
+SolarSystem::SolarSystem(Vector3f origin)
 	:m_rotationSpeed(100.f)
 	, m_rotationDirection(0.0f, 1.0f, 0.0f)
+	, m_circularMovementSpeed(0.1f)
+	, m_originPoint(origin)
+	, m_circularMovementRadius(1000.0f)
+	, m_angle(0.0f)
+
 {
 }
 
@@ -32,19 +37,30 @@ void SolarSystem::Update(float deltaTime)
 {
 	for (auto& ISM : this->m_ISMs)
 	{
-		for (int i = 0; i < static_cast<int>(ISM->getInstances().size()); ++i)
-		{
-			// Updare instance(planet) rotation here
-			/*Vector3f tPos = ISM->getInstance(i).InstancePosition;
-			tPos.x += 100.0f * deltaTime;
-			ISM->updateInstance(i, tPos);*/
-		}
-
+		// Rotate instnces around the Y axis
 		float tAngle = (this->m_rotationSpeed * (GLYPH_PI / 180.0f)) * deltaTime;
 
 		Matrix3f tRotationMatrix;
 
 		tRotationMatrix.RotationEuler(this->m_rotationDirection, tAngle);
 		ISM->GetBody()->Rotation() *= tRotationMatrix;
+
+		float x = 100.0f;
+		float z = 100.0f;
+
+		// Move around the solar system origin point
+		m_angle += this->m_circularMovementSpeed * deltaTime;
+
+
+		float offset = 1.0f;
+		for (int j = 0; j < ISM->getInstances().size(); j++)
+		{
+
+			Vector3f tNewPos = Vector3f(this->m_originPoint.x + (this->m_circularMovementRadius * cos(m_angle + offset)), ISM->GetNode()->Position().y, this->m_originPoint.z + (this->m_circularMovementRadius * sin(m_angle + offset)));
+			ISM->updateInstance(j, tNewPos);
+			offset++;
+		}
+
+		offset = 0;
 	}
 }

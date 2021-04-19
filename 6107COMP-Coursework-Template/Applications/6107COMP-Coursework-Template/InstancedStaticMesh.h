@@ -76,6 +76,5 @@ private:
 	RendererDX11* m_pRenderer;
 	MaterialPtr m_Material;
 
-
 };
 

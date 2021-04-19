@@ -194,31 +194,9 @@ void LJMULevelDemo::setupGeometry()
 
 	this->m_actors.push_back(this->m_planet);
 
-	this->m_solarSystem = std::make_shared<SolarSystem>();
-
-	this->m_solarSystem->addISM(tMesh2, Vector3f(400.0f, 300.0f, 300.0f), this->m_pRenderer11, this->m_pScene,
-		L"rocks_ground_06_diff_2k.tiff",
-		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
-
-	Vector3f tInstancePos1(30.0f, 30.0f, 30.0f);
-Vector3f tInstancePos2(30.0f, -30.0f, 30.0f);
-Vector3f tInstancePos3(30.0f, 30.0f, -30.0f);
-Vector3f tInstancePos4(30.0f, -30.0f, -30.0f);
-Vector3f tInstancePos5(130.0f, 130.0f, 130.0f);
-Vector3f tInstancePos6(130.0f, -130.0f, 130.0f);
-Vector3f tInstancePos7(130.0f, 130.0f, -130.0f);
-Vector3f tInstancePos8(130.0f, -130.0f, -130.0f);
 
 
-	this->m_solarSystem->addPlanet(0, tInstancePos1, EInstanceTexture::TEXTURE1);
-	this->m_solarSystem->addPlanet(0, tInstancePos2, EInstanceTexture::TEXTURE1);
-	this->m_solarSystem->addPlanet(0, tInstancePos3, EInstanceTexture::TEXTURE3);
-	this->m_solarSystem->addPlanet(0, tInstancePos4, EInstanceTexture::TEXTURE3);
-	this->m_solarSystem->addPlanet(0, tInstancePos5, EInstanceTexture::TEXTURE2);
-	this->m_solarSystem->addPlanet(0, tInstancePos6, EInstanceTexture::TEXTURE2);
-	this->m_solarSystem->addPlanet(0, tInstancePos7, EInstanceTexture::TEXTURE1);
-
-
+	this->setupSolarSystem();
 	this->setupSkySphere();
 
 }
@@ -360,6 +338,55 @@ void LJMUDX::LJMULevelDemo::setupPaths()
 
 
 	this->m_paths.push_back(tSpaceshipPath);
+}
+
+void LJMUDX::LJMULevelDemo::setupSolarSystem()
+{
+	BasicMeshPtr tMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1, 1, 1, 1));
+
+	this->m_solarSystem = std::make_shared<SolarSystem>(Vector3f(100.0f, 100.0f, 100.0f));
+	this->m_solarSystem->setCircularMovementRadius(700.0f);
+
+	this->m_solarSystem->addISM(tMesh, Vector3f(400.0f, 300.0f, 300.0f), this->m_pRenderer11, this->m_pScene,
+		L"rocks_ground_06_diff_2k.tiff",
+		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+
+	Vector3f tOrigin(400.0f, 300.0f, 300.0f);
+	float tAngle = 10;
+	float tAngleDiff = 10;
+	float tRadius = 1000.0f;
+
+	std::vector<Vector3f> tPositions;
+
+	for (int i = 0; i < 32; i++)
+	{
+
+		Vector3f tPos(tOrigin.x + (tRadius * cos(tAngle)), tOrigin.y, tOrigin.z + (tRadius * sin(tAngle)));
+
+		tAngle += tAngleDiff;
+
+
+
+		this->m_solarSystem->addPlanet(0, tPos, EInstanceTexture::TEXTURE1);
+	}
+
+	/*ector3f tInstancePos1(30.0f, 30.0f, 30.0f);
+	Vector3f tInstancePos2(30.0f, -30.0f, 30.0f);
+	Vector3f tInstancePos3(30.0f, 30.0f, -30.0f);
+	Vector3f tInstancePos4(30.0f, -30.0f, -30.0f);
+	Vector3f tInstancePos5(130.0f, 130.0f, 130.0f);
+	Vector3f tInstancePos6(130.0f, -130.0f, 130.0f);
+	Vector3f tInstancePos7(130.0f, 130.0f, -130.0f);
+	Vector3f tInstancePos8(130.0f, -130.0f, -130.0f);
+
+
+	this->m_solarSystem->addPlanet(0, tInstancePos1, EInstanceTexture::TEXTURE1);
+	this->m_solarSystem->addPlanet(0, tInstancePos2, EInstanceTexture::TEXTURE1);
+	this->m_solarSystem->addPlanet(0, tInstancePos3, EInstanceTexture::TEXTURE3);
+	this->m_solarSystem->addPlanet(0, tInstancePos4, EInstanceTexture::TEXTURE3);
+	this->m_solarSystem->addPlanet(0, tInstancePos5, EInstanceTexture::TEXTURE2);
+	this->m_solarSystem->addPlanet(0, tInstancePos6, EInstanceTexture::TEXTURE2);
+	this->m_solarSystem->addPlanet(0, tInstancePos7, EInstanceTexture::TEXTURE1);*/
 }
 
 ////////////////////////////////////
