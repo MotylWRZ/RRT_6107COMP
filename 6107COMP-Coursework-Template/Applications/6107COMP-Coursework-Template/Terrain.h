@@ -16,7 +16,7 @@ using namespace Glyph3;
 
 typedef std::shared_ptr<Light_Base> LightBasePtr;
 
-class Terrain
+class Terrain : public Actor
 {
 public:
 

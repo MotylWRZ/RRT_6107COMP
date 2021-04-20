@@ -384,13 +384,15 @@ void LJMUDX::LJMULevelDemo::setupTerrain()
 
 	// Terrain from Heightmap
 	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene);
-	tTerrainHeightmap->generateChunkedTerrainFromHeightmap(false, "heightmap.r16",1025, 1025, 512, 512, 7, 200);
+	tTerrainHeightmap->generateChunkedTerrainFromHeightmap(false, "heightmap.r16",1025, 1025, 512, 512, 10, 300);
 	tTerrainHeightmap->setMaterial(tTerrainMaterial);
+	tTerrainHeightmap->GetNode()->Position() = Vector3f(-1000.0f, -100.0f, -1000.0f);
 
 	// Terrain procedurally generated
 	Terrain* tTerrainProcedural = new Terrain(254, 3, 12, this->m_pScene);
-	tTerrainProcedural->generateChunkedTerrainFromNoise(true, 254, 7, 128);
+	tTerrainProcedural->generateChunkedTerrainFromNoise(true, 254, 10, 128);
 	tTerrainProcedural->setMaterial(tTerrainMaterial);
+	tTerrainProcedural->GetNode()->Position() = Vector3f(-100.0f, 0.0f, -100.0f);
 
 	this->m_terrains.push_back(tTerrainHeightmap);
 	this->m_terrains.push_back(tTerrainProcedural);
@@ -409,7 +411,8 @@ void LJMUDX::LJMULevelDemo::switchTerrainRendering()
 	// Clear the scene from the terrain meshes
 	for (auto& Terrain : this->m_terrains)
 	{
-		Terrain->removeTerrainFromScene(this->m_pScene);
+		//Terrain->removeTerrainFromScene(this->m_pScene);
+		this->m_pScene->RemoveActor(Terrain);
 	}
 
 	this->m_currentTerrainIndex++;
@@ -420,7 +423,8 @@ void LJMUDX::LJMULevelDemo::switchTerrainRendering()
 	}
 
 	// Add the terrain to the scene
-	this->m_terrains[this->m_currentTerrainIndex]->addTerrainIntoScene(this->m_pScene);
+	//this->m_terrains[this->m_currentTerrainIndex]->addTerrainIntoScene(this->m_pScene);
+	this->m_pScene->AddActor(this->m_terrains[this->m_currentTerrainIndex]);
 }
 
 ////////////////////////////////////

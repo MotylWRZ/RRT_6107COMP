@@ -12,7 +12,7 @@
 
 typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
-class TerrainChunk : public Actor
+class TerrainChunk : public Entity3D
 {
 public:
 	TerrainChunk();

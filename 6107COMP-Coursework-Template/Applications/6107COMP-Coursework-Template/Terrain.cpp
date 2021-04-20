@@ -19,30 +19,30 @@ void Terrain::setMaterial(MaterialPtr material)
 {
 	for (auto& Chunk : this->m_chunks)
 	{
-		Chunk->GetBody()->SetMaterial(material);
+		Chunk->SetMaterial(material);
 	}
 }
 
 void Terrain::addTerrainIntoScene(Scene* pScene)
 {
-	if (pScene)
-	{
-		for (auto& Chunk : this->m_chunks)
-		{
-				pScene->AddActor(Chunk);
-		}
-	}
+	//if (pScene)
+	//{
+	//	for (auto& Chunk : this->m_chunks)
+	//	{
+	//			pScene->AddActor(Chunk);
+	//	}
+	//}
 }
 
 void Terrain::removeTerrainFromScene(Scene* pScene)
 {
-	if (pScene)
-	{
-		for (auto& Chunk : this->m_chunks)
-		{
-			pScene->RemoveActor(Chunk);
-		}
-	}
+	//if (pScene)
+	//{
+	//	for (auto& Chunk : this->m_chunks)
+	//	{
+	//		pScene->RemoveActor(Chunk);
+	//	}
+	//}
 }
 
 void Terrain::updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights)
@@ -56,7 +56,7 @@ void Terrain::updateLighting(RendererDX11* pRenderer, const std::vector<LightBas
 	{
 		if (Chunk)
 		{
-			MaterialPtr tMaterial = Chunk->GetBody()->GetMaterial();
+			MaterialPtr tMaterial = Chunk->GetMaterial();
 
 			if (tMaterial)
 			{
@@ -79,7 +79,7 @@ void Terrain::generateBasicTerrain(int resolution, int terrainSpacing, float hei
 	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(vertices, this->m_heightScale, 0.1f);
 	TerrainChunk* tChunk = new TerrainChunk();
 
-	tChunk->GetBody()->SetGeometry(tMesh);
+	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
 }
@@ -94,7 +94,7 @@ void Terrain::generateTerrainFromNoise(int terrainResolution, float spacing, flo
 	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(vertices, this->m_heightScale, 0.1f);
 	TerrainChunk* tChunk = new TerrainChunk();
 
-	tChunk->GetBody()->SetGeometry(tMesh);
+	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
 }
@@ -109,7 +109,7 @@ void Terrain::generateTerrainFromHeightmap(const char* filename, int actualTerra
 	BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(vertices, this->m_heightScale, 0.1f);
 	TerrainChunk* tChunk = new TerrainChunk();
 
-	tChunk->GetBody()->SetGeometry(tMesh);
+	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
 }
@@ -217,9 +217,10 @@ void Terrain::generateChunkedTerrainFromHeightmap(bool extend, const char* filen
 
 void Terrain::deleteTerrainMesh()
 {
+	// Destroy all terrainChunks
 	for (int i = 0; i < static_cast<int>(this->m_chunks.size()); i++)
 	{
-		this->m_pScene->RemoveActor(this->m_chunks[i]);
+		this->RemoveElement(this->m_chunks[i]);
 		delete this->m_chunks[i];
 	}
 
@@ -233,10 +234,20 @@ void Terrain::generateTerrainChunks(const std::vector<std::vector<Vector3f>>& ch
 	{
 		TerrainChunk* tChunk = new TerrainChunk();
 
+		//this->root
+
+		Node3D* tTerrainNode= this->GetNode();
+
+		//TerrainChunk* tChunk = new TerrainChunk();
+		tTerrainNode->AttachChild(tChunk);
+
+		//this->m_pScene->AddActor(this->skysphereActor);
+
 		//  generate mesh from vertices
 		BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(VertsArray, heightScale, this->m_textureMappingFactor);
 
-		tChunk->GetBody()->SetGeometry(tMesh);
+		//tChunk->GetBody()->SetGeometry(tMesh);
+		tChunk->SetGeometry(tMesh);
 
 		this->m_chunks.push_back(tChunk);
 	}

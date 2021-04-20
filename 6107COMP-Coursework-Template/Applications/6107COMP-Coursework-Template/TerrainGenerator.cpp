@@ -261,7 +261,7 @@ TerrainChunk* TerrainGenerator::generateTerrainChunk(const Terrain& terrain, int
 
 	TerrainChunk* tChunk = new TerrainChunk();
 
-	tChunk->GetBody()->SetGeometry(tMesh);
+	tChunk->SetGeometry(tMesh);
 
 	return tChunk;
 }
