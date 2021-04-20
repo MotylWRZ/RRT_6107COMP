@@ -14,7 +14,7 @@ public:
 	PathFollowingActor(float movementSpeed = 160.0f, float RotationSpeed = 1.0f);
 	~PathFollowingActor();
 
-	void Update(float deltaTime);
+	virtual void update(float deltaTime);
 
 	inline const Path* getPath() const { return m_pPath; }
 	void setPath(const Path* pPath);

@@ -28,6 +28,7 @@ class InstancedStaticMesh;
 class SolarSystem;
 class Terrain;
 class PathFollowingActor;
+class CinematicCamera;
 
 using namespace Glyph3;
 
@@ -105,6 +106,7 @@ namespace LJMUDX
 		PathFollowingActor* m_pSpaceship;
 		PathFollowingActor* m_pSpaceship2;
 
+		CinematicCamera* m_pCinematicCamera;
 
 		std::vector<Terrain*> m_terrains;
 		int m_currentTerrainIndex;
@@ -119,7 +121,7 @@ namespace LJMUDX
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
 		Camera*					m_pCamera;			//Camera Object
-		Camera*					m_pCamera2;
+
 		Actor* m_Actor;
 		float					m_iscreenWidth = 1920.0f;
 		float					m_iscreenHeight = 1080.0f;

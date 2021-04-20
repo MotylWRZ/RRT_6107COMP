@@ -11,7 +11,7 @@ PathFollowingActor::~PathFollowingActor()
 {
 }
 
-void PathFollowingActor::Update(float deltaTime)
+void PathFollowingActor::update(float deltaTime)
 {
 	if (!this->m_pPath)
 	{
@@ -19,7 +19,6 @@ void PathFollowingActor::Update(float deltaTime)
 	}
 
 	this->moveActor(deltaTime);
-
 }
 
 void PathFollowingActor::setPath(const Path* pPath)

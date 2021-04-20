@@ -12,6 +12,7 @@
 #include "InstancedStaticMesh.h"
 #include "SolarSystem.h"
 #include "Terrain.h"
+#include "CinematicCamera.h"
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
@@ -187,7 +188,34 @@ void LJMULevelDemo::animateGeometry(float DT)
 
 void LJMULevelDemo::setupCamera()
 {
-	this->m_pCamera = new FirstPersonCamera();
+
+	this->m_pCinematicCamera = new CinematicCamera();
+
+	this->m_pCinematicCamera->SetEventManager(&this->EvtManager);
+	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
+	this->m_pCinematicCamera->Spatial().SetTranslation(tCameraPos);
+	this->m_pCinematicCamera->Spatial().RotateXBy(20 * DEG_TO_RAD);
+
+	this->m_pRenderView = new ViewPerspective(*this->m_pRenderer11, this->m_RenderTarget,
+		this->m_DepthTarget);
+	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+	this->m_pCinematicCamera->SetCameraView(this->m_pRenderView);
+
+	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, this->m_RenderTarget,
+		std::wstring(L"Cambria"),
+		25);
+	this->m_pCinematicCamera->SetOverlayView(this->m_pRender_text);
+	this->m_pCinematicCamera->SetProjectionParams(0.1f, 1000000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
+		static_cast<float>(GLYPH_PI) / 2.0f);
+	this->m_pScene->AddCamera(this->m_pCinematicCamera);
+
+	this->m_pCinematicCamera->setPath(this->m_paths[0]);
+	this->m_pCinematicCamera->setFocusObject(this->m_pSpaceship);
+
+
+
+
+	/*this->m_pCamera = new FirstPersonCamera();
 	this->m_pCamera->SetEventManager(&this->EvtManager);
 	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
 	this->m_pCamera->Spatial().SetTranslation(tCameraPos);
@@ -204,7 +232,7 @@ void LJMULevelDemo::setupCamera()
 	this->m_pCamera->SetOverlayView(this->m_pRender_text);
 	this->m_pCamera->SetProjectionParams(0.1f, 1000000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
 		static_cast<float>(GLYPH_PI) / 2.0f);
-	this->m_pScene->AddCamera(this->m_pCamera);
+	this->m_pScene->AddCamera(this->m_pCamera);*/
 }
 
 void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
@@ -499,7 +527,7 @@ void LJMULevelDemo::Update()
 
 	Vector3f vec;
 
-	this->m_pSpaceship->Update(tDT);
+	this->m_pSpaceship->update(tDT);
 	LightBasePtr tLight = this->m_lights[1];
 	LightInfo tInfo = tLight->getLightInfo();
 	tInfo.LightPosition.x = this->m_pSpaceship->GetNode()->Position().x;
@@ -509,7 +537,7 @@ void LJMULevelDemo::Update()
 	vec = this->m_pSpaceship2->GetNode()->Position();
 	tLight->setLightInfo(tInfo);
 
-	this->m_pSpaceship2->Update(tDT);
+	this->m_pSpaceship2->update(tDT);
 	LightBasePtr tLight2 = this->m_lights[2];
 	LightInfo tInfo2 = tLight->getLightInfo();
 	tInfo2.LightPosition.x = this->m_pSpaceship2->GetNode()->Position().x;
@@ -517,6 +545,8 @@ void LJMULevelDemo::Update()
 	tInfo2.LightPosition.z = this->m_pSpaceship2->GetNode()->Position().z;
 	tLight2->setLightInfo(tInfo2);
 	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
+
+	this->m_pCinematicCamera->updateCinematicCamera(tDT);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());
