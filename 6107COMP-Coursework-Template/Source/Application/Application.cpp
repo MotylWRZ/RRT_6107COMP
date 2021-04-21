@@ -1,11 +1,11 @@
 //--------------------------------------------------------------------------------
 // This file is a portion of the Hieroglyph 3 Rendering Engine.  It is distributed
-// under the MIT License, available in the root of this distribution and 
+// under the MIT License, available in the root of this distribution and
 // at the following URL:
 //
 // http://www.opensource.org/licenses/mit-license.php
 //
-// Copyright (c) Jason Zink 
+// Copyright (c) Jason Zink
 //--------------------------------------------------------------------------------
 // 06.02.2012: BeforeRegisterWindowClass default implementation added by Francois
 //             Piette.
@@ -42,7 +42,7 @@ Application::Application() :
 
 	SetEventManager( &EvtManager );
 
-	// The application object wants to know about these events, so it 
+	// The application object wants to know about these events, so it
 	// registers itself with the appropriate event IDs.
 
 	RequestEvent( SYSTEM_KEYBOARD_KEYUP );
@@ -123,11 +123,11 @@ bool Application::HandleEvent( EventPtr pEvent )
 void Application::MessageLoop()
 {
 	MSG msg;
-	
+
 	while( true )
 	{
 		while ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
-		{ 
+		{
 			if ( msg.message == WM_QUIT )
 			{
 				return;
@@ -151,9 +151,9 @@ void Application::BeforeRegisterWindowClass( WNDCLASSEX &wc )
 LRESULT Application::WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
 	switch( msg )
-	{	
+	{
 
-		case WM_CREATE: 
+		case WM_CREATE:
 			{
 				// Automatically return 0 to allow the window to proceed in the
 				// creation process.
@@ -163,7 +163,7 @@ LRESULT Application::WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 		case WM_PAINT:
 			{
-				// This message is handled by the default handler to avoid a 
+				// This message is handled by the default handler to avoid a
 				// repeated sending of the message.  This results in the ability
 				// to process all pending messages at once without getting stuck
 				// in an eternal loop.
@@ -175,7 +175,7 @@ LRESULT Application::WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 				// terminate.
 			} break;
 
-		case WM_DESTROY: 
+		case WM_DESTROY:
 			{
 				// This message is sent when a window has been destroyed.
 				PostQuitMessage(0);
@@ -183,14 +183,14 @@ LRESULT Application::WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 			} break;
 
 		case WM_SIZE:
-			{				
+			{
                 EvtWindowResizePtr pEvent = EvtWindowResizePtr( new EvtWindowResize( hwnd, wparam, lparam ) );
                 EvtManager.ProcessEvent( pEvent );
 			} break;
 
 
 		case WM_LBUTTONUP:
-			{				
+			{
                 EvtMouseLButtonUpPtr pEvent = EvtMouseLButtonUpPtr( new EvtMouseLButtonUp( hwnd, wparam, lparam ) );
                 EvtManager.ProcessEvent( pEvent );
 			} break;
@@ -200,7 +200,7 @@ LRESULT Application::WindowProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
                 EvtMouseLButtonDownPtr pEvent = EvtMouseLButtonDownPtr( new EvtMouseLButtonDown( hwnd, wparam, lparam ) );
                 EvtManager.ProcessEvent( pEvent );
 			} break;
-			
+
 		case WM_MBUTTONUP:
 			{
                 EvtMouseMButtonUpPtr pEvent = EvtMouseMButtonUpPtr( new EvtMouseMButtonUp( hwnd, wparam, lparam ) );

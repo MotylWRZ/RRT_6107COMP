@@ -51,7 +51,7 @@ void PathFollowingActor::moveActor(float deltaTime)
 		m_actorTargetDirection.Normalize();
 		m_actorDirection = m_actorTargetDirection;
 
-		if (cur_dist > m_actorPrevDist2Target)
+		if (cur_dist >= m_actorPrevDist2Target)
 		{
 			m_currentCheckpointID++;
 			m_nextCheckpointID++;
@@ -71,6 +71,7 @@ void PathFollowingActor::moveActor(float deltaTime)
 			{
 				m_actorState = 1;
 			}
+
 		}
 		else
 		{
@@ -101,15 +102,19 @@ void PathFollowingActor::moveActor(float deltaTime)
 		}
 		else
 		{
-			angle = angle + m_actorRotationSpeed * tpf;
-			Vector3f axis = m_actorDirection.Cross(m_actorTargetDirection);
-			axis.Normalize();
 
-			Matrix3f tstartRotation;
-			tstartRotation.RotationEuler(axis, m_actorRotationSpeed * tpf);
-			this->GetNode()->Rotation() *= tstartRotation;
-			m_actorDirection = this->GetNode()->Rotation() * m_actorRefDirection;
-			m_actorDirection.Normalize();
+			{
+				angle = angle + m_actorRotationSpeed * tpf;
+				Vector3f axis = m_actorDirection.Cross(m_actorTargetDirection);
+				axis.Normalize();
+
+				Matrix3f tstartRotation;
+				tstartRotation.RotationEuler(axis, m_actorRotationSpeed* tpf);
+				this->GetNode()->Rotation() *= tstartRotation;
+				m_actorDirection = this->GetNode()->Rotation() * m_actorRefDirection;
+				m_actorDirection.Normalize();
+
+			}
 		}
 	}
 }
@@ -138,4 +143,30 @@ void PathFollowingActor::resetActorPosition()
 
 	this->GetNode()->Rotation() = tstartRotation;
 	this->GetNode()->Position() = this->m_pPath->getPathPoints()[m_currentCheckpointID];
+}
+
+void PathFollowingActor::resetActorRotation()
+{
+
+	// Placing the actor at the start checkpoint and facing the next checkpoint
+	/*m_currentCheckpointID = 0;
+	m_nextCheckpointID = m_currentCheckpointID + 1;
+	m_actorState = 0;*/
+
+	Matrix3f tstartRotation;
+	//m_actorRefDirection = Vector3f(-1, 0, 0);
+	//m_actorDirection = m_actorRefDirection;
+	m_actorTargetDirection = this->m_pPath->getPathPoints()[m_nextCheckpointID] - this->GetNode()->Position();
+	//m_actorPrevDist2Target = m_actorTargetDirection.Magnitude();
+	m_actorTargetDirection.Normalize();
+
+	float angle = acos(m_actorRefDirection.Dot(m_actorTargetDirection));
+
+	Vector3f axis = m_actorRefDirection.Cross(m_actorTargetDirection);
+	axis.Normalize();
+
+	tstartRotation.RotationEuler(axis, angle);
+
+	this->GetNode()->Rotation() = tstartRotation;
+	//this->GetNode()->Position() = this->m_pPath->getPathPoints()[m_currentCheckpointID];
 }

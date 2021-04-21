@@ -1,11 +1,11 @@
 //--------------------------------------------------------------------------------
 // This file is a portion of the Hieroglyph 3 Rendering Engine.  It is distributed
-// under the MIT License, available in the root of this distribution and 
+// under the MIT License, available in the root of this distribution and
 // at the following URL:
 //
 // http://www.opensource.org/licenses/mit-license.php
 //
-// Copyright (c) Jason Zink 
+// Copyright (c) Jason Zink
 //--------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
@@ -68,6 +68,34 @@ void Scene::AddCamera( Camera* camera )
 	camera->SetScene( this );
 	AddActor( camera );
 }
+void Scene::SetCamera(unsigned int index, Camera* camera)
+{
+	if (!camera || static_cast<unsigned int>(this->m_vCameras.size()) <= index)
+	{
+		return;
+	}
+
+	this->m_vCameras[index] = camera;
+
+}
+
+void Scene::RemoveCamera(Camera* camera)
+{
+	// Remove the camera actor
+	this->RemoveActor(camera);
+
+	// First we iterate through the list of cameras and remove any instances of
+	// this camera.
+
+	auto it = this->m_vCameras.begin();
+
+	while (it != this->m_vCameras.end()) {
+		if (*it == camera)
+			it = this->m_vCameras.erase(it);
+		else
+			it++;
+	}
+}
 //--------------------------------------------------------------------------------
 Camera* Scene::GetCamera( unsigned int index )
 {
@@ -84,7 +112,7 @@ unsigned int Scene::GetCameraCount( )
 void Scene::AddLight( Light* pLight )
 {
 	m_vLights.push_back( pLight );
-	
+
 	AddActor( pLight );
 }
 //--------------------------------------------------------------------------------
@@ -108,23 +136,29 @@ void Scene::AddActor( Actor* actor )
 	m_pRoot->AttachChild( actor->GetNode() );
 	m_vActors.push_back( actor );
 }
+Actor* Glyph3::Scene::GetActor(unsigned int index)
+{
+	assert(index < m_vActors.size());
+
+	return m_vActors[index];
+}
 //--------------------------------------------------------------------------------
 void Scene::RemoveActor( Actor* pActor )
 {
-	// First we iterate through the list of actors and remove any instances of 
-	// this actor. 
+	// First we iterate through the list of actors and remove any instances of
+	// this actor.
 
 	auto it = m_vActors.begin();
 
 	while ( it != m_vActors.end() ) {
-		if ( *it == pActor ) 
+		if ( *it == pActor )
 			it = m_vActors.erase( it );
 		else
 			it++;
 	}
 
 	// Now we remove the actor's node from the scene's root node, if it is there.
-	// In general, an actor should always be attached directly to the scene's 
+	// In general, an actor should always be attached directly to the scene's
 	// root, but there may be cases where an actor is attached to another actor.
 	// To accommodate both situations, we do the removal by accessing the actor's
 	// node's parent.  This ensures that the actor is completely removed from the

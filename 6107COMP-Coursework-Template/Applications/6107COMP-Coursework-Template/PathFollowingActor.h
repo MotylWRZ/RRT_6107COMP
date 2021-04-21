@@ -23,6 +23,7 @@ public:
 private:
 	void moveActor(float deltaTime);
 	void resetActorPosition();
+	void resetActorRotation();
 
 private:
 	const Path* m_pPath;

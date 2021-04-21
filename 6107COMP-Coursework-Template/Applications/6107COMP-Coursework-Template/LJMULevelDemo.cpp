@@ -44,6 +44,8 @@
 
 #include "PathFollowingActor.h"
 
+#include <cmath>
+
 //Add a Using Directive to avoid typing Glyph3 for basic constructs
 using namespace Glyph3;
 //Include our own application Namespace
@@ -110,6 +112,7 @@ void LJMULevelDemo::setupGeometry()
 	this->m_pSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
 	this->m_pSpaceship->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
 	this->m_pScene->AddActor(this->m_pSpaceship);
+	this->m_pSpaceship->GetBody()->Rotation() = this->m_pSpaceship->GetNode()->Rotation();
 
 	this->m_pSpaceship2 = new PathFollowingActor(360.0f, 3.0f);
 	this->m_pSpaceship2->GetBody()->SetGeometry(tSpaceshipMesh);
@@ -188,11 +191,9 @@ void LJMULevelDemo::animateGeometry(float DT)
 
 void LJMULevelDemo::setupCamera()
 {
-
+	// Setup a cinematic camera (automatic camera)
 	this->m_pCinematicCamera = new CinematicCamera();
-
-	this->m_pCinematicCamera->SetEventManager(&this->EvtManager);
-	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
+	Vector3f tCameraPos(200.0f, 30.0f, -10.0f);
 	this->m_pCinematicCamera->Spatial().SetTranslation(tCameraPos);
 	this->m_pCinematicCamera->Spatial().RotateXBy(20 * DEG_TO_RAD);
 
@@ -200,31 +201,23 @@ void LJMULevelDemo::setupCamera()
 		this->m_DepthTarget);
 	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
 	this->m_pCinematicCamera->SetCameraView(this->m_pRenderView);
-
-	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, this->m_RenderTarget,
-		std::wstring(L"Cambria"),
-		25);
-	this->m_pCinematicCamera->SetOverlayView(this->m_pRender_text);
 	this->m_pCinematicCamera->SetProjectionParams(0.1f, 1000000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
 		static_cast<float>(GLYPH_PI) / 2.0f);
+
+
+	this->m_pCinematicCamera->setFocusObject(this->m_pSpaceship);
+	this->m_pCinematicCamera->Spatial().SetRotation(Vector3f(1.4f, -2.0f, 0.0f));
+
+	// Add the cinematic camera into a scene as a default camera
+	this->m_currentCameraId = 0;
 	this->m_pScene->AddCamera(this->m_pCinematicCamera);
 
-	this->m_pCinematicCamera->setPath(this->m_paths[0]);
-	this->m_pCinematicCamera->setFocusObject(this->m_pSpaceship);
-
-
-
-
-	/*this->m_pCamera = new FirstPersonCamera();
+	//// Setup manual camera
+	this->m_pCamera = new FirstPersonCamera();
 	this->m_pCamera->SetEventManager(&this->EvtManager);
-	Vector3f tCameraPos(100.0f, 30.0f, -5.0f);
-	this->m_pCamera->Spatial().SetTranslation(tCameraPos);
+	Vector3f tCameraPos2(100.0f, 30.0f, -5.0f);
+	this->m_pCamera->Spatial().SetTranslation(tCameraPos2);
 	this->m_pCamera->Spatial().RotateXBy(20 * DEG_TO_RAD);
-
-	this->m_pRenderView = new ViewPerspective(*this->m_pRenderer11, this->m_RenderTarget,
-		this->m_DepthTarget);
-	this->m_pRenderView->SetBackColor(Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-	this->m_pCamera->SetCameraView(this->m_pRenderView);
 
 	this->m_pRender_text = new LJMUTextOverlay(*this->m_pRenderer11, this->m_RenderTarget,
 		std::wstring(L"Cambria"),
@@ -232,7 +225,6 @@ void LJMULevelDemo::setupCamera()
 	this->m_pCamera->SetOverlayView(this->m_pRender_text);
 	this->m_pCamera->SetProjectionParams(0.1f, 1000000.0f, this->m_iscreenWidth / this->m_iscreenHeight,
 		static_cast<float>(GLYPH_PI) / 2.0f);
-	this->m_pScene->AddCamera(this->m_pCamera);*/
 }
 
 void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
@@ -342,7 +334,7 @@ void LJMUDX::LJMULevelDemo::setupPaths()
 {
 	Path* tSpaceshipPath = new Path();
 //	tSpaceshipPath->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
-	tSpaceshipPath->generatePath(EPathType::Path_Hermite, 0.0f, 0.0f, 700.0f, 100.0f, -180.0f, 180.0f, 3);
+	tSpaceshipPath->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 700.0f, 100.0f, -180.0f, 180.0f, 7);
 
 
 	this->m_paths.push_back(tSpaceshipPath);
@@ -455,6 +447,27 @@ void LJMUDX::LJMULevelDemo::switchTerrainRendering()
 	this->m_pScene->AddActor(this->m_terrains[this->m_currentTerrainIndex]);
 }
 
+void LJMUDX::LJMULevelDemo::switchCamera()
+{
+	this->m_currentCameraId++;
+
+	this->m_currentCameraId = (this->m_currentCameraId > 1) ? 0 : this->m_currentCameraId;
+
+	if (this->m_currentCameraId != 0)
+	{
+		this->m_pScene->RemoveCamera(this->m_pCinematicCamera);
+		this->m_pScene->AddCamera(this->m_pCamera);
+		this->m_pCamera->SetEventManager(&this->EvtManager);
+		this->m_pCamera->SetCameraView(this->m_pRenderView);
+	}
+	else
+	{
+		this->m_pScene->RemoveCamera(this->m_pCamera);
+		this->m_pScene->AddCamera(this->m_pCinematicCamera);
+		this->m_pCinematicCamera->SetCameraView(this->m_pRenderView);
+	}
+}
+
 ////////////////////////////////////
 // Initialise our DirectX 3D Scene
 ////////////////////////////////////
@@ -497,18 +510,6 @@ void LJMULevelDemo::Update()
 		tLight->setLightInfo(tInfo);
 	}
 
-
-
-
-	MaterialReflectanceInfo tMatInfo;
-	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
-	tMatInfo.Ambient = 0.0f;
-	tMatInfo.Diffuse = 0.0f;
-	tMatInfo.Specular = 0.0f;
-	tMatInfo.Shininess = 1.0f;
-
-	MaterialPtr tPlanetMat = this->m_planet->GetBody()->GetMaterial();
-
 	for (auto& Actor : this->m_actors)
 	{
 		MaterialPtr tMat = Actor->GetBody()->GetMaterial();
@@ -524,17 +525,12 @@ void LJMULevelDemo::Update()
 	this->m_planet->Update(tDT);
 	this->m_solarSystem->Update(tDT);
 
-
-	Vector3f vec;
-
 	this->m_pSpaceship->update(tDT);
 	LightBasePtr tLight = this->m_lights[1];
 	LightInfo tInfo = tLight->getLightInfo();
 	tInfo.LightPosition.x = this->m_pSpaceship->GetNode()->Position().x;
 	tInfo.LightPosition.y = this->m_pSpaceship->GetNode()->Position().y - 30.0f;
 	tInfo.LightPosition.z = this->m_pSpaceship->GetNode()->Position().z;
-	//this->m_planet->GetBody()->Position() = this->m_pSpaceship2->GetNode()->Position();//Vector3f(0.01f, 0.01f, 0.01f);
-	vec = this->m_pSpaceship2->GetNode()->Position();
 	tLight->setLightInfo(tInfo);
 
 	this->m_pSpaceship2->update(tDT);
@@ -544,9 +540,8 @@ void LJMULevelDemo::Update()
 	tInfo2.LightPosition.y = this->m_pSpaceship2->GetNode()->Position().y - 30.0f;
 	tInfo2.LightPosition.z = this->m_pSpaceship2->GetNode()->Position().z;
 	tLight2->setLightInfo(tInfo2);
-	//this->m_pInstancedStaticMesh->GetNode()->Position() += Vector3f(0.01f, 0.01f, 0.01f);
 
-	this->m_pCinematicCamera->updateCinematicCamera(tDT);
+	this->m_pCinematicCamera->updateCinematicCamera(tDT, this->m_pRenderer11);
 
 	//----------START RENDERING--------------------------------------------------------------
 		this->m_pScene->Update(m_pTimer->Elapsed());
@@ -639,9 +634,16 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 		EvtKeyDownPtr tkey_down = std::static_pointer_cast<EvtKeyDown>(pevent);
 		unsigned int  tkeycode = tkey_down->GetCharacterCode();
 
+		// Checkif Up key is pressed
 		if (tkeycode == VK_UP)
 		{
 			this->switchTerrainRendering();
+		}
+
+		// Check if C key is pressed
+		if (tkeycode == 0x43)
+		{
+			this->switchCamera();
 		}
 
 	}
@@ -650,7 +652,6 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 		EvtKeyUpPtr tkey_up = std::static_pointer_cast<EvtKeyUp>(pevent);
 		unsigned int tkeycode = tkey_up->GetCharacterCode();
 	}
-
 	return(Application::HandleEvent(pevent));
 }
 

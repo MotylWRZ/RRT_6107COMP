@@ -85,6 +85,7 @@ namespace LJMUDX
 		void setupSolarSystem();
 		void setupTerrain();
 		void switchTerrainRendering();
+		void switchCamera();
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -107,6 +108,7 @@ namespace LJMUDX
 		PathFollowingActor* m_pSpaceship2;
 
 		CinematicCamera* m_pCinematicCamera;
+		int m_currentCameraId;
 
 		std::vector<Terrain*> m_terrains;
 		int m_currentTerrainIndex;
@@ -119,6 +121,7 @@ namespace LJMUDX
 
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated
+		ViewPerspective*		m_pRenderView2;		//3D Output View - DirectX 11 Accelerated
 		LJMUTextOverlay*        m_pRender_text;		//2D Output View - DirectX 11 Accelerated
 		Camera*					m_pCamera;			//Camera Object
 
