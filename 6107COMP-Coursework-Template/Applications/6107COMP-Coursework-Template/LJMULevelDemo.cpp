@@ -444,12 +444,11 @@ void LJMUDX::LJMULevelDemo::switchCamera()
 
 void LJMUDX::LJMULevelDemo::setupSpaceships()
 {
-
 	MaterialReflectanceInfo tMatInfo;
 	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 100.0f);
-	tMatInfo.Ambient = 0.1f;
-	tMatInfo.Diffuse = 0.1f;
-	tMatInfo.Specular = 0.1f;
+	tMatInfo.Ambient = 0.0f;
+	tMatInfo.Diffuse = 0.0f;
+	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
 
@@ -473,6 +472,9 @@ void LJMUDX::LJMULevelDemo::setupSpaceships()
 
 	this->m_pathFollowingActors.push_back(tSpaceship);
 	this->m_pathFollowingActors.push_back(tSpaceship2);
+
+
+
 }
 
 void LJMUDX::LJMULevelDemo::animateLights(float DT)
@@ -528,17 +530,22 @@ void LJMUDX::LJMULevelDemo::setupBase()
 	tMatInfo.Specular = 0.0f;
 	tMatInfo.Shininess = 1.0f;
 
-	this->m_moonBase = new Actor();
-	BasicMeshPtr tMoonBaseMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Emergency_Backup_Generator.obj", Vector4f(1, 1, 1, 1));
-	MaterialPtr tMoonBaseMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Plastic010_1K_Color.png"), std::wstring(L"Plastic010_1K_Normal.png"), this->m_lights, tMatInfo);
-	this->m_moonBase->GetBody()->SetGeometry(tMoonBaseMesh);
-	this->m_moonBase->GetBody()->SetMaterial(tMoonBaseMat);
-	this->m_moonBase->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
-	this->m_moonBase->GetBody()->Rotation().RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), 90.0f);
-	this->m_moonBase->GetNode()->Position() = Vector3f(70.0f, 0.0f, 630.0f);
-	this->m_pScene->AddActor(this->m_moonBase);
+	//////////////////////////
+	// Setup static meshes
+	//////////////////////////
 
-	this->m_actors.push_back(this->m_moonBase);
+	Actor* tGenerator = new Actor();
+	BasicMeshPtr tGeneratorMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Emergency_Backup_Generator.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tGeneratorMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Plastic010_1K_Color.png"), std::wstring(L"Plastic010_1K_Normal.png"), this->m_lights, tMatInfo);
+	tGenerator->GetBody()->SetGeometry(tGeneratorMesh);
+	tGenerator->GetBody()->SetMaterial(tGeneratorMat);
+	tGenerator->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
+	tGenerator->GetBody()->Rotation().RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), 90.0f);
+	tGenerator->GetNode()->Position() = Vector3f(70.0f, 0.0f, 630.0f);
+
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tGenerator);
+	this->m_actors.push_back(tGenerator);
 
 	Actor* tLanding = new Actor();
 	BasicMeshPtr tLandingMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Landing.obj", Vector4f(1, 1, 1, 1));
@@ -548,9 +555,11 @@ void LJMUDX::LJMULevelDemo::setupBase()
 	tLanding->GetBody()->SetMaterial(tLandingMat);
 	tLanding->GetBody()->Scale() = Vector3f(10.0f, 10.0f, 10.0f);
 	tLanding->GetNode()->Position() = Vector3f(250.0f, -10.0f, 600.0f);
-	this->m_pScene->AddActor(tLanding);
 
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tLanding);
 	this->m_actors.push_back(tLanding);
+
 
 	Actor* tSpaceship = new Actor();
 	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"ares_I.obj", Vector4f(1, 1, 1, 1));
@@ -560,8 +569,9 @@ void LJMUDX::LJMULevelDemo::setupBase()
 	tSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
 	tSpaceship->GetBody()->Scale() = Vector3f(3.0f, 3.0f, 3.0f);
 	tSpaceship->GetNode()->Position() = Vector3f(150.0f, -10.0f, 700.0f);
-	this->m_pScene->AddActor(tSpaceship);
 
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tSpaceship);
 	this->m_actors.push_back(tSpaceship);
 
 	Actor* tSpaceShipLanding = new Actor();
@@ -573,9 +583,48 @@ void LJMUDX::LJMULevelDemo::setupBase()
 	tSpaceShipLanding->GetBody()->Scale() = Vector3f(3.0f, 3.0f, 3.0f);
 	tSpaceShipLanding->GetNode()->Rotation().RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), 180.0f);
 	tSpaceShipLanding->GetNode()->Position() = Vector3f(150.0f, -10.0f, 700.0f);
-	this->m_pScene->AddActor(tSpaceShipLanding);
 
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tSpaceShipLanding);
 	this->m_actors.push_back(tSpaceShipLanding);
+
+	//////////////////////////
+	// Setup static spaceships
+	//////////////////////////
+
+	MaterialReflectanceInfo tMatInfo2;
+	tMatInfo2.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 30.0f);
+	tMatInfo2.Ambient = 0.0f;
+	tMatInfo2.Diffuse = 0.0f;
+	tMatInfo2.Specular = 0.0f;
+	tMatInfo2.Shininess = 1.0f;
+
+	Actor* tSpaceshipSmall = new Actor();
+	BasicMeshPtr tSpaceshipSmallMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"spaceship.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tSpaceshipSmallMat = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, L"wedge_p1_diff_v1.png", this->m_lights, tMatInfo2);
+
+
+	tSpaceshipSmall->GetBody()->SetGeometry(tSpaceshipSmallMesh);
+	tSpaceshipSmall->GetBody()->SetMaterial(tSpaceshipSmallMat);
+	tSpaceshipSmall->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
+	tSpaceshipSmall->GetNode()->Position() = Vector3f(230.0f, 20.0f, 630.0f);
+
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tSpaceshipSmall);
+	this->m_actors.push_back(tSpaceshipSmall);
+
+
+	Actor* tSpaceshipSmall2 = new Actor();
+	tSpaceshipSmall2->GetBody()->SetGeometry(tSpaceshipSmallMesh);
+	tSpaceshipSmall2->GetBody()->SetMaterial(tSpaceshipSmallMat);
+	tSpaceshipSmall2->GetBody()->Scale() = Vector3f(0.1f, 0.1f, 0.1f);
+	tSpaceshipSmall2->GetNode()->Position() = Vector3f(270.0f, 20.0f, 570.0f);
+
+	// Add actor into a scene and into a vector of actors in order to update the material and lighting
+	this->m_pScene->AddActor(tSpaceshipSmall2);
+	this->m_actors.push_back(tSpaceshipSmall2);
+
+
 
 }
 

@@ -224,7 +224,7 @@ MaterialPtr MaterialGenerator::createTextureMaterial(RendererDX11& pRenderer, st
 
 	for (int i = 0; i < 8; ++i)
 	{
-		blendConfig.RenderTarget[i].BlendEnable = true;
+		blendConfig.RenderTarget[i].BlendEnable = false;
 		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
 		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
