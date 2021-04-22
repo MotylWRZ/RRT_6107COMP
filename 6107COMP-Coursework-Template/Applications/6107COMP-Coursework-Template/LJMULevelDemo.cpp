@@ -169,11 +169,12 @@ void LJMULevelDemo::setupGeometry()
 	//this->m_pScene->AddActor(tPlanetActor);
 
 
-
+	MaterialPtr tPlanetMaterial2 = MaterialGenerator::createPlanetExplosionmaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"));
 	//MaterialPtr tInstMaterial = MaterialGenerator::createGSInstancingMaterial(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"));
 	this->m_planet = new Planet();
-	this->m_planet->Initialize(tPlanetMaterial);
-	this->m_planet->GetBody()->Position() = Vector3f(200.0f, 50.0f, 100.0f);
+	this->m_planet->Initialize(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), this->m_lights, tMatInfo, std::wstring(L"rocks_ground_06_nor_2k.tiff"));
+	this->m_planet->GetNode()->Position() = Vector3f(1000.0f, 1000.0f, 1000.0f);
+	this->m_planet->GetBody()->Scale() = Vector3f(10.0f, 10.0f, 10.0f);
 	this->m_pScene->AddActor(this->m_planet);
 
 	this->m_actors.push_back(this->m_planet);
@@ -401,15 +402,16 @@ void LJMUDX::LJMULevelDemo::setupTerrain()
 
 	// Create test Landscape
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
+	MaterialPtr tTerrainMaterial2 = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rock_ground_02_diff_1k.png", L"aerial_sand_diff_1k.png", this->m_lights, tMatInfo);
 
 	// Terrain from Heightmap
-	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene);
+	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene, 0.01f);
 	tTerrainHeightmap->generateChunkedTerrainFromHeightmap(false, "heightmap.r16",1025, 1025, 512, 512, 10, 300);
-	tTerrainHeightmap->setMaterial(tTerrainMaterial);
+	tTerrainHeightmap->setMaterial(tTerrainMaterial2);
 	tTerrainHeightmap->GetNode()->Position() = Vector3f(-1000.0f, -100.0f, -1000.0f);
 
 	// Terrain procedurally generated
-	Terrain* tTerrainProcedural = new Terrain(254, 3, 12, this->m_pScene);
+	Terrain* tTerrainProcedural = new Terrain(254, 3, 12, this->m_pScene, 0.03f);
 	tTerrainProcedural->generateChunkedTerrainFromNoise(true, 254, 10, 128);
 	tTerrainProcedural->setMaterial(tTerrainMaterial);
 	tTerrainProcedural->GetNode()->Position() = Vector3f(-100.0f, 0.0f, -100.0f);
@@ -522,7 +524,7 @@ void LJMULevelDemo::Update()
 		Terrain->updateLighting(this->m_pRenderer11, this->m_lights);
 	}
 
-	this->m_planet->Update(tDT);
+	this->m_planet->Update(tDT, this->m_pTimer);
 	this->m_solarSystem->Update(tDT);
 
 	this->m_pSpaceship->update(tDT);
@@ -644,6 +646,20 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 		if (tkeycode == 0x43)
 		{
 			this->switchCamera();
+		}
+
+		// Check if G key is pressed
+		if (tkeycode == 0x0047)
+		{
+			if (this->m_planet->isExplosionActive())
+			{
+				this->m_planet->setExplosion(false);
+			}
+			else
+			{
+				this->m_planet->setExplosion(true);
+			}
+
 		}
 
 	}

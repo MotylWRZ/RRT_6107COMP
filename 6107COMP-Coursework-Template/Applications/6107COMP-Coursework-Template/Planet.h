@@ -18,6 +18,7 @@
 #include "LJMUTextOverlay.h"
 
 #include "RRTVertexDX11.h"
+#include "MaterialGenerator.h"
 
 class Light_Base;
 
@@ -30,14 +31,22 @@ public:
 	Planet();
 	virtual ~Planet() {};
 
-	void Initialize(MaterialPtr planetMaterial, std::wstring planetMesh = L"geosphere.obj");
-	void Update(float deltaTime);
+	void Initialize(RendererDX11& renderer, std::wstring diffuseTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo, std::wstring bumpTextureFile = L"none", std::wstring planetMesh = L"geosphere.obj");
+	void Update(float deltaTime, Timer* pTimer);
+	void setExplosion(bool enabled);
+
+	inline bool isExplosionActive() { return m_explosionActive; }
 
 private:
 	void UpdateEntities(float deltaTime);
 
 private:
+	MaterialPtr m_mainMaterial;
+	MaterialPtr m_explosionMaterial;
+	bool m_explosionActive;
+
 	float m_rotationSpeed;
 	Vector3f m_rotationDirection;
+	float m_totalTime;
 };
 

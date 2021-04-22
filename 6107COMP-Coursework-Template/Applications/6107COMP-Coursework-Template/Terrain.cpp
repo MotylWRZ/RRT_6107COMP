@@ -3,11 +3,12 @@
 #include "TerrainGenerator.h"
 #include "MaterialGenerator.h"
 
-Terrain::Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene)
+Terrain::Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene, float textureMappingFactor)
 	:m_terrainResolution(terrainResolution)
 	,m_terrainSpacing(terrainSpacing)
 	,m_heightScale(heightScale)
 	,m_pScene(pScene)
+	,m_textureMappingFactor(textureMappingFactor)
 {
 }
 
@@ -21,28 +22,6 @@ void Terrain::setMaterial(MaterialPtr material)
 	{
 		Chunk->SetMaterial(material);
 	}
-}
-
-void Terrain::addTerrainIntoScene(Scene* pScene)
-{
-	//if (pScene)
-	//{
-	//	for (auto& Chunk : this->m_chunks)
-	//	{
-	//			pScene->AddActor(Chunk);
-	//	}
-	//}
-}
-
-void Terrain::removeTerrainFromScene(Scene* pScene)
-{
-	//if (pScene)
-	//{
-	//	for (auto& Chunk : this->m_chunks)
-	//	{
-	//		pScene->RemoveActor(Chunk);
-	//	}
-	//}
 }
 
 void Terrain::updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights)
@@ -240,8 +219,6 @@ void Terrain::generateTerrainChunks(const std::vector<std::vector<Vector3f>>& ch
 
 		//TerrainChunk* tChunk = new TerrainChunk();
 		tTerrainNode->AttachChild(tChunk);
-
-		//this->m_pScene->AddActor(this->skysphereActor);
 
 		//  generate mesh from vertices
 		BasicMeshPtr tMesh = TerrainGenerator::generateTerrainMeshFromVertices(VertsArray, heightScale, this->m_textureMappingFactor);

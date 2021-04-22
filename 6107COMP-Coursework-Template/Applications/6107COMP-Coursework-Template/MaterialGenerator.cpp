@@ -446,6 +446,66 @@ MaterialPtr MaterialGenerator::createLitTexturedMaterial(RendererDX11& pRenderer
 	return tMaterial;
 }
 
+MaterialPtr MaterialGenerator::createPlanetExplosionmaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile)
+{
+
+	MaterialPtr tNewMaterial = MaterialPtr(new MaterialDX11());
+	RenderEffectDX11* tEffect = new RenderEffectDX11();
+
+	tEffect->SetVertexShader(pRenderer.LoadShader(ShaderType::VERTEX_SHADER,
+		std::wstring(L"RTRSphereExplosionShader.hlsl"),
+		std::wstring(L"VSMain"),
+		std::wstring(L"vs_4_0"),
+		true));
+
+	tEffect->SetPixelShader(pRenderer.LoadShader(ShaderType::PIXEL_SHADER,
+		std::wstring(L"RTRSphereExplosionShader.hlsl"),
+		std::wstring(L"PSMain"),
+		std::wstring(L"ps_4_0"),
+		true));
+
+	tEffect->SetGeometryShader(pRenderer.LoadShader(ShaderType::GEOMETRY_SHADER,
+		std::wstring(L"RTRSphereExplosionShader.hlsl"),
+		std::wstring(L"GSMain"),
+		std::wstring(L"gs_5_0")));
+
+
+	ResourcePtr tTexture = RendererDX11::Get()->LoadTexture(diffuseTextureFile);
+	tNewMaterial->Parameters.SetShaderResourceParameter(L"DiffuseTexture", tTexture);
+
+	//D3D11_SAMPLER_DESC tSamplerConfig;
+	SamplerStateConfigDX11 tSamplerConfig;
+	tSamplerConfig.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	tSamplerConfig.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	tSamplerConfig.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	tSamplerConfig.MaxAnisotropy = 0;
+
+	int tTextureSampler = RendererDX11::Get()->CreateSamplerState(&tSamplerConfig);
+	tNewMaterial->Parameters.SetSamplerParameter(L"TextureSampler", tTextureSampler);
+
+	BlendStateConfigDX11 blendConfig;
+	blendConfig.AlphaToCoverageEnable = false;
+	blendConfig.IndependentBlendEnable = false;
+	for (int i = 0; i < 8; ++i)
+	{
+		blendConfig.RenderTarget[i].BlendEnable = true;
+		blendConfig.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendConfig.RenderTarget[i].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendConfig.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendConfig.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		blendConfig.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_ONE;
+		blendConfig.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+
+	tEffect->m_iBlendState = RendererDX11::Get()->CreateBlendState(&blendConfig);
+
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].bRender = true;
+	tNewMaterial->Params[VIEWTYPE::VT_PERSPECTIVE].pEffect = tEffect;
+
+	return tNewMaterial;
+}
+
 void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)

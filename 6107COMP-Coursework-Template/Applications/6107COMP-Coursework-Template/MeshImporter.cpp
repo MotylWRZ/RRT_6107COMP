@@ -74,3 +74,42 @@ BasicMeshPtr MeshImporter::generateMeshOBJWithSurfaceVectors(std::wstring meshOB
 	}
 	return tia;
 }
+
+BasicMeshPtr MeshImporter::generateOBJMeshForGSExplosion(std::wstring MeshName, Vector4f MeshColour)
+{
+	FileSystem tFS;
+	LJMUDX::LJMUMeshOBJ* tMesh = new LJMUDX::LJMUMeshOBJ(tFS.GetModelsFolder() + MeshName);
+	int tVertCount = tMesh->positions.size();
+
+	auto tIA = std::make_shared<DrawExecutorDX11<RRTVertexDX11::Vertex>>();
+	tIA->SetLayoutElements(RRTVertexDX11::GetElementCount(), RRTVertexDX11::Elements);
+	tIA->SetPrimitiveType(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	tIA->SetMaxVertexCount(tVertCount);
+
+	RRTVertexDX11::Vertex tVertex;
+	tVertex.color = MeshColour;
+
+	for (auto& Object : tMesh->objects)
+	{
+		for (auto& Face : Object.faces)
+		{
+			for (size_t i = 0; i < 3; ++i)
+			{
+				tVertex.position = tMesh->positions[Face.PositionIndices[i]];
+				tVertex.normal = tMesh->normals[Face.NormalIndices[i]];
+				tVertex.texcoords = tMesh->coords[Face.CoordIndices[i]];
+
+				// Resources for explision animation in geometry shader
+				float spinSpeed = static_cast<float>(rand() % 100) / 100;
+				float spinDirX = static_cast<float>(rand() % 100) / 100;
+				float spinDirY = static_cast<float>(rand() % 100) / 100;
+				float spinDirZ = static_cast<float>(rand() % 100) / 100;
+				tVertex.color = Vector4f(spinSpeed, spinDirX, spinDirY, spinDirZ);
+
+				tIA->AddVertex(tVertex);
+			}
+		}
+	}
+
+	return tIA;
+}

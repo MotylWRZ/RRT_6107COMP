@@ -20,7 +20,7 @@ class Terrain : public Actor
 {
 public:
 
-	Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene);
+	Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene, float textureMappingFactor);
 	~Terrain();
 
 	inline int getTerrainResoultion() const { return m_terrainResolution; }
@@ -31,12 +31,6 @@ public:
 
 	// Set material for all terrain chunks
 	void setMaterial(MaterialPtr material);
-
-	// Add all chunk objects into the scene
-	void addTerrainIntoScene(Scene* pScene);
-
-	// remove all terrain chuns from the specified scene
-	void removeTerrainFromScene(Scene* pScene);
 
 	void updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights);
 

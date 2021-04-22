@@ -45,6 +45,8 @@ public:
 	static MaterialPtr createMultiTextureMaterial(RendererDX11& renderer, std::wstring shaderFile, std::wstring textureFile1, std::wstring textureFile2);
 	static MaterialPtr createLitBumpTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, std::wstring bumpTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 	static MaterialPtr createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
+
+	static MaterialPtr createPlanetExplosionmaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile);
 	///
 	// Terrain Materials
 	///

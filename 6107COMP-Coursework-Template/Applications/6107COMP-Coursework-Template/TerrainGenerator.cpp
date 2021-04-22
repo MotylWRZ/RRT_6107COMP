@@ -562,7 +562,6 @@ BasicMeshPtr TerrainGenerator::generateTerrainMeshFromVertices(const std::vector
 
 	// Texture
 	std::vector<Vector2f> tTextureCoords;
-	float tTextureMappingFactor = 0.1f;
 
 	for (int i = 0; i < tTerrainWidth; i++)
 	{
@@ -588,7 +587,7 @@ BasicMeshPtr TerrainGenerator::generateTerrainMeshFromVertices(const std::vector
 			tVertexColors.push_back(Vector4f(tShade, 1 - tShade, tShade / 2, 1));
 
 			// Calculate Texture Coordinate and store them in the array
-			tTextureCoords.push_back(Vector2f(i * tTextureMappingFactor, j * tTextureMappingFactor));
+			tTextureCoords.push_back(Vector2f(i * textureMappingFactor, j * textureMappingFactor));
 		}
 	}
 
