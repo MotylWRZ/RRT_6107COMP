@@ -6,6 +6,8 @@ Planet::Planet()
 	:m_rotationSpeed(100.f)
 	,m_rotationDirection(0.0f, 1.0f, 0.0f)
 	,m_explosionActive(false)
+	,m_explosionMaterial(nullptr)
+	,m_mainMaterial(nullptr)
 {
 }
 
@@ -30,6 +32,16 @@ void Planet::Initialize(RendererDX11& renderer, std::wstring diffuseTextureFile,
 
 	// Create explosion material
 	this->m_explosionMaterial = MaterialGenerator::createPlanetExplosionmaterial(renderer, diffuseTextureFile);
+}
+
+void Planet::Initialize(RendererDX11& renderer, std::wstring diffuseTextureFile, std::wstring planetMesh)
+{
+	MaterialPtr tMaterial = MaterialGenerator::createTextureMaterial(renderer, std::wstring(L"RRTTextureMapping.hlsl"), diffuseTextureFile);
+
+	this->m_mainMaterial = tMaterial;
+
+	this->GetBody()->SetGeometry(MeshImporter::generateOBJMeshForGSExplosion(planetMesh, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)));
+	this->GetBody()->SetMaterial(this->m_mainMaterial);
 }
 
 void Planet::Update(float deltaTime, Timer* pTimer)

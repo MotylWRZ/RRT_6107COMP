@@ -37,6 +37,18 @@
     <Filter Include="Source Files\Terrain">
       <UniqueIdentifier>{2d8fdd6f-acf9-4141-8858-1b69b722e673}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Paths">
+      <UniqueIdentifier>{c704ec7a-03c5-44ea-ae5c-feede409f83e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Paths">
+      <UniqueIdentifier>{7bfc0a2d-37b8-4595-8d6e-5322cd08ad02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{a4bd87e4-559c-48e8-b5bb-1d2e545c7f24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{3bce8283-ccda-4138-877e-3d8e75d4a135}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LJMULevelDemo.cpp">
@@ -45,13 +57,6 @@
     <ClCompile Include="LJMUTextOverlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RRTVertexDX11.cpp" />
     <ClCompile Include="Light_Point.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
@@ -73,7 +78,6 @@
     <ClCompile Include="InstancedStaticMesh.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="SolarSystem.cpp" />
     <ClCompile Include="FastNoise.cpp">
       <Filter>Source Files\NoiseLibrary</Filter>
     </ClCompile>
@@ -86,13 +90,29 @@
     <ClCompile Include="TerrainChunk.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="PathGenerator.cpp" />
     <ClCompile Include="PathFollowingActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Path.cpp" />
     <ClCompile Include="CinematicCamera.cpp">
       <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp">
+      <Filter>Source Files\Paths</Filter>
+    </ClCompile>
+    <ClCompile Include="PathGenerator.cpp">
+      <Filter>Source Files\Paths</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="RRTVertexDX11.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="SolarSystem.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialGenerator.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,13 +122,6 @@
     <ClInclude Include="LJMUTextOverlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RRTVertexDX11.h" />
     <ClInclude Include="Light_Base.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
@@ -133,7 +146,6 @@
     <ClInclude Include="InstancedStaticMesh.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="SolarSystem.h" />
     <ClInclude Include="FastNoise.h">
       <Filter>Header Files\NoiseLibrary</Filter>
     </ClInclude>
@@ -146,13 +158,29 @@
     <ClInclude Include="TerrainGenerator.h">
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="PathGenerator.h" />
     <ClInclude Include="PathFollowingActor.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Path.h" />
     <ClInclude Include="CinematicCamera.h">
       <Filter>Header Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Path.h">
+      <Filter>Header Files\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="PathGenerator.h">
+      <Filter>Header Files\Paths</Filter>
+    </ClInclude>
+    <ClInclude Include="SolarSystem.h">
+      <Filter>Header Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="RRTVertexDX11.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialGenerator.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

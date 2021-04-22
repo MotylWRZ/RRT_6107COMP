@@ -86,6 +86,8 @@ namespace LJMUDX
 		void setupTerrain();
 		void switchTerrainRendering();
 		void switchCamera();
+		void setupSpaceships();
+		void animateLights(float DT);
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -104,8 +106,10 @@ namespace LJMUDX
 		Actor* m_pCubeActor;
 		Actor* m_moonBase;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
-		PathFollowingActor* m_pSpaceship;
-		PathFollowingActor* m_pSpaceship2;
+		/*PathFollowingActor* m_pSpaceship;
+		PathFollowingActor* m_pSpaceship2;*/
+
+		std::vector<PathFollowingActor*> m_pathFollowingActors;
 
 		CinematicCamera* m_pCinematicCamera;
 		int m_currentCameraId;
@@ -115,7 +119,10 @@ namespace LJMUDX
 
 		std::vector<Path*> m_paths;
 		std::shared_ptr<SolarSystem> m_solarSystem;
+
 		Planet* m_planet;
+		Planet* m_sun;
+
 		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;
 

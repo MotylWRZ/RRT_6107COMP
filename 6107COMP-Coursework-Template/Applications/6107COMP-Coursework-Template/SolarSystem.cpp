@@ -35,15 +35,22 @@ void SolarSystem::addPlanet(int ISMindex, Vector3f position, EInstanceTexture pl
 
 void SolarSystem::Update(float deltaTime)
 {
-	for (auto& ISM : this->m_ISMs)
+	for (int i = 0; i < static_cast<int>(this->m_ISMs.size()); i++)
 	{
+		float tRadius = this->m_circularMovementRadius;
+
+		if (i > 0)
+		{
+			tRadius /= i * 2;
+		}
+
 		// Rotate instnces around the Y axis
 		float tAngle = (this->m_rotationSpeed * (GLYPH_PI / 180.0f)) * deltaTime;
 
 		Matrix3f tRotationMatrix;
 
 		tRotationMatrix.RotationEuler(this->m_rotationDirection, tAngle);
-		ISM->GetBody()->Rotation() *= tRotationMatrix;
+		this->m_ISMs[i]->GetBody()->Rotation() *= tRotationMatrix;
 
 		float x = 100.0f;
 		float z = 100.0f;
@@ -53,11 +60,11 @@ void SolarSystem::Update(float deltaTime)
 
 
 		float offset = 1.0f;
-		for (int j = 0; j < ISM->getInstances().size(); j++)
+		for (int j = 0; j < this->m_ISMs[i]->getInstances().size(); j++)
 		{
 
-			Vector3f tNewPos = Vector3f(this->m_originPoint.x + (this->m_circularMovementRadius * cos(m_angle + offset)), ISM->GetNode()->Position().y, this->m_originPoint.z + (this->m_circularMovementRadius * sin(m_angle + offset)));
-			ISM->updateInstance(j, tNewPos);
+			Vector3f tNewPos = Vector3f(this->m_originPoint.x + (tRadius * cos(m_angle + offset)), this->m_ISMs[i]->GetNode()->Position().y, this->m_originPoint.z + (tRadius * sin(m_angle + offset)));
+			this->m_ISMs[i]->updateInstance(j, tNewPos);
 			offset++;
 		}
 
