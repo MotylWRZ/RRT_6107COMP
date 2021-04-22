@@ -105,32 +105,7 @@ void LJMULevelDemo::setupGeometry()
 
 
 	this->setupSpaceships();
-
-
-
-
-	this->m_moonBase = new Actor();
-	BasicMeshPtr tMoonBaseMesh = MeshImporter::generateMeshOBJ(L"Emergency_Backup_Generator.obj", Vector4f(1, 1, 1, 1));
-	MaterialPtr tMoonBaseMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"14006_Moon_Building_Science_Module_diff1.jpg"), std::wstring(L"Emergency Backup Generator_Default_nmap_Blender.jpg"), this->m_lights, tMatInfo);
-	//MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, L"14006_Moon_Building_Science_Module_diff1.jpg", this->m_lights, tMatInfo);
-	this->m_moonBase->GetBody()->SetGeometry(tMoonBaseMesh);
-	this->m_moonBase->GetBody()->SetMaterial(tMoonBaseMat);
-	this->m_moonBase->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
-	this->m_moonBase->GetNode()->Position() = Vector3f(300.0f, 10.0f, 100.0f);
-	this->m_pScene->AddActor(this->m_moonBase);
-
-	this->m_actors.push_back(this->m_moonBase);
-
-
-	//Actor* tLanding = new Actor();
-	//BasicMeshPtr tLandingMesh = MeshImporter::generateMeshOBJ(L"Landing.obj", Vector4f(1, 1, 1, 1));
-	//MaterialPtr tLandingMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"HeliPad_Base_Color.png"), std::wstring(L"HeliPad_Normal_DirectX.png"), this->m_lights, tMatInfo);
-	////MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, L"14006_Moon_Building_Science_Module_diff1.jpg", this->m_lights, tMatInfo);
-	//tLanding->GetBody()->SetGeometry(tLandingMesh);
-	//tLanding->GetBody()->SetMaterial(tLandingMat);
-	//tLanding->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
-	//tLanding->GetNode()->Position() = Vector3f(500.0f, 10.0f, 100.0f);
-	//this->m_pScene->AddActor(tLanding);
+	this->setupBase();
 
 	this->m_planet = new Planet();
 	this->m_planet->Initialize(*this->m_pRenderer11, std::wstring(L"rocks_ground_06_diff_2k.tiff"), this->m_lights, tMatInfo, std::wstring(L"rocks_ground_06_nor_2k.tiff"));
@@ -139,6 +114,7 @@ void LJMULevelDemo::setupGeometry()
 	this->m_pScene->AddActor(this->m_planet);
 
 	this->m_actors.push_back(this->m_planet);
+
 
 	this->m_sun = new Planet();
 	this->m_sun->Initialize(*this->m_pRenderer11, std::wstring(L"2k_sun.jpg"));
@@ -210,16 +186,16 @@ void LJMUDX::LJMULevelDemo::addLight(LightBasePtr pLight)
 void LJMUDX::LJMULevelDemo::setupLighting()
 {
 	Vector4f tLightColour(0.0f, 1.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition(100.0f, -70.0f, 300.0f);
-	Vector2f tLightRange(100.0f, 0.0f);
+	Vector3f tLightPosition(150.0f, 70.0f, 700.0f);
+	Vector2f tLightRange(70.0f, 0.0f);
 
-	Vector4f tLightColour2(1.0f, 0.0f, 0.9f, 1.0f);
-	Vector3f tLightPosition2(300.0f, -70.0f, 400.0f);
+	Vector4f tLightColour2(0.1f, 0.7f, 0.9f, 1.0f);
+	Vector3f tLightPosition2(250.0f, 30.0f, 600.0f);
 	Vector2f tLightRange2(100.0f, 0.0f);
 
 	Vector4f tLightColour3(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector3f tLightPosition3(300.0f, -70.0f, 100.0f);
-	Vector2f tLightRange3(100.0f, 0.0f);
+	Vector3f tLightPosition3(170.0f, 30.0f, 700.0f);
+	Vector2f tLightRange3(200.0f, 0.0f);
 
 
 	//Vector4f tDirLightColour(0.1f, 0.1f, 0.7f, 1.0f);
@@ -233,7 +209,6 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 	Vector3f SpotLightPosition(400.0f, 100.0f, 100.0f);
 	Vector2f SpotLightRange(100.0f, 0.0f);
 	Vector2f SpotLightFocus(1.0f, 0.0f);
-	//SpotLightDirection.Normalize();
 
 	LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
 	LightBasePtr tPointLight2 = std::make_shared<Light_Point>(tLightColour2, tLightPosition2, tLightRange2);
@@ -252,22 +227,32 @@ void LJMUDX::LJMULevelDemo::setupLighting()
 	this->addLight(tSpotLight3);
 
 
-	for (int i = 0; i < 200;  i++)
-	{
-		if (tLightPosition.x > 500.0f)
-		{
-			tLightPosition.z += 70.0f;
-			tLightPosition.x = -100.0f;
-		}
-		tLightPosition.x += 70.0f;
-		//tLightColour.x += 0.1f;
-		tLightColour.x += 0.1;
-		//tLightColour.z += 0.01;
+	// Setup Dynamic lights (animated lights)
 
-		LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightRange);
+	Vector3f tOrigin(150.0f, 10.0f, 700.0f);
+	float tAngle = 10.0f;
+	float tAngleDiff = 10.0f;
+	float tRadius = 700.0f;
+
+	std::vector<Vector3f> tPositions;
+
+	Vector2f tLightDynamicRange(17.0f, 0.0f);
+	for (int i = 0; i < 22; i++)
+	{
+		tLightColour.x += 0.3;
+
+		Vector3f tPos(tOrigin.x + (tRadius * cos(tAngle)), tOrigin.y, tOrigin.z + (tRadius * sin(tAngle)));
+
+		tLightPosition = tPos;
+		tAngle += tAngleDiff;
+
+		LightBasePtr tPointLight = std::make_shared<Light_Point>(tLightColour, tLightPosition, tLightDynamicRange);
 
 		this->addLight(tPointLight);
+		this->m_dynamicLights.push_back(tPointLight);
 	}
+
+
 }
 
 void LJMUDX::LJMULevelDemo::setupSkySphere()
@@ -314,7 +299,7 @@ void LJMUDX::LJMULevelDemo::setupPaths()
 	this->m_paths.push_back(tSpaceshipPath);
 
 	Path* tSpaceshipPath2 = new Path();
-	tSpaceshipPath2->generatePath(EPathType::Path_Hermite, 0.0f, 0.0f, 300.0f, 200.0f, -180.0f, 180.0f, 2);
+	tSpaceshipPath2->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 300.0f, 200.0f, -180.0f, 180.0f, 2);
 	this->m_paths.push_back(tSpaceshipPath2);
 
 	Path* tSpaceshipPath3 = new Path();
@@ -395,7 +380,7 @@ void LJMUDX::LJMULevelDemo::setupTerrain()
 	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene, 0.01f);
 	tTerrainHeightmap->generateChunkedTerrainFromHeightmap(false, "heightmap.r16",1025, 1025, 512, 512, 10, 300);
 	tTerrainHeightmap->setMaterial(tTerrainMaterial2);
-	tTerrainHeightmap->GetNode()->Position() = Vector3f(-1000.0f, -100.0f, -1000.0f);
+	tTerrainHeightmap->GetNode()->Position() = Vector3f(-1000.0f, -110.0f, -1000.0f);
 
 	// Terrain procedurally generated
 	Terrain* tTerrainProcedural = new Terrain(254, 3, 12, this->m_pScene, 0.03f);
@@ -461,10 +446,10 @@ void LJMUDX::LJMULevelDemo::setupSpaceships()
 {
 
 	MaterialReflectanceInfo tMatInfo;
-	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 0.5f, 0.5f, 30.0f);
-	tMatInfo.Ambient = 0.0f;
-	tMatInfo.Diffuse = 0.0f;
-	tMatInfo.Specular = 0.0f;
+	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 100.0f);
+	tMatInfo.Ambient = 0.1f;
+	tMatInfo.Diffuse = 0.1f;
+	tMatInfo.Specular = 0.1f;
 	tMatInfo.Shininess = 1.0f;
 
 
@@ -505,6 +490,93 @@ void LJMUDX::LJMULevelDemo::animateLights(float DT)
 	tInfo2.LightPosition.y = this->m_pathFollowingActors[1]->GetNode()->Position().y - 30.0f;
 	tInfo2.LightPosition.z = this->m_pathFollowingActors[1]->GetNode()->Position().z;
 	tLight2->setLightInfo(tInfo2);
+
+	Vector3f tOrigin(150.0f, -12.0f, 700.0f);
+	float offset = 1.0f;
+
+	float tRadius = 47.0f;
+
+	for (int i = 0; i < this->m_dynamicLights.size(); i++)
+	{
+		LightBasePtr tDynamicLight = this->m_dynamicLights[i];
+
+		static float tAngle = 0;
+		tAngle += 0.01f * DT;
+
+		Vector3f tNewPos = Vector3f(tOrigin.x + (tRadius * cos(tAngle + offset)), tOrigin.y, tOrigin.z + (tRadius * sin(tAngle + offset)));
+
+		LightInfo tInfo;
+		tInfo = tDynamicLight->getLightInfo();
+		tInfo.LightPosition.x = tNewPos.x;
+		tInfo.LightPosition.y = tNewPos.y;
+		tInfo.LightPosition.z = tNewPos.z;
+
+		tDynamicLight->setLightInfo(tInfo);
+
+		offset++;
+
+	}
+	offset = 0;
+}
+
+void LJMUDX::LJMULevelDemo::setupBase()
+{
+	MaterialReflectanceInfo tMatInfo;
+	tMatInfo.SurfaceEmissiveColour = Vector4f(0.0f, 1.0f, 1.0f, 20.0f);
+	tMatInfo.Ambient = 0.0f;
+	tMatInfo.Diffuse = 0.0f;
+	tMatInfo.Specular = 0.0f;
+	tMatInfo.Shininess = 1.0f;
+
+	this->m_moonBase = new Actor();
+	BasicMeshPtr tMoonBaseMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Emergency_Backup_Generator.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tMoonBaseMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Plastic010_1K_Color.png"), std::wstring(L"Plastic010_1K_Normal.png"), this->m_lights, tMatInfo);
+	this->m_moonBase->GetBody()->SetGeometry(tMoonBaseMesh);
+	this->m_moonBase->GetBody()->SetMaterial(tMoonBaseMat);
+	this->m_moonBase->GetBody()->Scale() = Vector3f(10.1f, 10.1f, 10.1f);
+	this->m_moonBase->GetBody()->Rotation().RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), 90.0f);
+	this->m_moonBase->GetNode()->Position() = Vector3f(70.0f, 0.0f, 630.0f);
+	this->m_pScene->AddActor(this->m_moonBase);
+
+	this->m_actors.push_back(this->m_moonBase);
+
+	Actor* tLanding = new Actor();
+	BasicMeshPtr tLandingMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"Landing.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tLandingMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"concrete_floor_01_diff_1k.png"), std::wstring(L"concrete_floor_01_nor_1k.png"), this->m_lights, tMatInfo);
+
+	tLanding->GetBody()->SetGeometry(tLandingMesh);
+	tLanding->GetBody()->SetMaterial(tLandingMat);
+	tLanding->GetBody()->Scale() = Vector3f(10.0f, 10.0f, 10.0f);
+	tLanding->GetNode()->Position() = Vector3f(250.0f, -10.0f, 600.0f);
+	this->m_pScene->AddActor(tLanding);
+
+	this->m_actors.push_back(tLanding);
+
+	Actor* tSpaceship = new Actor();
+	BasicMeshPtr tSpaceshipMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"ares_I.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tSpaceshipMat = MaterialGenerator::createLitTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Ares_I.png"), this->m_lights, tMatInfo);
+
+	tSpaceship->GetBody()->SetGeometry(tSpaceshipMesh);
+	tSpaceship->GetBody()->SetMaterial(tSpaceshipMat);
+	tSpaceship->GetBody()->Scale() = Vector3f(3.0f, 3.0f, 3.0f);
+	tSpaceship->GetNode()->Position() = Vector3f(150.0f, -10.0f, 700.0f);
+	this->m_pScene->AddActor(tSpaceship);
+
+	this->m_actors.push_back(tSpaceship);
+
+	Actor* tSpaceShipLanding = new Actor();
+	BasicMeshPtr tSpaceShipLandingMesh = MeshImporter::generateMeshOBJWithSurfaceVectors(L"StartShipLanding.obj", Vector4f(1, 1, 1, 1));
+	MaterialPtr tSpaceShipLandingMat = MaterialGenerator::createLitBumpTexturedMaterial(*this->m_pRenderer11, std::wstring(L"Plastic010_1K_Color.png"), std::wstring(L"Plastic010_1K_Normal.png"), this->m_lights, tMatInfo);
+
+	tSpaceShipLanding->GetBody()->SetGeometry(tSpaceShipLandingMesh);
+	tSpaceShipLanding->GetBody()->SetMaterial(tSpaceShipLandingMat);
+	tSpaceShipLanding->GetBody()->Scale() = Vector3f(3.0f, 3.0f, 3.0f);
+	tSpaceShipLanding->GetNode()->Rotation().RotationEuler(Vector3f(0.0f, 1.0f, 0.0f), 180.0f);
+	tSpaceShipLanding->GetNode()->Position() = Vector3f(150.0f, -10.0f, 700.0f);
+	this->m_pScene->AddActor(tSpaceShipLanding);
+
+	this->m_actors.push_back(tSpaceShipLanding);
+
 }
 
 ////////////////////////////////////
@@ -528,34 +600,14 @@ void LJMULevelDemo::Update()
 
 	float tDT = this->m_pTimer->Elapsed();
 
-	/*LightBasePtr tLight = this->m_lights[2];
-	static float speed = 0.0f;
-	speed += 0.001f;
-	LightInfo tInfo;
-	tInfo = tLight->getLightInfo();
-	tInfo.LightPosition.x += cos(speed) * 0.2f;
-
-	tLight->setLightInfo(tInfo);*/
-
-	for (int i = 2; i < this->m_lights.size(); i++)
-	{
-		LightBasePtr tLight = this->m_lights[i];
-		static float speed = 0.0f;
-		speed += 0.001f;
-		LightInfo tInfo;
-		tInfo = tLight->getLightInfo();
-		tInfo.LightPosition.x += cos(speed / 2) * 4.7f;
-
-		tLight->setLightInfo(tInfo);
-	}
-
+	// Update materials for all actors
 	for (auto& Actor : this->m_actors)
 	{
 		MaterialPtr tMat = Actor->GetBody()->GetMaterial();
 		MaterialGenerator::updateMaterialLight(*this->m_pRenderer11, tMat, this->m_lights);
 	}
 
-
+	// Update materials for terrain meshes
 	for (auto& Terrain : this->m_terrains)
 	{
 		Terrain->updateLighting(this->m_pRenderer11, this->m_lights);
@@ -565,6 +617,7 @@ void LJMULevelDemo::Update()
 	this->m_sun->Update(tDT, this->m_pTimer);
 	this->m_solarSystem->Update(tDT);
 
+	// Update pathFollowing actors
 	for (auto& Actor : this->m_pathFollowingActors)
 	{
 		Actor->update(tDT);
@@ -574,7 +627,6 @@ void LJMULevelDemo::Update()
 	}
 
 	this->animateLights(tDT);
-
 
 	this->m_pCinematicCamera->updateCinematicCamera(tDT, this->m_pRenderer11);
 

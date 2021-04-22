@@ -47,6 +47,8 @@ public:
 	static MaterialPtr createLitTexturedMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo);
 
 	static MaterialPtr createPlanetExplosionmaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile);
+
+	static MaterialPtr createUVMappedTextureMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile);
 	///
 	// Terrain Materials
 	///

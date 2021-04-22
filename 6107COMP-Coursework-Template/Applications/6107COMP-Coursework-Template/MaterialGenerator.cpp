@@ -506,6 +506,33 @@ MaterialPtr MaterialGenerator::createPlanetExplosionmaterial(RendererDX11& pRend
 	return tNewMaterial;
 }
 
+MaterialPtr MaterialGenerator::createUVMappedTextureMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile)
+{
+
+	MaterialPtr tmat = MaterialPtr(new MaterialDX11());
+	RenderEffectDX11* tfx = new RenderEffectDX11();
+
+	tfx->SetVertexShader(pRenderer.LoadShader(VERTEX_SHADER, std::wstring(L"ImmediateGeometryTextured.hlsl"), std::wstring(L"VSMAIN"), std::wstring(L"vs_4_0")));
+	tfx->SetPixelShader(pRenderer.LoadShader(PIXEL_SHADER, std::wstring(L"ImmediateGeometryTextured.hlsl"), std::wstring(L"PSMAIN"), std::wstring(L"ps_4_0")));
+
+	tmat->Params[VT_PERSPECTIVE].bRender = true;
+	tmat->Params[VT_PERSPECTIVE].pEffect = tfx;
+
+	ResourcePtr tTexture = RendererDX11::Get()->LoadTexture(diffuseTextureFile);
+	tmat->Parameters.SetShaderResourceParameter(L"ColorTexture", tTexture);
+
+	SamplerStateConfigDX11 SamplerConfig;
+	SamplerConfig.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerConfig.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	SamplerConfig.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamplerConfig.MaxAnisotropy = 0;
+
+	int LinearSampler = RendererDX11::Get()->CreateSamplerState(&SamplerConfig);
+	tmat->Parameters.SetSamplerParameter(L"LinearSampler", LinearSampler);
+
+	return tmat;
+}
+
 void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)

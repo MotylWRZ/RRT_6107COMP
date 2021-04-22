@@ -88,6 +88,7 @@ namespace LJMUDX
 		void switchCamera();
 		void setupSpaceships();
 		void animateLights(float DT);
+		void setupBase();
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -106,8 +107,6 @@ namespace LJMUDX
 		Actor* m_pCubeActor;
 		Actor* m_moonBase;
 		InstancedStaticMesh* m_pInstancedStaticMesh;
-		/*PathFollowingActor* m_pSpaceship;
-		PathFollowingActor* m_pSpaceship2;*/
 
 		std::vector<PathFollowingActor*> m_pathFollowingActors;
 
@@ -125,6 +124,7 @@ namespace LJMUDX
 
 		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;
+		std::vector<LightBasePtr> m_dynamicLights;
 
 		//--------------HIEROGLYPH OBJECTS-----------------------------------------
 		ViewPerspective*		m_pRenderView;		//3D Output View - DirectX 11 Accelerated

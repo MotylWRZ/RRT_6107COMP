@@ -31,9 +31,11 @@ VS_OUTPUT VSMAIN( in VS_INPUT input )
 	return output;
 }
 
+
 float4 PSMAIN( in VS_OUTPUT input ) : SV_Target
 {
 	float4 sampledColor = ColorTexture.Sample( LinearSampler, input.tex );
 	float4 mixedColor = sampledColor * input.color;	
 	return(sampledColor);
 }
+
