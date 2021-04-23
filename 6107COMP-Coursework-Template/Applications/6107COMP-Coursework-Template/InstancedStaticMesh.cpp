@@ -25,7 +25,7 @@ void InstancedStaticMesh::initialise()
 
 }
 
-void InstancedStaticMesh::addInstance(Vector3f instancePosition, float instanceScale, EInstanceTexture instanceTexture)
+void InstancedStaticMesh::addInstance(Vector3f instancePosition, float instanceScale, Matrix4f instanceRotation, EInstanceTexture instanceTexture)
 {
 	// Do not add another instance if the limit of instances has been reached
 	if (this->m_instances.size() + 1 > INSTANCE_NUM_MAX)
@@ -48,12 +48,13 @@ const ISMInstanceInfo& InstancedStaticMesh::getInstance(int instanceId) const
 	return this->m_instances[instanceId];
 }
 
-void InstancedStaticMesh::updateInstance(int instanceId, Vector3f newInstancePosition, float newInstanceScale)
+void InstancedStaticMesh::updateInstance(int instanceId, Vector3f newInstancePosition, float newInstanceScale, Matrix4f newInstanceRotation)
 {
 	if (this->m_instances.size() > instanceId)
 	{
 		this->m_instances[instanceId].InstancePosition = newInstancePosition;
 		this->m_instances[instanceId].InstanceScale = newInstanceScale;
+		this->m_instances[instanceId].InstanceRotation = newInstanceRotation;
 	}
 
 	this->updateMaterial();

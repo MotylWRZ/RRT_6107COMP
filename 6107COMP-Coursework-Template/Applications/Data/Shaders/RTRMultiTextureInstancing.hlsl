@@ -11,14 +11,13 @@ cbuffer GSTransformMatrices
 	matrix WorldMatrix;
 	matrix ViewMatrix;
 	matrix ProjMatrix;
-
-	matrix WorldViewProjMatrix;
 };
 
 struct StaticMeshInstanceInfo
 {
     float3 InstancePosition;
     float InstanceScale;
+    float4x4 InstanceRotation;
     int InstanceTexture;
     int InstanceId;
     float2 padding;
@@ -59,7 +58,6 @@ float4x4 TransMatrix(float4 trans)
 		);
 }
 
-
 // Geometry Shader
 [instance(INSTANCES_NUM_MAX)]
 [maxvertexcount(3)]
@@ -92,11 +90,12 @@ void GSMain(triangle GS_INPUTOUTPUT input[3],
 
     float4x4 transMatrix = TransMatrix(instancePosition);
 
-
-
     for (int i = 0; i < 3; i++)
     {
         float4 position = input[i].position;
+
+		// Set instance rotation
+        position = mul(position, instanceInfos[InstanceID].InstanceRotation);
 
 		// Scale this instance by multiplication of it's position vector by the scaling matrix
         position = mul(position, scale4x4);

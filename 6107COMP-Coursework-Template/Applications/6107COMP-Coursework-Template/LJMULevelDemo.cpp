@@ -265,17 +265,16 @@ void LJMUDX::LJMULevelDemo::setupSkySphere()
 void LJMUDX::LJMULevelDemo::setupPaths()
 {
 	Path* tSpaceshipPath = new Path();
-	tSpaceshipPath->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 1000.0f, 200.0f, -180.0f, 180.0f, 1);
+	tSpaceshipPath->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 1000.0f, 200.0f, -180.0f, 180.0f, 2);
 	this->m_paths.push_back(tSpaceshipPath);
 
 	Path* tSpaceshipPath2 = new Path();
-	tSpaceshipPath2->generatePath(EPathType::Path_CatmullRom, 300.0f, 300.0f, 700.0f, 300.0f, -180.0f, 180.0f, 1);
+	tSpaceshipPath2->generatePath(EPathType::Path_CatmullRom, 300.0f, 300.0f, 700.0f, 300.0f, -180.0f, 180.0f, 2);
 	this->m_paths.push_back(tSpaceshipPath2);
 
 	Path* tSpaceshipPath3 = new Path();
-	tSpaceshipPath3->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 2000.0f, 200.0f, -180.0f, 180.0f, 1);
+	tSpaceshipPath3->generatePath(EPathType::Path_CatmullRom, 0.0f, 0.0f, 2000.0f, 200.0f, -180.0f, 180.0f, 2);
 	this->m_paths.push_back(tSpaceshipPath3);
-
 
 	tSpaceshipPath->generatePathMesh(this->m_pRenderer11);
 	this->m_pScene->AddActor(tSpaceshipPath);
@@ -331,8 +330,6 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 
 	std::vector<Vector3f> tPositions;
 	float tRadius = 300.0f;
-	float tSpeed = 0.007f;
-
 	// For each Instanced Static Mesh, create 32 instances
 	for (int i = 0; i < static_cast<int>(this->m_solarSystem->getISMs().size()); i++)
 	{
@@ -350,11 +347,11 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 			// Set per instance data
 			tRadius += 37.0f;
 			float tScale = randRangeFloat(1.0f, 3.0f);
-			//tSpeed += randRangeFloat(0.0003f, 0.001f);
-			tSpeed = randRangeFloat(0.0003f, 0.07f);
+			float tMovementSpeed = randRangeFloat(0.0003f, 0.07f);
+			float tRotationSpeed = randRangeFloat(30.0f, 100.0f);
 
 			// Add planet into a solar system
-			this->m_solarSystem->addPlanet(i, tPos, tSpeed, tRadius, tScale, tTexture);
+			this->m_solarSystem->addPlanet(i, tPos, tMovementSpeed, tRadius, tScale, Matrix4f::Identity(), tRotationSpeed, Vector3f(0.0f, 1.0f, 0.0f), tTexture);
 		}
 	}
 }

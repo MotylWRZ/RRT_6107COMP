@@ -25,10 +25,11 @@ using namespace Glyph3;
 struct ISMInstanceInfo
 {
 	ISMInstanceInfo() {};
-	ISMInstanceInfo(int NewInstanceId) { InstanceId = NewInstanceId; }
+	ISMInstanceInfo(int NewInstanceId) { InstanceId = NewInstanceId;}
 
-	Vector3f InstancePosition;
+	Vector3f InstancePosition = Vector3f(0.0f, 0.0f, 0.0f);
 	float InstanceScale = 1.0f;
+	Matrix4f InstanceRotation = Matrix4f::Identity();
 	int InstanceTexture = -1;
 
 private:
@@ -57,9 +58,9 @@ public:
 	~InstancedStaticMesh();
 
 	void initialise();
-	void addInstance(Vector3f instancePosition, float instanceScale, EInstanceTexture instanceTexture = EInstanceTexture::TEXTURE1);
+	void addInstance(Vector3f instancePosition, float instanceScale, Matrix4f instanceRotation, EInstanceTexture instanceTexture = EInstanceTexture::TEXTURE1);
 
-	void updateInstance(int instanceId, Vector3f newInstancePosition, float newInstanceScale);
+	void updateInstance(int instanceId, Vector3f newInstancePosition, float newInstanceScale, Matrix4f newInstanceRotation);
 
 	// Load all textures
 	void loadTextures(std::wstring texture1, std::wstring texture2 = L"none", std::wstring texture3 = L"none", std::wstring texture4 = L"none");

@@ -11,14 +11,19 @@
 #include "InstancedStaticMesh.h"
 #include "RRTVertexDX11.h"
 
+using namespace Glyph3;
+
 typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
 struct PlanetInfo
 {
-	float CircularMovementSpeed;
-	float CircularMovementRadius;
+	float CircularMovementSpeed = 0.0f;
+	float CircularMovementRadius = 0.0f;
+	float MovementAngle = 0.0f;
+	float RotationSpeed = 0.0f;
+	Vector3f RotationDirection = Vector3f(0.0f, 1.0f, 0.0f);
+	float RotationAngle = 0.0f;
 	float PlanetScale;
-	float Angle = 0.0f;
 };
 
 class SolarSystem
@@ -32,7 +37,7 @@ public:
 	const std::vector<InstancedStaticMesh*>& getISMs() { return m_ISMs; }
 
 
-	void addPlanet(int ISMindex, Vector3f position, float CircularMovementSpeed, float CircularMovementRadius, float PlanetScale, EInstanceTexture planetTexture);
+	void addPlanet(int ISMindex, Vector3f position, float circularMovementSpeed, float circularMovementRadius, float planetScale, Matrix4f planetRotation, float planetRotationSpeed, Vector3f planetRotationDirection, EInstanceTexture planetTexturee);
 
 	void Update(float deltaTime);
 

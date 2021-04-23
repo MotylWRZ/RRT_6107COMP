@@ -25,18 +25,20 @@ void SolarSystem::addISM(BasicMeshPtr mesh, Vector3f origin, RendererDX11* rende
 	scene->AddActor(tISM);
 }
 
-void SolarSystem::addPlanet(int ISMindex, Vector3f position, float CircularMovementSpeed, float CircularMovementRadius, float PlanetScale, EInstanceTexture planetTexture)
+void SolarSystem::addPlanet(int ISMindex, Vector3f position, float circularMovementSpeed, float circularMovementRadius, float planetScale, Matrix4f planetRotation, float planetRotationSpeed, Vector3f planetRotationDirection, EInstanceTexture planetTexture)
 {
 	if (static_cast<int>(this->m_ISMs.size()) > ISMindex)
 	{
 		// Create a new instance of the specified ISM
-		this->m_ISMs[ISMindex]->addInstance(position, PlanetScale, planetTexture);
+		this->m_ISMs[ISMindex]->addInstance(position, planetScale, planetRotation, planetTexture);
 
 		// Create a new planet struct and fill the relevant info
 		PlanetInfo tNewPlanet;
-		tNewPlanet.CircularMovementSpeed = CircularMovementSpeed;
-		tNewPlanet.CircularMovementRadius = CircularMovementRadius;
-		tNewPlanet.PlanetScale = PlanetScale;
+		tNewPlanet.CircularMovementSpeed = circularMovementSpeed;
+		tNewPlanet.CircularMovementRadius = circularMovementRadius;
+		tNewPlanet.RotationSpeed = planetRotationSpeed;
+		tNewPlanet.RotationDirection = planetRotationDirection;
+		tNewPlanet.PlanetScale = planetScale;
 
 		// Check if an element with specified ID already exists
 		if(this->m_planets.find(ISMindex) == this->m_planets.end())
@@ -48,7 +50,7 @@ void SolarSystem::addPlanet(int ISMindex, Vector3f position, float CircularMovem
 			return;
 		}
 
-		// If an element already existss and vector is not empty, add a planet info struct into a vector with planet infos
+		// If an element already exists and vector is not empty, add a planet info struct into a vector with planet infos
 		// Add a planet info into the vector
 		this->m_planets.at(ISMindex).push_back(tNewPlanet);
 	}
@@ -65,52 +67,22 @@ void SolarSystem::Update(float deltaTime)
 			PlanetInfo& tPlanetInfo = this->m_planets.at(i)[j];
 			const ISMInstanceInfo& tInstanceInfo = this->m_ISMs[i]->getInstance(j);
 
-			float tMovementSpeed = tPlanetInfo.CircularMovementSpeed;
-			float tMovementRadius = tPlanetInfo.CircularMovementRadius;
-			float tScale = tPlanetInfo.PlanetScale;
+			// Calculate movement and rotation angles
+			tPlanetInfo.MovementAngle += tPlanetInfo.CircularMovementSpeed * deltaTime;
+			tPlanetInfo.RotationAngle += (tPlanetInfo.RotationSpeed * (GLYPH_PI / 180.0f)) * deltaTime;
 
-			// Move around the solar system origin point
-			tPlanetInfo.Angle += tMovementSpeed * deltaTime;
+			// Construct Matrix3f which wil be use for planet rotation in Geometry Shader
+			Matrix3f tRotationMatrix;
+			tRotationMatrix.RotationEuler(tPlanetInfo.RotationDirection, tPlanetInfo.RotationAngle);
 
-			Vector3f tNewPos = Vector3f(this->m_originPoint.x + (tMovementRadius * cos(tPlanetInfo.Angle + offset)), this->m_ISMs[i]->GetNode()->Position().y, this->m_originPoint.z + (tMovementRadius * sin(tPlanetInfo.Angle + offset)));
-			this->m_ISMs[i]->updateInstance(j, tNewPos, tScale);
+			// Construct Matrix4f and set it's rotation
+			Matrix4f tRotMatrix = Matrix4f::Identity();
+			tRotMatrix.SetRotation(tRotationMatrix);
+
+			// Calculate planet position
+			Vector3f tNewPos = Vector3f(this->m_originPoint.x + (tPlanetInfo.CircularMovementRadius * cos(tPlanetInfo.MovementAngle + offset)), this->m_ISMs[i]->GetNode()->Position().y, this->m_originPoint.z + (tPlanetInfo.CircularMovementRadius * sin(tPlanetInfo.MovementAngle + offset)));
+			this->m_ISMs[i]->updateInstance(j, tNewPos, tPlanetInfo.PlanetScale, tRotMatrix);
 			offset++;
 		}
 	}
-
-
-
-	//for (int i = 0; i < static_cast<int>(this->m_ISMs.size()); i++)
-	//{
-	//	float tRadius = this->m_circularMovementRadius;
-	//	float tSpeed = this->m_circularMovementSpeed;
-	//	if (i > 0)
-	//	{
-	//		tRadius /= i * 2;
-	//		tSpeed /= i * 10;
-	//	}
-
-	//	// Rotate instnces around the Y axis
-	//	float tAngle = (this->m_rotationSpeed * (GLYPH_PI / 180.0f)) * deltaTime;
-
-	//	Matrix3f tRotationMatrix;
-
-	//	tRotationMatrix.RotationEuler(this->m_rotationDirection, tAngle);
-	//	this->m_ISMs[i]->GetBody()->Rotation() *= tRotationMatrix;
-
-	//	// Move around the solar system origin point
-	//	m_angle += tSpeed * deltaTime;
-
-	//	float offset = 1.0f;
-	//	for (int j = 0; j < this->m_ISMs[i]->getInstances().size(); j++)
-	//	{
-	//		float tScale = this->m_ISMs[i]->getInstance(j).InstanceScale;
-
-	//		Vector3f tNewPos = Vector3f(this->m_originPoint.x + (tRadius * cos(m_angle + offset)), this->m_ISMs[i]->GetNode()->Position().y, this->m_originPoint.z + (tRadius * sin(m_angle + offset)));
-	//		this->m_ISMs[i]->updateInstance(j, tNewPos, tScale);
-	//		offset++;
-	//	}
-
-	//	offset = 0;
-	//}
 }
