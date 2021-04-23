@@ -1,9 +1,9 @@
-Texture2D       DiffuseTexture : register( t0 );           
+Texture2D       DiffuseTexture : register( t0 );
 SamplerState    TextureSampler : register( s0 );
 
 cbuffer TransformMatrices
 {
-	matrix WorldViewProjMatrix;	
+	matrix WorldViewProjMatrix;
 };
 
 cbuffer TerrainParams
@@ -28,7 +28,7 @@ struct VS_OUTPUT
 VS_OUTPUT VSMain( in VS_INPUT input )
 {
 	VS_OUTPUT output;
-	
+
 	output.position = mul(float4(input.position, 1.0f), WorldViewProjMatrix);
 	output.worldpos = input.position;
 	output.tex = input.tex;
@@ -40,7 +40,7 @@ VS_OUTPUT VSMain( in VS_INPUT input )
 float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
 	float4 sampledTextureColour = DiffuseTexture.Sample(TextureSampler, input.tex);
-	
+
 	return(sampledTextureColour);
 }
 

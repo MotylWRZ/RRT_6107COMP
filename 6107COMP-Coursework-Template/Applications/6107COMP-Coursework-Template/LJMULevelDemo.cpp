@@ -291,18 +291,18 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 
 	// Add an instance which can instantiate up to 32 instances of the specified mesh
 	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
-		L"rocks_ground_06_diff_2k.tiff",
-		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+		L"2k_mars.jpg",
+		L"2k_mercury.jpg", L"2k_jupiter.jpg", L"2k_neptune.jpg");
 
 	// Add another instance which can instantiate up to 32 instances of the specified mesh
 	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
-		L"rocks_ground_06_diff_2k.tiff",
-		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+		L"2k_ceres_fictional.jpg",
+		L"2k_eris_fictional.jpg", L"2k_uranus.jpg", L"2k_venus_surface.jpg");
 
 	// Add another instance which can instantiate up to 32 instances of the specified mesh
 	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
-		L"rocks_ground_06_diff_2k.tiff",
-		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+		L"mar0kuu2.tif",
+		L"jup1vuu2.tif", L"ven0aaa2.tif", L"mars.tif");
 
 	std::random_device rd;
 	std::default_random_engine eng(rd());
@@ -342,7 +342,7 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 			// Generate Planet Info
 
 			// GenerateRandomTexture
-			EInstanceTexture tTexture = static_cast<EInstanceTexture>(randRangeInt(0, 3));
+			EInstanceTexture tTexture = static_cast<EInstanceTexture>(randRangeInt(0, 4));
 
 			// Set per instance data
 			tRadius += 37.0f;

@@ -153,7 +153,6 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
     float3 normalVector = input.normal * input.tangent * input.binormal;
 
-    //float3 normalVector = float3(1.0f, 1.0f, 1.0f);
     normalVector = normalize(normalVector);
     float3 worldPosition = input.worldPos.xyz;
 
@@ -166,7 +165,6 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 	// Compute Lights
     for (int i = 0; i < 100; i++)
     {
-        //pointlightIntensity += calculatePointLight(Lights[i], normalVector, worldPosition);
         if (Lights[i].iLightType == LIGHT_TYPE_NONE)
         {
             continue;

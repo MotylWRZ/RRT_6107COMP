@@ -150,13 +150,6 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
     float4 pixelcolour = DiffuseTexture.Sample(TextureSampler, input.tex);
 
-	// Number of transitions/2
-	//int n = 3;
-	//float pi = 3.1415f;
-	//float weight = (sin(input.tex.x * 2 * pi * n) + 1) / 2;
-
-	//pixelcolour = pixelcolour * weight * (1 - weight);
-
     pixelcolour.w = input.rotationdata.w;
 
     return (pixelcolour);

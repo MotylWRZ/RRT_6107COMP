@@ -48,7 +48,6 @@ VS_OUTPUT VSMain(in VS_INPUT v)
 //Pixel Shader
 float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
-	//float4 Color = DiffuseTexture1.Sample(TextureSampler, input.tex) * DiffuseTexture2.Sample(TextureSampler, input.tex);
     float terrainheight = input.worldpos.y;
     float texweight = 1 / (1 + exp(terrainheight - TextureBoundary.x));
 
@@ -58,5 +57,4 @@ float4 PSMain(in VS_OUTPUT input) : SV_Target
     float4 sampledTextureColour = sampledTextureColour1 + sampledTextureColour2;
 
     return (sampledTextureColour);
-	//return(Color);
 }
