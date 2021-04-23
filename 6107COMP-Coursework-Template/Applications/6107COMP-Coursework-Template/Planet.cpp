@@ -86,7 +86,3 @@ void Planet::setExplosion(bool enabled)
 
 	this->m_explosionActive = enabled;
 }
-
-void Planet::UpdateEntities(float deltaTime)
-{
-}

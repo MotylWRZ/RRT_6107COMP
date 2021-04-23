@@ -1,2 +1,6 @@
-﻿  SolarSystem.cpp
+﻿  InstancedStaticMesh.cpp
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(39,52): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(53,31): warning C4018: '>': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(98,20): warning C4018: '<': signed/unsigned mismatch
+D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\6107COMP-Coursework-Template\InstancedStaticMesh.cpp(162,20): warning C4018: '<': signed/unsigned mismatch
   6107COMP-Coursework-Template.vcxproj -> D:\Game Development\GitLocalRepositories\Github_MotylWRZ\RRT_6107COMP\6107COMP-Coursework-Template\Applications\Bin\6107COMP-Coursework-Template.exe

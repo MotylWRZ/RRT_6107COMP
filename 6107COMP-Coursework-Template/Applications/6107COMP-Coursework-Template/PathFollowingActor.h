@@ -23,7 +23,6 @@ public:
 private:
 	void moveActor(float deltaTime);
 	void resetActorPosition();
-	void resetActorRotation();
 
 private:
 	const Path* m_pPath;
@@ -37,7 +36,5 @@ private:
 
 	int m_currentCheckpointID;
 	int m_nextCheckpointID;
-
-	Scene* m_pScene;
 };
 

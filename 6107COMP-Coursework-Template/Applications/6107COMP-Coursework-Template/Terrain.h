@@ -20,7 +20,7 @@ class Terrain : public Actor
 {
 public:
 
-	Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene, float textureMappingFactor);
+	Terrain(Scene* pScene, float textureMappingFactor);
 	~Terrain();
 
 	inline int getTerrainResoultion() const { return m_terrainResolution; }
@@ -106,6 +106,7 @@ private:
 	int m_terrainSpacing;
 	float m_heightScale;
 	float m_textureMappingFactor;
+	Vector4f m_textureBoundary;
 	std::vector<TerrainChunk*> m_chunks;
 	Scene* m_pScene;
 };

@@ -20,7 +20,6 @@ InstancedStaticMesh::~InstancedStaticMesh()
 void InstancedStaticMesh::initialise()
 {
 	this->setupMaterial();
-	//this->GetBody()->SetGeometry(MeshImporter::generateMeshOBJWithSurfaceVectors(L"geosphere.obj", Vector4f(1.0f, 1.0f, 1.0f, 1.0f)));
 	this->GetBody()->SetMaterial(this->m_Material);
 
 
@@ -84,9 +83,7 @@ void InstancedStaticMesh::loadTextures(std::wstring texture1, std::wstring textu
 
 void InstancedStaticMesh::setupMaterial()
 {
-	MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTR_MultiTextureInstancing2.hlsl");
-	//MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTR_MultiLitTextureInstancing.hlsl");
-
+	MaterialPtr tMaterial = MaterialGenerator::createMaterialWithGS(*this->m_pRenderer, L"RTRMultiTextureInstancing.hlsl");
 
 	if (this->m_textures.size() > 0)
 	{

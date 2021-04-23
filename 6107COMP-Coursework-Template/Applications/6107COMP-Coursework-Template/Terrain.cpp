@@ -3,12 +3,10 @@
 #include "TerrainGenerator.h"
 #include "MaterialGenerator.h"
 
-Terrain::Terrain(int terrainResolution, int terrainSpacing, float heightScale, Scene* pScene, float textureMappingFactor)
-	:m_terrainResolution(terrainResolution)
-	,m_terrainSpacing(terrainSpacing)
-	,m_heightScale(heightScale)
-	,m_pScene(pScene)
+Terrain::Terrain(Scene* pScene, float textureMappingFactor)
+	:m_pScene(pScene)
 	,m_textureMappingFactor(textureMappingFactor)
+
 {
 }
 
@@ -18,6 +16,9 @@ Terrain::~Terrain()
 
 void Terrain::setMaterial(MaterialPtr material)
 {
+	// Set texture boundary in material
+	material->Parameters.SetVectorParameter(std::wstring(L"TextureBoundary"), this->m_textureBoundary);
+
 	for (auto& Chunk : this->m_chunks)
 	{
 		Chunk->SetMaterial(material);
@@ -71,6 +72,10 @@ void Terrain::generateBasicTerrain(int resolution, int terrainSpacing, float hei
 	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
+
+	m_terrainResolution = resolution;
+	m_terrainSpacing = terrainSpacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::generateTerrainFromNoise(int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType, int seed, float frequency)
@@ -86,6 +91,10 @@ void Terrain::generateTerrainFromNoise(int terrainResolution, float spacing, flo
 	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
+
+	m_terrainResolution = terrainResolution;
+	m_terrainSpacing = spacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::generateTerrainFromHeightmap(const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainWidth, int terrainLength, int terrainSpacing, float heightScale)
@@ -101,6 +110,14 @@ void Terrain::generateTerrainFromHeightmap(const char* filename, int actualTerra
 	tChunk->SetGeometry(tMesh);
 
 	this->m_chunks.push_back(tChunk);
+
+	if (terrainWidth == terrainLength)
+	{
+		m_terrainResolution = terrainWidth;
+	}
+	m_terrainResolution = 0;
+	m_terrainSpacing = terrainSpacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::generateBasicChunkedTerrain(bool extend, int resolution, int terrainSpacing, float heightScale, float majorHeightFrequency,
@@ -137,6 +154,10 @@ void Terrain::generateBasicChunkedTerrain(bool extend, int resolution, int terra
 
 	// Generate terrain mesh chunks from the groups of vertices
 	this->generateTerrainChunks(tChunkVertices, heightScale);
+
+	m_terrainResolution = resolution;
+	m_terrainSpacing = terrainSpacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::generateChunkedTerrainFromNoise(bool extend, int terrainResolution, float spacing, float heightScale, FastNoise::NoiseType noiseType, int seed, float frequency)
@@ -169,6 +190,10 @@ void Terrain::generateChunkedTerrainFromNoise(bool extend, int terrainResolution
 
 	// Generate terrain mesh chunks from the groups of vertices
 	this->generateTerrainChunks(tChunkVertices, heightScale);
+
+	m_terrainResolution = terrainResolution;
+	m_terrainSpacing = spacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::generateChunkedTerrainFromHeightmap(bool extend, const char* filename, int actualTerrainWidth, int actualterrainLength, int terrainWidth, int terrainLength, int terrainSpacing, float heightScale)
@@ -202,6 +227,14 @@ void Terrain::generateChunkedTerrainFromHeightmap(bool extend, const char* filen
 
 	// Generate terrain mesh chunks from the groups of vertices
 	this->generateTerrainChunks(tChunkVertices, heightScale);
+
+	if (terrainWidth == terrainLength)
+	{
+		m_terrainResolution = terrainWidth;
+	}
+	m_terrainResolution = 0;
+	m_terrainSpacing = terrainSpacing;
+	m_heightScale = heightScale;
 }
 
 void Terrain::deleteTerrainMesh()
@@ -214,10 +247,16 @@ void Terrain::deleteTerrainMesh()
 	}
 
 	this->m_chunks.clear();
+
+	m_terrainResolution = 0;
+	m_terrainSpacing = 0.0f;
+	m_heightScale = 0.0f;
 }
 
 void Terrain::generateTerrainChunks(const std::vector<std::vector<Vector3f>>& chunksVertices, float heightScale)
 {
+	this->m_textureBoundary = Vector4f(0.1f, 0.0f, 0.0f, 0.0f) * m_heightScale;
+
 	// Instantiate chunks
 	for (auto& VertsArray : chunksVertices)
 	{

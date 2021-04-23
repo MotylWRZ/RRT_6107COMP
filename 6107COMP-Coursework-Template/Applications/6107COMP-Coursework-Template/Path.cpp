@@ -33,6 +33,8 @@ void Path::generatePath(EPathType pathType, float centerX, float centerY, float 
 		break;
 	}
 	}
+
+	this->m_pathType = pathType;
 }
 
 void Path::generatePathMesh(RendererDX11* pRenderer)

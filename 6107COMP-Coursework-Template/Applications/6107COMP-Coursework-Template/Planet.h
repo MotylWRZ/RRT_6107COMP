@@ -46,9 +46,6 @@ public:
 	inline bool isExplosionActive() { return m_explosionActive; }
 
 private:
-	void UpdateEntities(float deltaTime);
-
-private:
 	MaterialPtr m_mainMaterial;
 	MaterialPtr m_explosionMaterial;
 	bool m_explosionActive;

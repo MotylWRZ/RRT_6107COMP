@@ -506,33 +506,6 @@ MaterialPtr MaterialGenerator::createPlanetExplosionmaterial(RendererDX11& pRend
 	return tNewMaterial;
 }
 
-MaterialPtr MaterialGenerator::createUVMappedTextureMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile)
-{
-
-	MaterialPtr tmat = MaterialPtr(new MaterialDX11());
-	RenderEffectDX11* tfx = new RenderEffectDX11();
-
-	tfx->SetVertexShader(pRenderer.LoadShader(VERTEX_SHADER, std::wstring(L"ImmediateGeometryTextured.hlsl"), std::wstring(L"VSMAIN"), std::wstring(L"vs_4_0")));
-	tfx->SetPixelShader(pRenderer.LoadShader(PIXEL_SHADER, std::wstring(L"ImmediateGeometryTextured.hlsl"), std::wstring(L"PSMAIN"), std::wstring(L"ps_4_0")));
-
-	tmat->Params[VT_PERSPECTIVE].bRender = true;
-	tmat->Params[VT_PERSPECTIVE].pEffect = tfx;
-
-	ResourcePtr tTexture = RendererDX11::Get()->LoadTexture(diffuseTextureFile);
-	tmat->Parameters.SetShaderResourceParameter(L"ColorTexture", tTexture);
-
-	SamplerStateConfigDX11 SamplerConfig;
-	SamplerConfig.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	SamplerConfig.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	SamplerConfig.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	SamplerConfig.MaxAnisotropy = 0;
-
-	int LinearSampler = RendererDX11::Get()->CreateSamplerState(&SamplerConfig);
-	tmat->Parameters.SetSamplerParameter(L"LinearSampler", LinearSampler);
-
-	return tmat;
-}
-
 void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr material, const std::vector<LightBasePtr>& lights, MaterialReflectanceInfo MatReflectanceInfo)
 {
 	if (!material)
@@ -550,7 +523,7 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	// Load Lights info structs
 	for (int i = 0; i < lights.size(); i++)
 	{
-		tLights[i] = lights[i]->getLightInfo();// tVecLights[i]->getLightInfo();
+		tLights[i] = lights[i]->getLightInfo();
 	}
 
 	Vector4f tSurfaceConstants = MatReflectanceInfo.SurfaceEmissiveColour;
@@ -560,16 +533,16 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	material->Parameters.SetVectorParameter(L"SurfaceEmissiveColour", tSurfaceEmissiveColour);
 
 	BufferConfigDX11 tBuffConfig;
-	//tBuffConfig.SetDefaultConstantBuffer(LIGHTS_NUM_MAX * sizeof(LightInfo), false);
 	tBuffConfig.SetByteWidth(LIGHTS_NUM_MAX * sizeof(LightInfo));
 	tBuffConfig.SetBindFlags(D3D11_BIND_CONSTANT_BUFFER);
 	tBuffConfig.SetMiscFlags(0);
 	tBuffConfig.SetStructureByteStride(0);
-	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);// D3D11_USAGE_DEFAULT);
+	tBuffConfig.SetUsage(D3D11_USAGE_DYNAMIC);
 	tBuffConfig.SetCPUAccessFlags(D3D11_CPU_ACCESS_WRITE);
 
 	BufferData tData;
 
+	// Load lights into a buffer
 	for (int i = 0; i < LIGHTS_NUM_MAX; i++)
 	{
 		tData.Lights[i] = tLights[i];
@@ -580,6 +553,7 @@ void MaterialGenerator::setLightToMaterial(RendererDX11& pRenderer, MaterialPtr 
 	dataLights.SysMemPitch = 0;
 	dataLights.SysMemSlicePitch = 0;
 
+	// Create a constant buffer with loaded lights
 	ResourcePtr resLights = pRenderer.CreateConstantBuffer(&tBuffConfig, &dataLights);
 
 	material->Parameters.SetConstantBufferParameter(L"cLights", resLights);
@@ -632,11 +606,6 @@ void MaterialGenerator::updateMaterialLight(RendererDX11& pRenderer, MaterialPtr
 	// Create a pointer to the source constant buffer
 	ID3D11Buffer* srcBuffer;
 	srcResource->QueryInterface(IID_ID3D11Buffer, (void**)&srcBuffer);
-
-	//// get buffer description
-	//D3D11_BUFFER_DESC srcDesc;
-	//srcBuffer->GetDesc(&srcDesc);
-
 
 	// Download the data from the source buffer and save it in MappedResource
 	D3D11_MAPPED_SUBRESOURCE MappedResource = { 0 };

@@ -90,6 +90,8 @@ namespace LJMUDX
 		void animateLights(float DT);
 		void setupBase();
 		void terrainWireframeRendering(bool enabled);
+		void setupPlanets();
+
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -102,15 +104,6 @@ namespace LJMUDX
 		ResourcePtr				m_DepthTarget;		//Pointer to the GPU Render Target for Depth
 
 		// Actors
-		Actor* m_LandscapeActor;
-
-		Actor* m_CubeActor;
-		Actor* m_pCubeActor;
-		Actor* m_moonBase;
-		InstancedStaticMesh* m_pInstancedStaticMesh;
-
-		std::vector<PathFollowingActor*> m_pathFollowingActors;
-
 		CinematicCamera* m_pCinematicCamera;
 		int m_currentCameraId;
 
@@ -118,12 +111,13 @@ namespace LJMUDX
 		int m_currentTerrainIndex;
 		bool m_wireframeRendering;
 
-		std::vector<Path*> m_paths;
-		std::shared_ptr<SolarSystem> m_solarSystem;
 
+		std::shared_ptr<SolarSystem> m_solarSystem;
 		Planet* m_planet;
 		Planet* m_sun;
 
+		std::vector<Path*> m_paths;
+		std::vector<PathFollowingActor*> m_pathFollowingActors;
 		std::vector<Actor*> m_actors;
 		std::vector<LightBasePtr> m_lights;
 		std::vector<LightBasePtr> m_dynamicLights;

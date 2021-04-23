@@ -28,15 +28,9 @@ class TerrainGenerator
 	~TerrainGenerator();
 
 public:
-	static BasicMeshPtr generateTerrainMesh(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
 	static void generateterainMeshVertices(std::vector<Vector3f>& verticesOut, int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
 	static void createTerrainIndexArray(int terrainWidth, int terrainLength,
 		bool winding, std::vector<int>& indices);
-
-	static void createSegmentedTerrainActor(std::vector<Actor*>& terrainSegments);
-	static Actor* createTerrainActor(int offsetX, int offsetZ, int terrainResolution, int terrainSpacing);
-
-	static TerrainChunk* generateTerrainChunk(const Terrain& terrain, int offsetX, int offsetZ);
 
 	// Divid terrain mesh into 4 equal chunks
 	// Returns 4 equal array of vertices

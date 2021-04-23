@@ -48,7 +48,6 @@ public:
 
 	static MaterialPtr createPlanetExplosionmaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile);
 
-	static MaterialPtr createUVMappedTextureMaterial(RendererDX11& pRenderer, std::wstring diffuseTextureFile);
 	///
 	// Terrain Materials
 	///

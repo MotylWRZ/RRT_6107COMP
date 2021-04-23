@@ -151,10 +151,6 @@ VS_OUTPUT VSMain(in VS_INPUT input)
 //Pixel Shader
 float4 PSMain(in VS_OUTPUT input) : SV_Target
 {
-  //  float3 bump = 4 * (BumpTexture.Sample(TextureSampler, input.tex) - 0.5f);
-   // float3 normalVector = input.normal + bump.x * input.tangent + bump.y * input.binormal;
-    //normalVector = normalize(normalVector);
-
     float3 normalVector = input.normal * input.tangent * input.binormal;
 
     //float3 normalVector = float3(1.0f, 1.0f, 1.0f);
