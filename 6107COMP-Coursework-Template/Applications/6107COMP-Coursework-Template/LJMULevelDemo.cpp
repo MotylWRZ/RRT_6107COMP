@@ -16,6 +16,8 @@
 
 //------------DX TK AND STD/STL Includes-------------------------------------
 #include <sstream>
+#include <random>
+
 
 //------------Include Hieroglyph Engine Files--------------------------------
 
@@ -269,7 +271,6 @@ void LJMUDX::LJMULevelDemo::setupSkySphere()
 	tSkySphereActor->GetBody()->SetMaterial(tSkySphereMaterial);
 	tSkySphereActor->GetBody()->Scale() = Vector3f(10000.0f, 10000.0f, 10000.0f);
 
-	// Modify ratserizer state
 	MaterialPtr tMat = tSkySphereActor->GetBody()->GetMaterial();
 	RenderEffectDX11* tEffect = tMat->Params[VT_PERSPECTIVE].pEffect;
 
@@ -320,33 +321,88 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 	this->m_solarSystem->setCircularMovementRadius(1000.0f);
 
 
-	// Add outer part of the solar system
+	// Add an instance which can instantiate up to 32 instances of the specified mesh
 	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
 		L"rocks_ground_06_diff_2k.tiff",
 		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+
+	// Add another instance which can instantiate up to 32 instances of the specified mesh
+	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
+		L"rocks_ground_06_diff_2k.tiff",
+		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+
+	// Add another instance which can instantiate up to 32 instances of the specified mesh
+	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
+		L"rocks_ground_06_diff_2k.tiff",
+		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
+
+
+
+
+
+	const float minX = -200.0f;
+	const float maxX = 200.0f;
+	const float minY = -200.0f;
+	const float maxY = 200.0f;
+
+	std::random_device rd;
+	std::default_random_engine eng(rd());
+
+	// Generate random float between Min and Max values
+	auto randRangeFloat = [&eng](float rangeMin, float rangeMax)
+	{
+		std::uniform_real_distribution<> distr(rangeMin, rangeMax);
+		float random = distr(eng);
+		return random;
+	};
+
+	// Generate random int between Min and Max values
+	auto randRangeInt = [&eng](int rangeMin, int rangeMax)
+	{
+		std::uniform_real_distribution<> distr(rangeMin, rangeMax);
+		int random = distr(eng);
+		return random;
+	};
+
 
 	Vector3f tOrigin(400.0f, 200.0f, 300.0f);
 	float tAngle = 10.0f;
 	float tAngleDiff = 10.0f;
-	float tRadius = 1000.0f;
+	//float tRadius = 1000.0f;
 
 	std::vector<Vector3f> tPositions;
+	float tRadius = 300.0f;
+	float tSpeed = 0.007f;
 
-	for (int i = 0; i < 32; i++)
+	// For each Instanced Static Mesh, create 32 instances
+	for (int i = 0; i < static_cast<int>(this->m_solarSystem->getISMs().size()); i++)
 	{
+		for (int j = 0; j < 32; j++)
+		{
+			Vector3f tPos(tOrigin.x + (tRadius * cos(tAngle)), tOrigin.y, tOrigin.z + (tRadius * sin(tAngle)));
 
-		Vector3f tPos(tOrigin.x + (tRadius * cos(tAngle)), tOrigin.y, tOrigin.z + (tRadius * sin(tAngle)));
+			tAngle += tAngleDiff;
 
-		tAngle += tAngleDiff;
+			// Generate Planet Info
 
-		this->m_solarSystem->addPlanet(0, tPos, EInstanceTexture::TEXTURE1);
+			// GenerateRandomTexture
+			EInstanceTexture tTexture = static_cast<EInstanceTexture>(randRangeInt(0, 3));
+
+			tRadius += 37.0f;
+			float tScale = randRangeFloat(1.0f, 3.0f);
+			//tSpeed += randRangeFloat(0.0003f, 0.001f);
+			tSpeed = randRangeFloat(0.0003f, 0.07f);
+
+			this->m_solarSystem->addPlanet(i, tPos, tSpeed, tRadius, tScale, tTexture);
+		}
 	}
 
-	tOrigin = Vector3f(400.0f, 200.0f, 300.0f);
+
+	/*tOrigin = Vector3f(400.0f, 200.0f, 300.0f);
 	tRadius = 500.0f;
 	tAngle = 10.0f;
 
-	// Add inner part of the solar system
+	 Add inner part of the solar system
 	this->m_solarSystem->addISM(tMesh, Vector3f(0.0f, 3000.0f, 0.0f), this->m_pRenderer11, this->m_pScene,
 		L"rocks_ground_06_diff_2k.tiff",
 		L"brown_mud_dry_diff_2k.tiff", L"mars.tif");
@@ -358,8 +414,11 @@ void LJMUDX::LJMULevelDemo::setupSolarSystem()
 
 		tAngle += tAngleDiff;
 
-		this->m_solarSystem->addPlanet(1, tPos, EInstanceTexture::TEXTURE1);
-	}
+		 GenerateRandomTexture
+		EInstanceTexture tTexture = static_cast<EInstanceTexture>(randRangeInt(0, 3));
+
+		this->m_solarSystem->addPlanet(1, tPos, tTexture);
+	}*/
 }
 
 void LJMUDX::LJMULevelDemo::setupTerrain()
@@ -374,7 +433,7 @@ void LJMUDX::LJMULevelDemo::setupTerrain()
 
 	// Create test Landscape
 	MaterialPtr tTerrainMaterial = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rocks_ground_06_diff_2k.tiff", L"brown_mud_dry_diff_2k.tiff", this->m_lights, tMatInfo);
-	MaterialPtr tTerrainMaterial2 = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"rock_ground_02_diff_1k.png", L"aerial_sand_diff_1k.png", this->m_lights, tMatInfo);
+	MaterialPtr tTerrainMaterial2 = MaterialGenerator::createLitTerrainMultiTextureMaterial(*this->m_pRenderer11, L"snow_03_diff_1k.tiff", L"snow_field_aerial_col_1k.tiff", this->m_lights, tMatInfo);
 
 	// Terrain from Heightmap
 	Terrain* tTerrainHeightmap = new Terrain(254, 3, 12, this->m_pScene, 0.01f);
@@ -393,6 +452,8 @@ void LJMUDX::LJMULevelDemo::setupTerrain()
 
 	this->m_currentTerrainIndex = 0;
 	this->switchTerrainRendering();
+
+	this->m_wireframeRendering = false;
 }
 
 void LJMUDX::LJMULevelDemo::switchTerrainRendering()
@@ -628,6 +689,36 @@ void LJMUDX::LJMULevelDemo::setupBase()
 
 }
 
+void LJMUDX::LJMULevelDemo::terrainWireframeRendering(bool enabled)
+{
+	for (auto& TerrainObject : this->m_terrains)
+	{
+		MaterialPtr tMat  = TerrainObject->getMaterial();
+		RenderEffectDX11* tEffect = tMat->Params[VT_PERSPECTIVE].pEffect;
+
+		// Modify the rasterizer state
+		RasterizerStateConfigDX11 rsConfig;
+		RasterizerStateComPtr rstatePtr = this->m_pRenderer11->GetRasterizerState(tEffect->m_iRasterizerState);
+		rstatePtr->GetDesc(&rsConfig);
+
+		if (enabled)
+		{
+			// Set Wireframe mode
+			rsConfig.FillMode= D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+		}
+		else
+		{
+			// Set Solid mode
+			rsConfig.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+		}
+
+		int iRasterizerState = this->m_pRenderer11->CreateRasterizerState(&rsConfig);
+		tEffect->m_iRasterizerState = iRasterizerState;
+		tMat->Params[VT_PERSPECTIVE].bRender = true;
+		tMat->Params[VT_PERSPECTIVE].pEffect = tEffect;
+	}
+}
+
 ////////////////////////////////////
 // Initialise our DirectX 3D Scene
 ////////////////////////////////////
@@ -794,6 +885,20 @@ bool LJMULevelDemo::HandleEvent(EventPtr pevent)
 				this->m_planet->setExplosion(true);
 			}
 
+		}
+
+		if (tkeycode == VK_RIGHT)
+		{
+			if (this->m_wireframeRendering)
+			{
+				this->terrainWireframeRendering(false);
+				this->m_wireframeRendering = false;
+			}
+			else
+			{
+				this->terrainWireframeRendering(true);
+				this->m_wireframeRendering = true;
+			}
 		}
 
 	}

@@ -13,6 +13,14 @@
 
 typedef std::shared_ptr<Glyph3::DrawExecutorDX11<RRTVertexDX11::Vertex>> BasicMeshPtr;
 
+struct PlanetInfo
+{
+	float CircularMovementSpeed;
+	float CircularMovementRadius;
+	float PlanetScale;
+	float Angle = 0.0f;
+};
+
 class SolarSystem
 {
 public:
@@ -24,7 +32,7 @@ public:
 	const std::vector<InstancedStaticMesh*>& getISMs() { return m_ISMs; }
 
 
-	void addPlanet(int ISMindex, Vector3f position, EInstanceTexture planetTexture);
+	void addPlanet(int ISMindex, Vector3f position, float CircularMovementSpeed, float CircularMovementRadius, float PlanetScale, EInstanceTexture planetTexture);
 
 	void Update(float deltaTime);
 
@@ -39,6 +47,8 @@ public:
 private:
 	float m_angle;
 
+	// int = ISM ID,  std::vector<PlanetInfo> = PlanetInfos that represent additional info about instances and planets
+	std::map<int, std::vector<PlanetInfo>> m_planets;
 	std::vector<InstancedStaticMesh*> m_ISMs;
 	float m_circularMovementSpeed;
 	Vector3f m_originPoint;

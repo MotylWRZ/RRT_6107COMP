@@ -18,9 +18,10 @@ cbuffer GSTransformMatrices
 struct StaticMeshInstanceInfo
 {
     float3 InstancePosition;
+    float InstanceScale;
     int InstanceTexture;
     int InstanceId;
-    float3 padding;
+    float2 padding;
 };
 
 cbuffer cInstances
@@ -80,12 +81,26 @@ void GSMain(triangle GS_INPUTOUTPUT input[3],
     instancePosition.z = instanceInfos[InstanceID].InstancePosition.z;
     instancePosition.w = 1.0f;
 
+    float instanceScale = instanceInfos[InstanceID].InstanceScale;
+
+	// Scale matrix
+    float4x4 scale4x4 = float4x4(
+	instanceScale, 0, 0, 0,
+	0, instanceScale, 0, 0,
+	0, 0, instanceScale, 0,
+	0, 0, 0, 1);
+
     float4x4 transMatrix = TransMatrix(instancePosition);
+
 
 
     for (int i = 0; i < 3; i++)
     {
         float4 position = input[i].position;
+
+		// Scale this instance by multiplication of it's position vector by the scaling matrix
+        position = mul(position, scale4x4);
+
         position = mul(position, WorldMatrix);
         position = mul(position, transMatrix);
         position = mul(position, ViewMatrix);

@@ -28,11 +28,12 @@ struct ISMInstanceInfo
 	ISMInstanceInfo(int NewInstanceId) { InstanceId = NewInstanceId; }
 
 	Vector3f InstancePosition;
+	float InstanceScale = 1.0f;
 	int InstanceTexture = -1;
 
 private:
 	int InstanceId = -1;
-	Vector3f padding;
+	Vector2f padding;
 };
 
 struct InstancedMeshMatCBuffData
@@ -56,9 +57,9 @@ public:
 	~InstancedStaticMesh();
 
 	void initialise();
-	void addInstance(Vector3f instancePosition, EInstanceTexture instanceTexture = EInstanceTexture::TEXTURE1);
+	void addInstance(Vector3f instancePosition, float instanceScale, EInstanceTexture instanceTexture = EInstanceTexture::TEXTURE1);
 
-	void updateInstance(int instanceId, Vector3f newInstancePosition);
+	void updateInstance(int instanceId, Vector3f newInstancePosition, float newInstanceScale);
 
 	// Load all textures
 	void loadTextures(std::wstring texture1, std::wstring texture2 = L"none", std::wstring texture3 = L"none", std::wstring texture4 = L"none");

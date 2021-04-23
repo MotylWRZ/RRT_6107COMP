@@ -31,6 +31,7 @@ public:
 
 	// Set material for all terrain chunks
 	void setMaterial(MaterialPtr material);
+	MaterialPtr getMaterial();
 
 	void updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights);
 

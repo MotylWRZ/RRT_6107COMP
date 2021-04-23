@@ -24,6 +24,16 @@ void Terrain::setMaterial(MaterialPtr material)
 	}
 }
 
+MaterialPtr Terrain::getMaterial()
+{
+	if (static_cast<int>(this->m_chunks.size()) == 0)
+	{
+		return nullptr;
+	}
+
+	return this->m_chunks[0]->GetMaterial();
+}
+
 void Terrain::updateLighting(RendererDX11* pRenderer, const std::vector<LightBasePtr>& lights)
 {
 	if (!pRenderer)

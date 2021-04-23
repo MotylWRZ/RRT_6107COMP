@@ -89,6 +89,7 @@ namespace LJMUDX
 		void setupSpaceships();
 		void animateLights(float DT);
 		void setupBase();
+		void terrainWireframeRendering(bool enabled);
 		std::wstring outputFPSInfo();				//Convert the timer's Frames Per Second to a formatted string
 
 	protected:
@@ -115,6 +116,7 @@ namespace LJMUDX
 
 		std::vector<Terrain*> m_terrains;
 		int m_currentTerrainIndex;
+		bool m_wireframeRendering;
 
 		std::vector<Path*> m_paths;
 		std::shared_ptr<SolarSystem> m_solarSystem;
